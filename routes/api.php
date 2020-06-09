@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,3 +30,29 @@ Route::post('des-job/{id?}', 'Api\ApiController@desJob');
 Route::post('create', 'Api\ApiController@create');
 Route::post('edit', 'Api\ApiController@edit');
 Route::post('remove', 'Api\ApiController@remove');
+
+
+Route::namespace('Api\v1')->group(function () {
+
+    Route::group(['prefix' => 'v1'], function () {
+
+        //menu
+        Route::group(['prefix' => 'menu'], function () {
+            Route::get('list-header', 'ApiController@listProMenuGroup');
+            Route::get('list-sidebar', 'ApiController@listProMenu');
+
+        });
+        //data basic
+        Route::group(['prefix' => 'data-basic'], function () {
+            Route::get('company', 'ApiController@getInfoCompany');
+            Route::get('list-customer', 'ApiController@listCustomer');
+            Route::get('list-staff-customs', 'ApiController@listStaffCustoms');
+            Route::get('list-type-cost', 'ApiController@listTypeCost');
+            Route::get('list-carriers', 'ApiController@listCarriers');
+            Route::get('list-agent', 'ApiController@listAgent');
+            Route::get('list-branch', 'ApiController@listBranch');
+            Route::get('list-garage', 'ApiController@listGarage');
+
+        });
+    });
+});
