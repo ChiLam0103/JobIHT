@@ -17,10 +17,5 @@ class Menus extends Model
         $data = DB::table('CKICO_PRO_MENU')->get();
         return $data;
     }
-    public static function getInfoCompany()
-    {
-        $data = DB::table('COMPANY')->get();
-        return $data;
-    }
    
 }

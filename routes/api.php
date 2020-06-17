@@ -44,8 +44,18 @@ Route::namespace('Api\v1')->group(function () {
         });
         //data basic
         Route::group(['prefix' => 'data-basic'], function () {
+            //company
             Route::get('company', 'ApiController@getInfoCompany');
+            Route::post('add-company', 'ApiController@addCompany');
+            Route::post('edit-company', 'ApiController@editCompany');
+            Route::post('delete-company', 'ApiController@deleteCompany');
+            //customer
             Route::get('list-customer', 'ApiController@listCustomer');
+            Route::get('des-customer/{id}', 'ApiController@desCustomer');
+            Route::post('add-customer', 'ApiController@addCustomer');
+            Route::post('edit-customer', 'ApiController@editCustomer');
+            Route::post('delete-customer', 'ApiController@deleteCustomer');
+            //staff-customs
             Route::get('list-staff-customs', 'ApiController@listStaffCustoms');
             Route::get('list-type-cost', 'ApiController@listTypeCost');
             Route::get('list-carriers', 'ApiController@listCarriers');
