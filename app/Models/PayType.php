@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Branch extends Model
+class PayType extends Model
 {
-    public static function listBranch()
+    public static function listPayType()
     {
-        $data = DB::table(config('constants.BRANCH_TABLE'))->get();
+        $data = DB::table(config('constants.PAY_TYPE_TABLE'))->get();
         return $data;
     }
-   
 }

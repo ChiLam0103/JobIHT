@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Jobs extends Model
+class JobStart extends Model
 {
-    public static function getAll($skip = 0)
+    public static function listJobStart($skip = 0)
     {
         $data = DB::table('JOB_START as js')
         ->leftJoin('LENDER as ld','js.JOB_NO','=','ld.JOB_NO')
@@ -18,16 +18,7 @@ class Jobs extends Model
         ->get();
         return $data;
     }
-    public static function getAllPayType()
-    {
-        $data = DB::table('PAY_TYPE')->get();
-        return $data;
-    }
-    public static function getAllPayNote()
-    {
-        $data = DB::table('PAY_NOTE')->get();
-        return $data;
-    }
+  
     public static function getByJobNo($id)
     {
         $data = DB::table('JOB_START as js')
@@ -53,7 +44,7 @@ class Jobs extends Model
         ->get();
         return $data;
     }
-    public static function create($request)
+    public static function addJob($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -75,7 +66,7 @@ class Jobs extends Model
             return $e;
         }
     }
-    public static function edit($request)
+    public static function editJob($request)
     {
         try {
             DB::table('JOB_ORDER_D')
@@ -97,7 +88,7 @@ class Jobs extends Model
             return $e;
         }
     }
-    public static function remove($request)
+    public static function deleteJob($request)
     {
         try {
             DB::table('JOB_ORDER_D')

@@ -1,45 +1,20 @@
 <?php
- 
-namespace App\Http\Controllers\Api;
+
+namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use JWTAuth;
-use Illuminate\Support\Facades\DB;
 
-use App\Models\Users;
-use App\Models\Jobs;
+use App\Models\JobStart;
+use App\Models\JobD;
+use App\Models\JobM;
 
-class ApiController extends Controller
+class JobController extends Controller
 {
-
-    public function login(Request $request)
-    {
-       $data = Users::login($request);
-       if($data){
-        if($data=='404' || $data=='401'){
-            return response()->json( [
-                'success' => false,
-                'message' => 'Invalid User or Password'],
-                Response::HTTP_BAD_REQUEST);
-           }else{
-            return response()->json([
-                'success' => true,
-                'data'=>$data
-            ], Response::HTTP_OK);
-           }
-       }else{
-        return response()->json( [
-            'success' => false,
-            'message' => 'Invalid User or Password'],
-             Response::HTTP_BAD_REQUEST);
-       }
-       
-    }
-    public function listJob(Request $req){
+    public function listJobStart(Request $req){
         $skip = $req->skip ? $req->skip : 0;
-        $data=Jobs::listJob($skip);
+        $data=JobStart::listJobStart($skip);
         if($data){
              return response()->json([
                     'success' => true,
@@ -52,7 +27,6 @@ class ApiController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    
     public function desJob($id){
         $job_start=Jobs::getByJobNo($id);
         $job_order_m=Jobs::getJobOrderM($id);
@@ -114,4 +88,3 @@ class ApiController extends Controller
            }
     }
 }
-?>

@@ -35,12 +35,30 @@ Route::post('remove', 'Api\ApiController@remove');
 Route::namespace('Api\v1')->group(function () {
 
     Route::group(['prefix' => 'v1'], function () {
-
+        //user
+        Route::group(['prefix' => 'user'], function () {
+            Route::post('login', 'UserController@login');
+            Route::get('list-user', 'UserController@listUser');
+            Route::get('get-user/{USER_NO?}', 'UserController@getUser');
+            Route::get('list-menu-pro', 'UserController@listMenuPro');
+        });
+        //pay
+        Route::group(['prefix' => 'pay'], function () {
+            Route::get('list-pay-type', 'PayController@listPayType');
+            Route::get('list-pay-note', 'PayController@listPayNote');
+        });
+        //job
+        Route::group(['prefix' => 'job'], function () {
+            Route::get('list-job-start', 'JobController@listJobStart');
+            Route::post('des-job/{id?}', 'JobController@desJob');
+            Route::post('add-job', 'JobController@addJob');
+            Route::post('edit-job', 'JobController@editJob');
+            Route::post('delete-job', 'JobController@deleteJob');
+        });
         //menu
         Route::group(['prefix' => 'menu'], function () {
-            Route::get('list-header', 'ApiController@listProMenuGroup');
-            Route::get('list-sidebar', 'ApiController@listProMenu');
-
+            Route::get('list-header', 'ApiController@listMenuGroup');
+            Route::get('list-sidebar', 'ApiController@listMenu');
         });
         //data basic
         Route::group(['prefix' => 'data-basic'], function () {
@@ -62,7 +80,6 @@ Route::namespace('Api\v1')->group(function () {
             Route::get('list-agent', 'ApiController@listAgent');
             Route::get('list-branch', 'ApiController@listBranch');
             Route::get('list-garage', 'ApiController@listGarage');
-
         });
     });
 });

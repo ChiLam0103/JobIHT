@@ -10,30 +10,14 @@ class Customer extends Model
     //list
     public static function listCustomer()
     {
-        $data = DB::table('CUSTOMER')->where('CUST_TYPE', 1)->where('BRANCH_ID', 'IHTVN1')->get();
-        return $data;
-    }
-    public static function listCarriers()
-    {
-        $data = DB::table('CUSTOMER')->where('CUST_TYPE', 2)->where('BRANCH_ID', 'IHTVN1')->get();
-        return $data;
-    }
-    public static function listAgent()
-    {
-        $data = DB::table('CUSTOMER')->where('CUST_TYPE', 3)->where('BRANCH_ID', 'IHTVN1')->get();
-        return $data;
-    }
- 
-    public static function listGarage()
-    {
-        $data = DB::table('CUSTOMER')->where('CUST_TYPE', 4)->where('BRANCH_ID', 'IHTVN1')->get();
+        $data = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_TYPE', 1)->get();
         return $data;
     }
     //action customer
     public static function desCustomer($id)
     {
         try {
-            $data = DB::table('CUSTOMER')->where('CUST_TYPE', 1)->where('CUST_NO', $id)->get();
+            $data = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_TYPE', 1)->where('CUST_NO', $id)->get();
             return $data;
         } catch (\Exception $e) {
             return $e;
@@ -43,7 +27,7 @@ class Customer extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            DB::table('CUSTOMER')->insert(
+            DB::table(config('constants.CUSTOMER_TABLE'))->insert(
                 [
                     'CUST_TYPE' => $request['CUST_TYPE'],
                     'CUST_NO' => $request['CUST_NO'],
@@ -72,7 +56,7 @@ class Customer extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            DB::table('CUSTOMER')
+            DB::table(config('constants.CUSTOMER_TABLE'))
                 ->where('CUST_TYPE', $request['CUST_TYPE'])
                 ->where('CUST_NO', $request['CUST_NO'])
                 ->update(
@@ -99,7 +83,7 @@ class Customer extends Model
     public static function deleteCustomer($request)
     {
         try {
-            DB::table('CUSTOMER')
+            DB::table(config('constants.CUSTOMER_TABLE'))
                 ->where('CUST_NO', $request['CUST_NO'])
                 ->delete();
             return '200';
@@ -107,5 +91,4 @@ class Customer extends Model
             return $e;
         }
     }
-   
 }

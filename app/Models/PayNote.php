@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class TypeCost extends Model
+class PayNote extends Model
 {
-    public static function listTypeCost()
+    public static function listPayNote()
     {
-        $data = DB::table(config('constants.TYPE_COST_TABLE'))->get();
+        $data = DB::table(config('constants.PAY_NOTE_TABLE'))->get();
         return $data;
     }
    

@@ -9,13 +9,13 @@ class Company extends Model
 {
     public static function getInfoCompany()
     {
-        $data = DB::table('COMPANY')->get();
+        $data = DB::table(config('constants.COMPANY_TABLE'))->get();
         return $data;
     }
     public static function addCompany($request)
     {
         try {
-            DB::table('COMPANY')->insert(
+            DB::table(config('constants.COMPANY_TABLE'))->insert(
                 [
                     'COMP_NO' => $request['COMP_NO'],
                     'COMP_NAME' => $request['COMP_NAME'],
@@ -41,7 +41,7 @@ class Company extends Model
     public static function editCompany($request)
     {
         try {
-            DB::table('COMPANY')
+            DB::table(config('constants.COMPANY_TABLE'))
                 ->where('COMP_NO', $request['COMP_NO'])
                 ->update(
                     [
@@ -68,7 +68,7 @@ class Company extends Model
     public static function deleteCompany($request)
     {
         try {
-            DB::table('COMPANY')
+            DB::table(config('constants.COMPANY_TABLE'))
                 ->where('COMP_NO', $request['COMP_NO'])
                 ->delete();
             return '200';

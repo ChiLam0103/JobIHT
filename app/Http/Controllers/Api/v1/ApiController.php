@@ -6,19 +6,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Models\Menus;
+use App\Models\Menu;
+use App\Models\MenuGroup;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\Garage;
+use App\Models\Branch;
+use App\Models\Carriers;
+use App\Models\Agent;
 use App\Models\Personal;
 use App\Models\TypeCost;
-use App\Models\Branch;
 
 class ApiController extends Controller
 {
     //menu
-    public function listProMenuGroup()
+    public function listMenuGroup()
     {
-        $data = Menus::listProMenuGroup();
+        $data = MenuGroup::listMenuGroup();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -34,9 +38,9 @@ class ApiController extends Controller
             );
         }
     }
-    public function listProMenu()
+    public function listMenu()
     {
-        $data = Menus::listProMenu();
+        $data = Menu::listMenu();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -260,7 +264,7 @@ class ApiController extends Controller
     //CUSTOMER-carriers
     public function listCarriers()
     {
-        $data = Customer::listCarriers();
+        $data = Carriers::listCarriers();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -279,7 +283,7 @@ class ApiController extends Controller
     //CUSTOMER-agent
     public function listAgent()
     {
-        $data = Customer::listAgent();
+        $data = Agent::listAgent();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -317,7 +321,7 @@ class ApiController extends Controller
     //CUSTOMER-garage
     public function listGarage()
     {
-        $data = Customer::listGarage();
+        $data = Garage::listGarage();
         if ($data) {
             return response()->json([
                 'success' => true,

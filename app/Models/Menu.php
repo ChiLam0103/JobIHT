@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class TypeCost extends Model
+class Menu extends Model
 {
-    public static function listTypeCost()
+    public static function listMenu()
     {
-        $data = DB::table(config('constants.TYPE_COST_TABLE'))->get();
+        $data = DB::table(config('constants.MENU_TABLE'))->get();
         return $data;
     }
    
