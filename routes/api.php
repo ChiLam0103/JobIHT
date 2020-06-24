@@ -38,48 +38,73 @@ Route::namespace('Api\v1')->group(function () {
         //user
         Route::group(['prefix' => 'user'], function () {
             Route::post('login', 'UserController@login');
-            Route::get('list-user', 'UserController@listUser');
-            Route::get('get-user/{USER_NO?}', 'UserController@getUser');
+            Route::get('list', 'UserController@listUser');
+            Route::get('get/{USER_NO?}', 'UserController@getUser');
             Route::get('list-menu-pro', 'UserController@listMenuPro');
         });
         //pay
         Route::group(['prefix' => 'pay'], function () {
-            Route::get('list-pay-type', 'PayController@listPayType');
-            Route::get('list-pay-note', 'PayController@listPayNote');
+            Route::get('list-type', 'PayController@listPayType');
+            Route::get('list-note', 'PayController@listPayNote');
         });
         //job
         Route::group(['prefix' => 'job'], function () {
-            Route::get('list-job-start', 'JobController@listJobStart');
-            Route::post('des-job/{id?}', 'JobController@desJob');
-            Route::post('add-job', 'JobController@addJob');
-            Route::post('edit-job', 'JobController@editJob');
-            Route::post('delete-job', 'JobController@deleteJob');
+            Route::get('list-start', 'JobController@listJobStart');//phieu theo doi
+            Route::post('des/{id?}', 'JobController@desJob');
+            Route::post('add', 'JobController@addJob');
+            Route::post('edit', 'JobController@editJob');
+            Route::post('remove', 'JobController@deleteJob');
         });
         //menu
         Route::group(['prefix' => 'menu'], function () {
-            Route::get('list-header', 'ApiController@listMenuGroup');
-            Route::get('list-sidebar', 'ApiController@listMenu');
+            Route::get('list-header', 'MenuController@listMenuGroup');
+            Route::get('list-sidebar', 'MenuController@listMenu');
         });
         //data basic
         Route::group(['prefix' => 'data-basic'], function () {
             //company
-            Route::get('company', 'ApiController@getInfoCompany');
-            Route::post('add-company', 'ApiController@addCompany');
-            Route::post('edit-company', 'ApiController@editCompany');
-            Route::post('delete-company', 'ApiController@deleteCompany');
+            Route::group(['prefix' => 'company'], function () {
+                Route::get('/', 'CompanyController@getInfoCompany');
+                Route::post('add', 'CompanyController@addCompany');
+                Route::post('edit', 'CompanyController@editCompany');
+                Route::post('remove', 'CompanyController@deleteCompany');
+            });
+           
             //customer
-            Route::get('list-customer', 'ApiController@listCustomer');
-            Route::get('des-customer/{id}', 'ApiController@desCustomer');
-            Route::post('add-customer', 'ApiController@addCustomer');
-            Route::post('edit-customer', 'ApiController@editCustomer');
-            Route::post('delete-customer', 'ApiController@deleteCustomer');
-            //staff-customs
-            Route::get('list-staff-customs', 'ApiController@listStaffCustoms');
-            Route::get('list-type-cost', 'ApiController@listTypeCost');
-            Route::get('list-carriers', 'ApiController@listCarriers');
-            Route::get('list-agent', 'ApiController@listAgent');
-            Route::get('list-branch', 'ApiController@listBranch');
-            Route::get('list-garage', 'ApiController@listGarage');
+            Route::group(['prefix' => 'customer'], function () {
+                Route::get('/', 'CustomerController@listCustomer');
+                Route::get('des/{id}', 'CustomerController@desCustomer');
+                Route::post('add', 'CustomerController@addCustomer');
+                Route::post('edit', 'CustomerController@editCustomer');
+                Route::post('remove', 'CustomerController@deleteCustomer');
+            });
+           
+            //staff-customs(nhan vien hai quan)
+            Route::group(['prefix' => 'staff-customs'], function () {
+                Route::get('/', 'StaffCustomerController@listStaffCustoms');
+
+            });
+            Route::group(['prefix' => 'type-cost'], function () {
+                Route::get('/', 'TypeCostController@listTypeCost');
+
+            });
+            Route::group(['prefix' => 'carriers'], function () {
+                Route::get('/', 'CarriersController@listCarriers');
+
+            });
+            Route::group(['prefix' => 'agent'], function () {
+                Route::get('/', 'AgentController@listAgent');
+
+            });
+            Route::group(['prefix' => 'branch'], function () {
+                Route::get('/', 'BranchController@listBranch');
+
+            });
+            Route::group(['prefix' => 'garage'], function () {
+                Route::get('/','GarageController@listBranch');
+
+            });
+           
         });
     });
 });
