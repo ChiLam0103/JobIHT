@@ -13,9 +13,9 @@ class CompanyController extends Controller
 
 
     //company
-    public function getInfoCompany()
+    public function list()
     {
-        $data = Company::getInfoCompany();
+        $data = Company::list();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -31,9 +31,9 @@ class CompanyController extends Controller
             );
         }
     }
-    public function addCompany(Request $req)
+    public function add(Request $req)
     {
-        $data = Company::addCompany($req);
+        $data = Company::add($req);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -49,9 +49,9 @@ class CompanyController extends Controller
             );
         }
     }
-    public function editCompany(Request $req)
+    public function edit(Request $req)
     {
-        $data = Company::editCompany($req);
+        $data = Company::edit($req);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -67,9 +67,9 @@ class CompanyController extends Controller
             );
         }
     }
-    public function deleteCompany(Request $req)
+    public function remove(Request $req)
     {
-        $data = Company::deleteCompany($req);
+        $data = Company::remove($req);
         if ($data) {
             return response()->json([
                 'success' => true,

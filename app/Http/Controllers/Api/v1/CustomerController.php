@@ -11,9 +11,9 @@ use App\Models\Customer;
 class CustomerController extends Controller
 {
     //customer
-    public function listCustomer()
+    public function list()
     {
-        $data = Customer::listCustomer();
+        $data = Customer::list();
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -29,9 +29,9 @@ class CustomerController extends Controller
             );
         }
     }
-    public function desCustomer($id)
+    public function des($id)
     {
-        $data = Customer::desCustomer($id);
+        $data = Customer::des($id);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -47,9 +47,9 @@ class CustomerController extends Controller
             );
         }
     }
-    public function addCustomer(Request $req)
+    public function add(Request $req)
     {
-        $data = Customer::addCustomer($req);
+        $data = Customer::add($req);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -65,9 +65,9 @@ class CustomerController extends Controller
             );
         }
     }
-    public function editCustomer(Request $req)
+    public function edit(Request $req)
     {
-        $data = Customer::editCustomer($req);
+        $data = Customer::edit($req);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -83,9 +83,9 @@ class CustomerController extends Controller
             );
         }
     }
-    public function deleteCustomer(Request $req)
+    public function remove(Request $req)
     {
-        $data = Customer::deleteCustomer($req);
+        $data = Customer::remove($req);
         if ($data) {
             return response()->json([
                 'success' => true,

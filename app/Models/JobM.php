@@ -7,25 +7,25 @@ use Illuminate\Support\Facades\DB;
 
 class JobM extends Model
 {
-    public static function listJob($skip = 0)
+    public static function list()
     {
         $data = DB::table('JOB_START as js')
-        ->leftJoin('LENDER as ld','js.JOB_NO','=','ld.JOB_NO')
-        ->select('ld.LENDER_NO','js.*')
-        ->orderBy('js.JOB_NO', 'desc')
-        ->skip($skip)
-        ->take(10)
+        ->leftjoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
+        ->select('jm.*')
+        ->orderBy('jm.JOB_NO', 'desc')
+        ->take(1000)
         ->get();
         return $data;
+        return $data;
     }
-  
-    public static function getByJobNo($id)
+    public static function listDes($id)
     {
-        $data = DB::table('JOB_START as js')
-        ->leftJoin('LENDER as ld','js.JOB_NO','=','ld.JOB_NO')
-        ->select('ld.LENDER_NO','js.*')
-        ->where('js.JOB_NO',$id)
-        ->first();
+        $data = DB::table('JOB_ORDER_M as jm')
+        ->leftjoin('JOB_ORDER_D as jd','jm.JOB_NO','=','jd.JOB_NO')
+        ->leftJoin('PAY_TYPE as pt','jd.ORDER_TYPE','=','pt.PAY_NO')
+        ->where('jm.JOB_NO',$id)
+        ->select('pt.PAY_NAME as ORDER_TYPE_NAME','jd.*')
+        ->get();
         return $data;
     }
     public static function getJobOrderM($id)

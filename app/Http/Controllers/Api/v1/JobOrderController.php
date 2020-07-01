@@ -6,15 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Models\JobStart;
 use App\Models\JobD;
 use App\Models\JobM;
 
-class JobController extends Controller
+class JobOrderController extends Controller
 {
-    public function listJobStart(Request $req){
-        $skip = $req->skip ? $req->skip : 0;
-        $data=JobStart::listJobStart($skip);
+    public function list(){
+        $data=JobM::list();
         if($data){
              return response()->json([
                     'success' => true,
@@ -27,16 +25,12 @@ class JobController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    public function desJob($id){
-        $job_start=Jobs::getByJobNo($id);
-        $job_order_m=Jobs::getJobOrderM($id);
-        $list_job_order_d=Jobs::listJobOrderD($id);
-        if($job_start){
+    public function listDes($id){
+        $data=JobM::listDes($id);
+        if($data){
              return response()->json([
                     'success' => true,
-                    'job_start'=>$job_start,
-                    'job_order_m'=>$job_order_m,
-                    'list_job_order_d'=>$list_job_order_d,
+                    'data'=>$data
                 ], Response::HTTP_OK);
            }else{
             return response()->json( [
@@ -45,9 +39,9 @@ class JobController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    public function addJob(Request $request){
-        $data=Jobs::addJob($request);
-        if($data=='200'){
+    public function edit(Request $request){
+        $data=JobStart::edit($request);
+        if($data){
              return response()->json([
                     'success' => true,
                     'data'=>$data
@@ -55,13 +49,13 @@ class JobController extends Controller
            }else{
             return response()->json( [
                 'success' => false,
-                'message' => $data],
+                'message' => 'null'],
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    public function editJob(Request $request){
-        $data=Jobs::editJob($request);
-        if($data=='200'){
+    public function remove(Request $request){
+        $data=JobStart::remove($request);
+        if($data){
              return response()->json([
                     'success' => true,
                     'data'=>$data
@@ -69,22 +63,9 @@ class JobController extends Controller
            }else{
             return response()->json( [
                 'success' => false,
-                'message' => $data],
+                'message' => 'null'],
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    public function deleteJob(Request $request){
-        $data=Jobs::deleteJob($request);
-        if($data=='200'){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => $data],
-                 Response::HTTP_BAD_REQUEST);
-           }
-    }
+   
 }

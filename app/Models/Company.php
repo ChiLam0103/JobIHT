@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 class Company extends Model
 {
-    public static function getInfoCompany()
+    public static function list()
     {
         $data = DB::table(config('constants.COMPANY_TABLE'))->get();
         return $data;
     }
-    public static function addCompany($request)
+    public static function add($request)
     {
         try {
             DB::table(config('constants.COMPANY_TABLE'))->insert(
@@ -38,7 +38,7 @@ class Company extends Model
             return $e;
         }
     }
-    public static function editCompany($request)
+    public static function edit($request)
     {
         try {
             DB::table(config('constants.COMPANY_TABLE'))
@@ -65,7 +65,7 @@ class Company extends Model
             return $e;
         }
     }
-    public static function deleteCompany($request)
+    public static function remove($request)
     {
         try {
             DB::table(config('constants.COMPANY_TABLE'))

@@ -6,50 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Models\Users;
+use App\Models\JobStart;
+use App\Models\JobD;
+use App\Models\JobM;
 
-class UserController extends Controller
+class JobStartController extends Controller
 {
-    public function login(Request $request)
-    {
-       $data = Users::login($request);
-       if($data){
-        if($data=='404' || $data=='401'){
-            return response()->json( [
-                'success' => false,
-                'message' => 'Invalid User or Password'],
-                Response::HTTP_BAD_REQUEST);
-           }else{
-            return response()->json([
-                'success' => true,
-                'data'=>$data
-            ], Response::HTTP_OK);
-           }
-       }else{
-        return response()->json( [
-            'success' => false,
-            'message' => 'Invalid User or Password'],
-             Response::HTTP_BAD_REQUEST);
-       }
-       
-    }
     public function list(){
-        $data=Users::list();
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
-    }
-
-    public function add(Request $request){
-        $data=Users::add($request);
+        $data=JobStart::list();
         if($data){
              return response()->json([
                     'success' => true,
@@ -63,7 +27,21 @@ class UserController extends Controller
            }
     }
     public function des($id){
-        $data=Users::des($id);
+        $data=JobStart::des($id);
+        if($data){
+             return response()->json([
+                    'success' => true,
+                    'data'=>$data
+                ], Response::HTTP_OK);
+           }else{
+            return response()->json( [
+                'success' => false,
+                'message' => 'null'],
+                 Response::HTTP_BAD_REQUEST);
+           }
+    }
+    public function add(Request $request){
+        $data=JobStart::add($request);
         if($data){
              return response()->json([
                     'success' => true,
@@ -77,7 +55,7 @@ class UserController extends Controller
            }
     }
     public function edit(Request $request){
-        $data=Users::edit($request);
+        $data=JobStart::edit($request);
         if($data){
              return response()->json([
                     'success' => true,
@@ -91,7 +69,21 @@ class UserController extends Controller
            }
     }
     public function remove(Request $request){
-        $data=Users::remove($request);
+        $data=JobStart::remove($request);
+        if($data){
+             return response()->json([
+                    'success' => true,
+                    'data'=>$data
+                ], Response::HTTP_OK);
+           }else{
+            return response()->json( [
+                'success' => false,
+                'message' => 'null'],
+                 Response::HTTP_BAD_REQUEST);
+           }
+    }
+    public function removeCheck(Request $request){
+        $data=JobStart::removeCheck($request);
         if($data){
              return response()->json([
                     'success' => true,

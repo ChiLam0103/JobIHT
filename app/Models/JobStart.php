@@ -4,99 +4,143 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class JobStart extends Model
 {
-    public static function listJobStart($skip = 0)
+    public static function list()
     {
-        $data = DB::table('JOB_START as js')
-        ->leftJoin('LENDER as ld','js.JOB_NO','=','ld.JOB_NO')
-        ->select('ld.LENDER_NO','js.*')
-        ->orderBy('js.JOB_NO', 'desc')
-        ->skip($skip)
-        ->take(10)
-        ->get();
+        $data = DB::table(config('constants.JOB_START_TABLE'))
+            ->orderBy('JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
         return $data;
     }
-  
-    public static function getByJobNo($id)
+    public static function des($id)
     {
-        $data = DB::table('JOB_START as js')
-        ->leftJoin('LENDER as ld','js.JOB_NO','=','ld.JOB_NO')
-        ->select('ld.LENDER_NO','js.*')
-        ->where('js.JOB_NO',$id)
-        ->first();
+        $data = DB::table(config('constants.JOB_START_TABLE'))->where('JOB_NO', $id)->first();
         return $data;
     }
-    public static function getJobOrderM($id)
+    public static function generateJobNo()
     {
-        $data = DB::table('JOB_ORDER_M')
-        ->where('JOB_NO',$id)
-        ->first();
-        return $data;
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $countRecordToday = DB::table(config('constants.JOB_START_TABLE'))->where('JOB_DATE', date("Ymd"))->count();
+        $countRecordToday = (int) $countRecordToday + 1;
+        do {
+            $job_no = sprintf("J%s%'.03d", date('ymd') . '-', $countRecordToday);
+            $countRecordToday++;
+        } while (DB::table(config('constants.JOB_START_TABLE'))->where('JOB_NO', $job_no)->first());
+        return $job_no;
     }
-    public static function listJobOrderD($id)
-    {
-        $data = DB::table('JOB_ORDER_D as jo')
-        ->where('JOB_NO',$id)
-        ->join('PAY_TYPE as pt','pt.PAY_NO','=','jo.ORDER_TYPE')
-        ->select('pt.PAY_NAME as ORDER_TYPE_NAME','jo.*')
-        ->get();
-        return $data;
-    }
-    public static function addJob($request)
+
+    public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            DB::table('JOB_ORDER_D')->insert(
-                ['JOB_NO' => $request['JOB_NO'],
-                    'ORDER_TYPE' =>$request['ORDER_TYPE'],
-                    'SER_NO' => $request['SER_NO'],
-                    'DESCRIPTION' => $request['DESCRIPTION'],
-                    'REV_TYPE' => $request['REV_TYPE'],
-                    'PORT_AMT' => $request['PORT_AMT'],
-                    'NOTE' => $request['NOTE'],
-                    'BRANCH_ID' => $request['BRANCH_ID'],
-                    'INPUT_USER' => $request['INPUT_USER'],
-                    'INPUT_DT' => date("Ymd"),
-                ]
-            );
+            $job_no = JobStart::generateJobNo();
+            DB::table(config('constants.JOB_START_TABLE'))
+                ->insert(
+                    [
+                        'JOB_NO' => $job_no,
+                        'CUST_NO' => $request['CUST_NO'],
+                        'NV_CHUNGTU' => $request['NV_CHUNGTU'],
+                        'NV_GIAONHAN' => $request['NV_GIAONHAN'],
+                        'JOB_DATE' => date("Ymd"),
+                        'NOTE' =>  $request['NOTE'],
+                        'INPUT_USER' =>  $request['INPUT_USER'],
+                        'INPUT_DT' =>  date("YmdHis"),
+                        'CUST_NO2' =>  $request['CUST_NO2'],
+                        'CUST_NO3' =>  $request['CUST_NO3'],
+                        'CUST_NO4' =>  $request['CUST_NO4'],
+                        'CUST_NO5' =>  $request['CUST_NO5'],
+                        'ORDER_FROM' =>  $request['ORDER_FROM'],
+                        'ORDER_TO' =>  $request['ORDER_TO'],
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
+                        'POL' =>  $request['POL'],
+                        'POD' =>  $request['POD'],
+                        // 'ETA_ETD' =>  $request['ETA_ETD'],
+                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'BILL_NO' =>  $request['BILL_NO'],
+                        'NW' =>  $request['NW'],
+                        'GW' =>  $request['GW'],
+                        'INVOICE_NO' =>  $request['INVOICE_NO'],
+                        'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
+                    ]
+                );
             return '200';
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function editJob($request)
+    public static function edit($request)
     {
         try {
-            DB::table('JOB_ORDER_D')
-            ->where('JOB_NO', $request['JOB_NO'])
-            ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-            ->where('SER_NO', $request['SER_NO'])
-            ->update(
-                [
-                    'DESCRIPTION' => $request['DESCRIPTION'],
-                    'REV_TYPE' => $request['REV_TYPE'],
-                    'PORT_AMT' => $request['PORT_AMT'],
-                    'NOTE' => $request['NOTE'],
-                    'MODIFY_USER' => $request['MODIFY_USER'],
-                    'MODIFY_DT' => date("Ymd"),
-                ]
-            );
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            DB::table(config('constants.JOB_START_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])
+                ->update(
+                    [
+                        'CUST_NO' => $request['CUST_NO'],
+                        'NV_CHUNGTU' => $request['NV_CHUNGTU'],
+                        'NV_GIAONHAN' => $request['NV_GIAONHAN'],
+                        'NOTE' =>  $request['NOTE'],
+                        'MODIFY_USER' =>  $request['MODIFY_USER'],
+                        'MODIFY_DT' =>  date("YmdHis"),
+                        'CUST_NO2' =>  $request['CUST_NO2'],
+                        'CUST_NO3' =>  $request['CUST_NO3'],
+                        'CUST_NO4' =>  $request['CUST_NO4'],
+                        'CUST_NO5' =>  $request['CUST_NO5'],
+                        'ORDER_FROM' =>  $request['ORDER_FROM'],
+                        'ORDER_TO' =>  $request['ORDER_TO'],
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
+                        'POL' =>  $request['POL'],
+                        'POD' =>  $request['POD'],
+                        'ETA_ETD' =>  $request['ETA_ETD'],
+                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'BILL_NO' =>  $request['BILL_NO'],
+                        'NW' =>  $request['NW'],
+                        'GW' =>  $request['GW'],
+                        'INVOICE_NO' =>  $request['INVOICE_NO'],
+                        'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
+                    ]
+                );
             return '200';
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function deleteJob($request)
+
+    public static function remove($request)
     {
         try {
-            DB::table('JOB_ORDER_D')
-            ->where('JOB_NO', $request['JOB_NO'])
-            ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-            ->where('SER_NO', $request['SER_NO'])
-            ->delete();
+            DB::table(config('constants.JOB_START_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])
+                ->delete();
             return '200';
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function removeCheck($request)
+    {
+        try {
+            $exist = DB::table('JOB_START as js')
+                ->rightJoin('LENDER as ld', 'js.JOB_NO', '=', 'ld.JOB_NO')
+                ->where('js.JOB_NO', $request['JOB_NO'])
+                ->count();
+            if ($exist == 0) {
+                //co the xoa
+                return '200';
+            } else {
+                //khong the xoa
+                return '201';
+            }
         } catch (\Exception $e) {
             return $e;
         }

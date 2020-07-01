@@ -10,9 +10,9 @@ use App\Models\Branch;
 
 class BranchController extends Controller
 {
-    public function listBranch()
+    public function list()
     {
-        $data = Branch::listBranch();
+        $data = Branch::list();
         if ($data) {
             return response()->json([
                 'success' => true,

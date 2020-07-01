@@ -7,29 +7,32 @@ use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
-    //list
-    public static function listCustomer()
+    public static function list()
     {
-        $data = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_TYPE', 1)->get();
+        $data = DB::table('CUSTOMER as c')
+        ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
+        ->where('c.CUST_TYPE', 1)->select('c.*','b.BRANCH_NAME')->get();
         return $data;
     }
-    //action customer
-    public static function desCustomer($id)
+    public static function des($id)
     {
         try {
-            $data = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_TYPE', 1)->where('CUST_NO', $id)->get();
+            $data = DB::table('CUSTOMER as c')
+            ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
+            ->where('c.CUST_TYPE', 1)->where('c.CUST_NO', $id)
+            ->select('c.*','b.BRANCH_NAME')->first();
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function addCustomer($request)
+    public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             DB::table(config('constants.CUSTOMER_TABLE'))->insert(
                 [
-                    'CUST_TYPE' => $request['CUST_TYPE'],
+                    'CUST_TYPE' => 1,
                     'CUST_NO' => $request['CUST_NO'],
                     'CUST_NAME' => $request['CUST_NAME'],
                     'CUST_CNAME' => $request['CUST_CNAME'],
@@ -40,19 +43,17 @@ class Customer extends Model
                     'CUST_TAX' => $request['CUST_TAX'],
                     'CUST_BOSS' => $request['CUST_BOSS'],
                     'INPUT_USER' => $request['INPUT_USER'],
-                    'INPUT_DT' => date("Ymd"),
+                    'INPUT_DT' => date("YmdHis"),
                     'TEN_DON_VI' => $request['TEN_DON_VI'],
                     'BRANCH_ID' => $request['BRANCH_ID'],
                 ]
             );
-            dd(1);
             return '200';
         } catch (\Exception $e) {
-            dd(2);
             return $e;
         }
     }
-    public static function editCustomer($request)
+    public static function edit($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -70,9 +71,8 @@ class Customer extends Model
                         'CUST_TAX' => $request['CUST_TAX'],
                         'CUST_BOSS' => $request['CUST_BOSS'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'],
-                        'MODIFY_DT' => date("Ymd"),
+                        'MODIFY_DT' => date("YmdHis"),
                         'TEN_DON_VI' => $request['TEN_DON_VI'],
-                        'BRANCH_ID' => $request['BRANCH_ID'],
                     ]
                 );
             return '200';
@@ -80,11 +80,12 @@ class Customer extends Model
             return $e;
         }
     }
-    public static function deleteCustomer($request)
+    public static function remove($request)
     {
         try {
             DB::table(config('constants.CUSTOMER_TABLE'))
                 ->where('CUST_NO', $request['CUST_NO'])
+                ->where('CUST_TYPE', $request['CUST_TYPE'])
                 ->delete();
             return '200';
         } catch (\Exception $e) {

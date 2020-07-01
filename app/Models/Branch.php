@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Branch extends Model
 {
-    public static function listBranch()
+    public static function list()
     {
         $data = DB::table(config('constants.BRANCH_TABLE'))->get();
         return $data;
