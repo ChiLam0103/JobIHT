@@ -18,30 +18,7 @@ class JobM extends Model
             ->get();
         return $data;
     }
-    public static function listPending()
-    {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $data = DB::table('JOB_START as js')
-            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->where('jm.CHK_MK','!=','Y')
-            ->select('jm.*')
-            ->orderBy('jm.JOB_NO', 'desc')
-            ->take(1000)
-            ->get();
-        return $data;
-    }
-    public static function listApproved()
-    {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $data = DB::table('JOB_START as js')
-            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->where('jm.CHK_MK','Y')
-            ->select('jm.*')
-            ->orderBy('jm.JOB_NO', 'desc')
-            ->take(1000)
-            ->get();
-        return $data;
-    }
+ 
     public static function des($id)
     {
         $data = DB::table('JOB_START as js')
@@ -154,6 +131,7 @@ class JobM extends Model
             return $e;
         }
     }
+    //3. duyet cuoc job
     public static function approved($request)
     {
         try {
@@ -168,6 +146,30 @@ class JobM extends Model
         } catch (\Exception $e) {
             return $e;
         }
+    }
+    public static function listPending()
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $data = DB::table('JOB_START as js')
+            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->where('jm.CHK_MK','!=','Y')
+            ->select('jm.*')
+            ->orderBy('jm.JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
+        return $data;
+    }
+    public static function listApproved()
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $data = DB::table('JOB_START as js')
+            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->where('jm.CHK_MK','Y')
+            ->select('jm.*')
+            ->orderBy('jm.JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
+        return $data;
     }
     
 }

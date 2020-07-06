@@ -10,17 +10,14 @@ class Users extends Model
 
     public static function login($request)
     {
-        if ($request->user_no && $request->user_pwd) {
-            $user = DB::table(config('constants.USER_TABLE'))->where(trim('user_no'), trim($request->user_no))->where(trim('user_pwd'), trim($request->user_pwd))->first();
-            if ($user) {
-                return $user;
-            } else {
-                //sai thong tin
-                return '401';
-            }
+        $user = DB::table(config('constants.USER_TABLE'))
+            ->where('USER_NO', $request->user_no)
+            ->where('USER_PWD', $request->user_pwd)->first();
+        if ($user) {
+            return $user;
         } else {
-            //thieu du lieu
-            return '404';
+            //sai thong tin
+            return '401';
         }
     }
     public static function list()
@@ -61,16 +58,16 @@ class Users extends Model
     {
         try {
             DB::table(config('constants.USER_TABLE'))
-            ->where('USER_NO', $request['USER_NO'])
-            ->update(
-                [
-                    // 'USER_NO' => $request['USER_NO'],
-                    'USER_PWD' => $request['USER_PWD'],
-                    'USER_NAME' => $request['USER_NAME'],
-                    'ADMIN_MK' => $request['ADMIN_MK'],
-                    'BRANCH_ID' => $request['BRANCH_ID'],
-                ]
-            );
+                ->where('USER_NO', $request['USER_NO'])
+                ->update(
+                    [
+                        // 'USER_NO' => $request['USER_NO'],
+                        'USER_PWD' => $request['USER_PWD'],
+                        'USER_NAME' => $request['USER_NAME'],
+                        'ADMIN_MK' => $request['ADMIN_MK'],
+                        'BRANCH_ID' => $request['BRANCH_ID'],
+                    ]
+                );
             return '200';
         } catch (\Exception $e) {
             return $e;

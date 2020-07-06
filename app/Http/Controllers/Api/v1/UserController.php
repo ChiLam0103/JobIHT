@@ -14,7 +14,7 @@ class UserController extends Controller
     {
        $data = Users::login($request);
        if($data){
-        if($data=='404' || $data=='401'){
+        if($data=='401'){
             return response()->json( [
                 'success' => false,
                 'message' => 'Invalid User or Password'],

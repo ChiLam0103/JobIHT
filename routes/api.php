@@ -90,7 +90,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('remove', 'GarageController@remove');
             });
         });
-        //II.manager system
+        //II.system manager 
         Route::group(['prefix' => 'system'], function () {
             Route::post('login', 'UserController@login');
             //info
@@ -108,7 +108,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'PermissionController@edit');
             });
         });
-        //III. manager file
+        //III.file manager 
         Route::group(['prefix' => 'file'], function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
@@ -143,6 +143,21 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('list-type', 'PayController@listPayType');
                 Route::get('list-note', 'PayController@listPayNote');
             });
+        });
+        //IV. payment manager
+        Route::group(['prefix' => 'payment'], function () {
+            //1.quan ly thu chi
+            Route::group(['prefix' => 'advance-slip'], function () { 
+                Route::get('/', 'LenderController@list');
+                Route::get('des/{id}', 'LenderController@des');
+                Route::post('add', 'LenderController@add');
+                Route::post('edit', 'LenderController@edit');
+                Route::post('remove', 'LenderController@remove');
+            });
+             //1.yeu cau thanh toan
+             Route::group(['prefix' => 'debit-note'], function () { 
+
+             });
         });
     });
 });
