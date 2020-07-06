@@ -26,6 +26,20 @@ class JobStartController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
+    public function listNotCreatedOrder(){
+        $data=JobStart::listNotCreatedOrder();
+        if($data){
+             return response()->json([
+                    'success' => true,
+                    'data'=>$data
+                ], Response::HTTP_OK);
+           }else{
+            return response()->json( [
+                'success' => false,
+                'message' => 'null'],
+                 Response::HTTP_BAD_REQUEST);
+           }
+    }
     public function des($id){
         $data=JobStart::des($id);
         if($data){
@@ -82,8 +96,8 @@ class JobStartController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
-    public function removeCheck(Request $request){
-        $data=JobStart::removeCheck($request);
+    public function removeCheck($id){
+        $data=JobStart::removeCheck($id);
         if($data){
              return response()->json([
                     'success' => true,

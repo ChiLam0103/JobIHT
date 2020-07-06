@@ -16,6 +16,17 @@ class JobStart extends Model
             ->get();
         return $data;
     }
+    public static function listNotCreatedOrder()
+    {
+        $data = DB::table('JOB_START as js')
+            ->leftJoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
+            ->whereNull('jm.JOB_NO')
+            ->orderBy('js.JOB_NO', 'desc')
+            ->select('js.*')
+            ->take(100)
+            ->get();
+        return $data;
+    }
     public static function des($id)
     {
         $data = DB::table(config('constants.JOB_START_TABLE'))->where('JOB_NO', $id)->first();
@@ -127,12 +138,12 @@ class JobStart extends Model
             return $e;
         }
     }
-    public static function removeCheck($request)
+    public static function removeCheck($id)
     {
         try {
             $exist = DB::table('JOB_START as js')
-                ->rightJoin('LENDER as ld', 'js.JOB_NO', '=', 'ld.JOB_NO')
-                ->where('js.JOB_NO', $request['JOB_NO'])
+                ->leftjoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
+                ->where('js.JOB_NO', $id)
                 ->count();
             if ($exist == 0) {
                 //co the xoa

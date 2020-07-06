@@ -1,34 +1,35 @@
 <?php
 
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::post('login', 'Api\ApiController@login');
+// Route::post('login', 'Api\ApiController@login');
 //list phieu theo doi
-Route::post('list-job', 'Api\ApiController@listJob');
-//list pay
-Route::get('list-pay-type', 'Api\ApiController@listPayType');
-Route::get('list-pay-note', 'Api\ApiController@listPayNote');
-//chi tiet
-Route::post('des-job/{id?}', 'Api\ApiController@desJob');
+// Route::post('list-job', 'Api\ApiController@listJob');
+// //list pay
+// Route::get('list-pay-type', 'Api\ApiController@listPayType');
+// Route::get('list-pay-note', 'Api\ApiController@listPayNote');
+// //chi tiet
+// Route::post('des-job/{id?}', 'Api\ApiController@desJob');
 
 //them job_order_d
-Route::post('create', 'Api\ApiController@create');
-Route::post('edit', 'Api\ApiController@edit');
-Route::post('remove', 'Api\ApiController@remove');
+// Route::post('create', 'Api\ApiController@create');
+// Route::post('edit', 'Api\ApiController@edit');
+// Route::post('remove', 'Api\ApiController@remove');
 
 
 Route::namespace('Api\v1')->group(function () {
 
     Route::group(['prefix' => 'v1'], function () {
-
-
-
+        //user
+        Route::group(['prefix' => 'user'], function () {
+            Route::post('login', 'UserController@login');
+        });
         //menu
         Route::group(['prefix' => 'menu'], function () {
             Route::get('list-header', 'MenuController@listMenuGroup');
@@ -112,20 +113,30 @@ Route::namespace('Api\v1')->group(function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('/', 'JobStartController@list');
+                Route::get('not-created-order', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
                 Route::post('edit', 'JobStartController@edit');
+                Route::get('remove-check/{id}', 'JobStartController@removeCheck');
                 Route::post('remove', 'JobStartController@remove');
-                Route::post('remove-check', 'JobStartController@removeCheck');
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
-                Route::get('list-des/{id}', 'JobOrderController@listDes');
                 Route::get('des/{id}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
+                Route::post('add-d', 'JobOrderController@addOrderD');
                 Route::post('edit', 'JobOrderController@edit');
+                Route::post('edit-d', 'JobOrderController@editOrderD');
+                Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
                 Route::post('remove', 'JobOrderController@remove');
-                Route::post('remove-check', 'JobOrderController@removeCheck');
+                Route::post('remove-d', 'JobOrderController@removeOrderD');
+               
+            });
+            Route::group(['prefix' => 'approved'], function () {
+                Route::get('list-pending', 'JobOrderController@listPending');
+                Route::get('list-approved', 'JobOrderController@listApproved');
+                Route::post('/', 'JobOrderController@approved');
+               
             });
             //pay
             Route::group(['prefix' => 'pay'], function () {

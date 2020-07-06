@@ -9,96 +9,165 @@ class JobM extends Model
 {
     public static function list()
     {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
-        ->leftjoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
-        ->select('jm.*')
-        ->orderBy('jm.JOB_NO', 'desc')
-        ->take(1000)
-        ->get();
-        return $data;
+            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->select('jm.*')
+            ->orderBy('jm.JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
         return $data;
     }
-    public static function listDes($id)
+    public static function listPending()
     {
-        $data = DB::table('JOB_ORDER_M as jm')
-        ->leftjoin('JOB_ORDER_D as jd','jm.JOB_NO','=','jd.JOB_NO')
-        ->leftJoin('PAY_TYPE as pt','jd.ORDER_TYPE','=','pt.PAY_NO')
-        ->where('jm.JOB_NO',$id)
-        ->select('pt.PAY_NAME as ORDER_TYPE_NAME','jd.*')
-        ->get();
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $data = DB::table('JOB_START as js')
+            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->where('jm.CHK_MK','!=','Y')
+            ->select('jm.*')
+            ->orderBy('jm.JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
         return $data;
     }
-    public static function getJobOrderM($id)
+    public static function listApproved()
     {
-        $data = DB::table('JOB_ORDER_M')
-        ->where('JOB_NO',$id)
-        ->first();
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $data = DB::table('JOB_START as js')
+            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->where('jm.CHK_MK','Y')
+            ->select('jm.*')
+            ->orderBy('jm.JOB_NO', 'desc')
+            ->take(1000)
+            ->get();
         return $data;
     }
-    public static function listJobOrderD($id)
+    public static function des($id)
     {
-        $data = DB::table('JOB_ORDER_D as jo')
-        ->where('JOB_NO',$id)
-        ->join('PAY_TYPE as pt','pt.PAY_NO','=','jo.ORDER_TYPE')
-        ->select('pt.PAY_NAME as ORDER_TYPE_NAME','jo.*')
-        ->get();
+        $data = DB::table('JOB_START as js')
+            ->rightjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->where('jm.JOB_NO', $id)
+            ->select('jm.*')
+            ->first();
         return $data;
     }
-    public static function addJob($request)
+    public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            DB::table('JOB_ORDER_D')->insert(
-                ['JOB_NO' => $request['JOB_NO'],
-                    'ORDER_TYPE' =>$request['ORDER_TYPE'],
-                    'SER_NO' => $request['SER_NO'],
-                    'DESCRIPTION' => $request['DESCRIPTION'],
-                    'REV_TYPE' => $request['REV_TYPE'],
-                    'PORT_AMT' => $request['PORT_AMT'],
-                    'NOTE' => $request['NOTE'],
-                    'BRANCH_ID' => $request['BRANCH_ID'],
-                    'INPUT_USER' => $request['INPUT_USER'],
-                    'INPUT_DT' => date("Ymd"),
-                ]
-            );
+            DB::table(config('constants.JOB_M_TABLE'))
+                ->insert(
+                    [
+                        'JOB_NO' => $request['JOB_NO'],
+                        'ORDER_DATE' => $request['ORDER_DATE'],
+                        'CUST_NO' => $request['CUST_NO'],
+                        'CONSIGNEE' => $request['CONSIGNEE'],
+                        'SHIPPER' => $request['SHIPPER'],
+                        'ORDER_FROM' =>  $request['ORDER_FROM'],
+                        'ORDER_TO' =>  $request['ORDER_TO'],
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'BILL_NO' =>  $request['BILL_NO'],
+                        'NW' =>  $request['NW'],
+                        'GW' =>  $request['GW'],
+                        'POL' =>  $request['POL'],
+                        'POD' =>  $request['POD'],
+                        'ETD_ETA' =>  $request['ETD_ETA'],
+                        'PO_NO' =>  $request['PO_NO'],
+                        'INVOICE_NO' =>  $request['INVOICE_NO'],
+                        'NOTE' =>  $request['NOTE'],
+                        'CHK_MK' =>  "N",
+                        'INPUT_USER' =>  $request['INPUT_USER'],
+                        'INPUT_DT' =>  date("YmdHis"),
+                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+                    ]
+                );
             return '200';
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function editJob($request)
+    public static function edit($request)
     {
         try {
-            DB::table('JOB_ORDER_D')
-            ->where('JOB_NO', $request['JOB_NO'])
-            ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-            ->where('SER_NO', $request['SER_NO'])
-            ->update(
-                [
-                    'DESCRIPTION' => $request['DESCRIPTION'],
-                    'REV_TYPE' => $request['REV_TYPE'],
-                    'PORT_AMT' => $request['PORT_AMT'],
-                    'NOTE' => $request['NOTE'],
-                    'MODIFY_USER' => $request['MODIFY_USER'],
-                    'MODIFY_DT' => date("Ymd"),
-                ]
-            );
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            DB::table(config('constants.JOB_M_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])
+                ->update(
+                    [
+                        'CONSIGNEE' => $request['CONSIGNEE'],
+                        'SHIPPER' => $request['SHIPPER'],
+                        'ORDER_FROM' =>  $request['ORDER_FROM'],
+                        'ORDER_TO' =>  $request['ORDER_TO'],
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'BILL_NO' =>  $request['BILL_NO'],
+                        'NW' =>  $request['NW'],
+                        'GW' =>  $request['GW'],
+                        'POL' =>  $request['POL'],
+                        'POD' =>  $request['POD'],
+                        'ETD_ETA' =>  $request['ETD_ETA'],
+                        'PO_NO' =>  $request['PO_NO'],
+                        'INVOICE_NO' =>  $request['INVOICE_NO'],
+                        'NOTE' =>  $request['NOTE'],
+                        'MODIFY_USER' =>  $request['MODIFY_USER'],
+                        'MODIFY_DT' =>  date("YmdHis"),
+                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+
+                    ]
+                );
             return '200';
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function deleteJob($request)
+    public static function removeCheck($id)
     {
         try {
-            DB::table('JOB_ORDER_D')
-            ->where('JOB_NO', $request['JOB_NO'])
-            ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-            ->where('SER_NO', $request['SER_NO'])
-            ->delete();
+            $exist = DB::table('JOB_ORDER_M as jm')
+                ->leftjoin('JOB_ORDER_D as jd','jm.JOB_NO','=','jd.JOB_NO')
+                ->where('jm.JOB_NO', $id)
+                ->count();
+            if ($exist == 0) {
+                //co the xoa
+                return '200';
+            } else {
+                //khong the xoa
+                return '201';
+            }
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function remove($request)
+    {
+        try {
+            DB::table(config('constants.JOB_M_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])
+                ->delete();
             return '200';
         } catch (\Exception $e) {
             return $e;
         }
     }
+    public static function approved($request)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            DB::table(config('constants.JOB_M_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])
+                ->update([
+                    'CHK_MK' => "Y",
+                    'CHK_DATE' =>  date("Ymd"),
+                ]);
+            return '200';
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
 }
