@@ -113,7 +113,7 @@ Route::namespace('Api\v1')->group(function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('/', 'JobStartController@list');
-                Route::get('not-created-order', 'JobStartController@listNotCreatedOrder');
+                Route::get('not-created', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
                 Route::post('edit', 'JobStartController@edit');
@@ -124,11 +124,12 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('/', 'JobOrderController@list');
                 Route::get('des/{id}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
-                Route::post('add-d', 'JobOrderController@addOrderD');
                 Route::post('edit', 'JobOrderController@edit');
-                Route::post('edit-d', 'JobOrderController@editOrderD');
                 Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
                 Route::post('remove', 'JobOrderController@remove');
+                
+                Route::post('add-d', 'JobOrderController@addOrderD');
+                Route::post('edit-d', 'JobOrderController@editOrderD');
                 Route::post('remove-d', 'JobOrderController@removeOrderD');
                
             });
@@ -154,9 +155,19 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'LenderController@edit');
                 Route::post('remove', 'LenderController@remove');
             });
-             //1.yeu cau thanh toan
+             //3.yeu cau thanh toan
              Route::group(['prefix' => 'debit-note'], function () { 
+                Route::get('/', 'DebitNoteController@list');
+                Route::get('not-created', 'DebitNoteController@listNotCreated');
+                Route::get('des/{id}', 'DebitNoteController@des');
+                Route::post('add', 'DebitNoteController@add');
+                Route::post('edit', 'DebitNoteController@edit');
+                Route::get('remove-check/{id}', 'DebitNoteController@removeCheck');
+                Route::post('remove', 'DebitNoteController@remove');
 
+                Route::post('add-d', 'DebitNoteController@addDebitD');
+                Route::post('edit-d', 'DebitNoteController@editDebitD');
+                Route::post('remove-d', 'DebitNoteController@removeDebitD');
              });
         });
     });

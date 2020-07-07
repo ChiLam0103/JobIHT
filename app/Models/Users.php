@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -10,15 +11,22 @@ class Users extends Model
 
     public static function login($request)
     {
-        $user = DB::table(config('constants.USER_TABLE'))
+        try{
+            dd($request->user_no);
+            $user = DB::table(config('constants.USER_TABLE'))
             ->where('USER_NO', $request->user_no)
-            ->where('USER_PWD', $request->user_pwd)->first();
+            ->where('USER_PWD', $request->user_pwd)
+            ->first();
         if ($user) {
             return $user;
         } else {
             //sai thong tin
             return '401';
         }
+        }catch(Exception $e){
+            return $e;
+        }
+        
     }
     public static function list()
     {

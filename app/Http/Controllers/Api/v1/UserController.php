@@ -12,12 +12,15 @@ class UserController extends Controller
 {
     public function login(Request $request)
     {
+        dd($request);
        $data = Users::login($request);
+  
        if($data){
         if($data=='401'){
             return response()->json( [
                 'success' => false,
-                'message' => 'Invalid User or Password'],
+                'data'=>$request,
+                'message' => 'Invalid User or Password1'],
                 Response::HTTP_BAD_REQUEST);
            }else{
             return response()->json([
@@ -28,7 +31,7 @@ class UserController extends Controller
        }else{
         return response()->json( [
             'success' => false,
-            'message' => 'Invalid User or Password'],
+            'message' => 'Invalid User or Password2'],
              Response::HTTP_BAD_REQUEST);
        }
        
