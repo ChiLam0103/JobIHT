@@ -49,37 +49,37 @@ class LenderController extends Controller
     public function add(Request $request)
     {
         $data = Lender::add($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function edit(Request $request)
     {
         $data = Lender::edit($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function remove(Request $request)

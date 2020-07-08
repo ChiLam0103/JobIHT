@@ -18,7 +18,7 @@ class JobM extends Model
             ->get();
         return $data;
     }
- 
+
     public static function des($id)
     {
         $data = DB::table('JOB_START as js')
@@ -61,9 +61,10 @@ class JobM extends Model
                         'BRANCH_ID' =>  $request['BRANCH_ID'],
                     ]
                 );
-            return '200';
+            $data = JobM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function edit($request)
@@ -97,16 +98,17 @@ class JobM extends Model
 
                     ]
                 );
-            return '200';
+            $data = JobM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function removeCheck($id)
     {
         try {
             $exist = DB::table('JOB_ORDER_M as jm')
-                ->leftjoin('JOB_ORDER_D as jd','jm.JOB_NO','=','jd.JOB_NO')
+                ->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')
                 ->where('jm.JOB_NO', $id)
                 ->count();
             if ($exist == 0) {
@@ -142,9 +144,10 @@ class JobM extends Model
                     'CHK_MK' => "Y",
                     'CHK_DATE' =>  date("Ymd"),
                 ]);
-            return '200';
+            $data = JobM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function listPending()
@@ -152,7 +155,7 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->where('jm.CHK_MK','!=','Y')
+            ->where('jm.CHK_MK', '!=', 'Y')
             ->select('jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
             ->take(1000)
@@ -164,12 +167,11 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->where('jm.CHK_MK','Y')
+            ->where('jm.CHK_MK', 'Y')
             ->select('jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
             ->take(1000)
             ->get();
         return $data;
     }
-    
 }

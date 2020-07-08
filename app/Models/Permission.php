@@ -15,7 +15,7 @@ class Permission extends Model
     public static function des($USER_NO)
     {
         $data = DB::table(config('constants.USER_RIGHT_TABLE'))
-            ->where('USER_NO', $USER_NO)->first();
+            ->where('USER_NO', $USER_NO)->get();
         return $data;
     }
     public static function edit($request)

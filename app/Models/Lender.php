@@ -56,10 +56,11 @@ class Lender extends Model
                         "INPUT_DT" => date("YmdHis")
                     ]
                 );
-            return '200';
-        } catch (\Exception $e) {
-            return $e;
-        }
+                $data = Lender::des($lender_no);
+                return $data;
+            } catch (\Exception $e) {
+                return '201';
+            }
     }
     public static function edit($request)
     {
@@ -85,10 +86,11 @@ class Lender extends Model
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
                 );
-            return '200';
-        } catch (\Exception $e) {
-            return $e;
-        }
+                $data = Lender::des($request['LENDER_NO']);
+                return $data;
+            } catch (\Exception $e) {
+                return '201';
+            }
     }
     public static function remove($request)
     {

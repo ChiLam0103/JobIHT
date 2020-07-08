@@ -45,9 +45,10 @@ class DebitNoteD extends Model
                         ]
                     );
             }
-            return '200';
+            $data = DebitNoteM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function edit($request)
@@ -81,9 +82,10 @@ class DebitNoteD extends Model
                         ]
                     );
             }
-            return '200';
+            $data = DebitNoteM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function remove($request)

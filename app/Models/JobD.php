@@ -47,9 +47,10 @@ class JobD extends Model
                         ]
                     );
             }
-            return '200';
+            $data = JobD::getJob($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function edit($request)
@@ -59,9 +60,9 @@ class JobD extends Model
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             foreach ($request->data as $res) {
                 DB::table(config('constants.JOB_D_TABLE'))
-                ->where('JOB_NO', $JOB_NO)
-                ->where('SER_NO', $res['SER_NO'])
-                ->where('ORDER_TYPE', $res['ORDER_TYPE'])
+                    ->where('JOB_NO', $JOB_NO)
+                    ->where('SER_NO', $res['SER_NO'])
+                    ->where('ORDER_TYPE', $res['ORDER_TYPE'])
                     ->update(
                         [
                             "DESCRIPTION" => $res['DESCRIPTION'],
@@ -81,9 +82,10 @@ class JobD extends Model
                         ]
                     );
             }
-            return '200';
+            $data = JobD::getJob($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function remove($request)

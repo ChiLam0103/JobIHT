@@ -45,59 +45,71 @@ class JobOrderController extends Controller
     }
     public function add(Request $request){
         $data=JobM::add($request);
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
     }
     public function addOrderD(Request $request){
         $data=JobD::add($request);
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
     }
     public function edit(Request $request){
         $data=JobM::edit($request);
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
     }
     public function editOrderD(Request $request){
         $data=JobD::edit($request);
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
     }
     public function removeCheck($id){
         $data=JobM::removeCheck($id);
@@ -172,16 +184,19 @@ class JobOrderController extends Controller
     }
     public function approved(Request $request){
         $data=JobM::approved($request);
-        if($data){
-             return response()->json([
-                    'success' => true,
-                    'data'=>$data
-                ], Response::HTTP_OK);
-           }else{
-            return response()->json( [
-                'success' => false,
-                'message' => 'null'],
-                 Response::HTTP_BAD_REQUEST);
-           }
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
     }
 }

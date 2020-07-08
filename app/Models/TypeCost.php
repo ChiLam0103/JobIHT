@@ -12,6 +12,13 @@ class TypeCost extends Model
         $data = DB::table(config('constants.TYPE_COST_TABLE'))->get();
         return $data;
     }
+    public static function des($no)
+    {
+        $data = DB::table(config('constants.TYPE_COST_TABLE'))
+        ->where('DESCRIPTION_CODE',$no)
+        ->first();
+        return $data;
+    }
     public static function add($request)
     {
         try {
@@ -23,9 +30,10 @@ class TypeCost extends Model
                     'DESCRIPTION_NAME_CN' => $request['DESCRIPTION_NAME_CN'],
                 ]
             );
-            return '200';
+            $data=TypeCost::des($request['DESCRIPTION_CODE']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function edit($request)
@@ -39,9 +47,10 @@ class TypeCost extends Model
                     'DESCRIPTION_NAME_CN' => $request['DESCRIPTION_NAME_CN'],
                 ]
             );
-            return '200';
+            $data=TypeCost::des($request['DESCRIPTION_CODE']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function remove($request)

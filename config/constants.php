@@ -3,9 +3,6 @@ return [
     'BRANCH_TABLE'=>'CKICO_BRANCH',
     'COMPANY_TABLE'=>'COMPANY',
     'CUSTOMER_TABLE'=>'CUSTOMER',
-    'CARRIERS_TABLE'=>'CUSTOMER',
-    'AGENT_TABLE'=>'CUSTOMER',
-    'GARAGE_TABLE'=>'CUSTOMER',
     'JOB_START_TABLE'=>'JOB_START',//phieu theo doi
     'JOB_D_TABLE'=>'JOB_ORDER_D',//job card
     'JOB_M_TABLE'=>'JOB_ORDER_M',//list chi phi job card

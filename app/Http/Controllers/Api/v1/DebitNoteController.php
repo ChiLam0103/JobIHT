@@ -47,6 +47,42 @@ class DebitNoteController extends Controller
             );
         }
     }
+    public function listPending()
+    {
+        $data = DebitNoteM::listPending();
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listPaid()
+    {
+        $data = DebitNoteM::listPaid();
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function des($id)
     {
         $data = DebitNoteM::des($id);
@@ -70,37 +106,37 @@ class DebitNoteController extends Controller
     public function add(Request $request)
     {
         $data = DebitNoteM::add($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function edit(Request $request)
     {
         $data = DebitNoteM::edit($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function removeCheck($id)
@@ -142,37 +178,37 @@ class DebitNoteController extends Controller
     public function addDebitD(Request $request)
     {
         $data = DebitNoteD::add($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function editDebitD(Request $request)
     {
         $data = DebitNoteD::edit($request);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function removeDebitD(Request $request)
@@ -191,6 +227,24 @@ class DebitNoteController extends Controller
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+        }
+    }
+    public function changePaid(Request $request)
+    {
+        $data = DebitNoteM::changePaid($request);
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
         }
     }
 }

@@ -81,10 +81,11 @@ class JobStart extends Model
                         'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
                     ]
                 );
-            return '200';
-        } catch (\Exception $e) {
-            return $e;
-        }
+                $data = JobStart::des($job_no);
+                return $data;
+            } catch (\Exception $e) {
+                return '201';
+            }
     }
     public static function edit($request)
     {
@@ -121,10 +122,11 @@ class JobStart extends Model
                         'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
                     ]
                 );
-            return '200';
-        } catch (\Exception $e) {
-            return $e;
-        }
+                $data = JobStart::des($request['JOB_NO']);
+                return $data;
+            } catch (\Exception $e) {
+                return '201';
+            }
     }
 
     public static function remove($request)

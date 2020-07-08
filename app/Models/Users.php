@@ -11,22 +11,20 @@ class Users extends Model
 
     public static function login($request)
     {
-        try{
-            dd($request->user_no);
+        try {
             $user = DB::table(config('constants.USER_TABLE'))
-            ->where('USER_NO', $request->user_no)
-            ->where('USER_PWD', $request->user_pwd)
-            ->first();
-        if ($user) {
-            return $user;
-        } else {
-            //sai thong tin
-            return '401';
-        }
-        }catch(Exception $e){
+                ->where('USER_NO', $request->user_no)
+                ->where('USER_PWD', $request->user_pwd)
+                ->first();
+            if ($user) {
+                return $user;
+            } else {
+                //sai thong tin
+                return '401';
+            }
+        } catch (Exception $e) {
             return $e;
         }
-        
     }
     public static function list()
     {
@@ -48,9 +46,10 @@ class Users extends Model
                     'BRANCH_ID' => $request['BRANCH_ID'],
                 ]
             );
-            return '200';
+            $data = Users::des($request['USER_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function des($id)
@@ -69,16 +68,16 @@ class Users extends Model
                 ->where('USER_NO', $request['USER_NO'])
                 ->update(
                     [
-                        // 'USER_NO' => $request['USER_NO'],
                         'USER_PWD' => $request['USER_PWD'],
                         'USER_NAME' => $request['USER_NAME'],
                         'ADMIN_MK' => $request['ADMIN_MK'],
                         'BRANCH_ID' => $request['BRANCH_ID'],
                     ]
                 );
-            return '200';
+            $data = Users::des($request['USER_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function remove($request)

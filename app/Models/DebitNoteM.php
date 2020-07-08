@@ -15,9 +15,26 @@ class DebitNoteM extends Model
     public static function listNotCreated()
     {
         $data = DB::table('JOB_ORDER_M as jom')
-        ->leftJoin('DEBIT_NOTE_M as dnm','jom.JOB_NO','dnm.JOB_NO')
-        ->whereNull('dnm.JOB_NO')->select('jom.*')
-        ->orderBy('jom.JOB_NO', 'desc')->take(100)->get();
+            ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
+            ->whereNull('dnm.JOB_NO')->select('jom.*')
+            ->orderBy('jom.JOB_NO', 'desc')->take(100)->get();
+        return $data;
+    }
+    public static function listPending()
+    {
+        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+            ->where(function ($query) {
+                $query->where('PAYMENT_CHK', null)
+                    ->orWhere('PAYMENT_CHK', 'N');
+            })
+            ->orderBy('JOB_NO', 'desc')->take(100)->get();
+        return $data;
+    }
+    public static function listPaid()
+    {
+        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+            ->where('PAYMENT_CHK', 'Y')
+            ->orderBy('JOB_NO', 'desc')->take(1000)->get();
         return $data;
     }
     public static function des($id)
@@ -65,9 +82,10 @@ class DebitNoteM extends Model
                         "INPUT_DT" => date("YmdHis"),
                     ]
                 );
-            return '200';
+            $data = DebitNoteM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function edit($request)
@@ -75,7 +93,7 @@ class DebitNoteM extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-            ->where('JOB_NO',$request['JOB_NO'])
+                ->where('JOB_NO', $request['JOB_NO'])
                 ->update(
                     [
                         'CUST_NO' => $request['CUST_NO'],
@@ -107,9 +125,10 @@ class DebitNoteM extends Model
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
                 );
-            return '200';
+            $data = DebitNoteM::des($request['JOB_NO']);
+            return $data;
         } catch (\Exception $e) {
-            return $e;
+            return '201';
         }
     }
     public static function remove($request)
@@ -121,6 +140,25 @@ class DebitNoteM extends Model
             return '200';
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+    public static function changePaid($request)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+
+            $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+                ->where('JOB_NO', $request['JOB_NO'])->first();
+            if ($data->PAYMENT_CHK == 'Y') {
+                dd(1);
+            } else {
+                dd(2);
+            }
+
+            $data = DebitNoteM::des($request['JOB_NO']);
+            return $data;
+        } catch (\Exception $e) {
+            return '201';
         }
     }
 }

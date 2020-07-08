@@ -10,10 +10,9 @@ use App\Models\Customer;
 
 class CustomerController extends Controller
 {
-    //customer
-    public function list()
+    public function list($type)
     {
-        $data = Customer::list();
+        $data = Customer::list($type);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -29,9 +28,9 @@ class CustomerController extends Controller
             );
         }
     }
-    public function des($id)
+    public function des($id, $type)
     {
-        $data = Customer::des($id);
+        $data = Customer::des($id, $type);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -50,37 +49,37 @@ class CustomerController extends Controller
     public function add(Request $req)
     {
         $data = Customer::add($req);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Duplicate primary key'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function edit(Request $req)
     {
         $data = Customer::edit($req);
-        if ($data) {
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function remove(Request $req)
@@ -101,5 +100,4 @@ class CustomerController extends Controller
             );
         }
     }
-   
 }
