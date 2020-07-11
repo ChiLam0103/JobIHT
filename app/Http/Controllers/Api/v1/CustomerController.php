@@ -49,11 +49,11 @@ class CustomerController extends Controller
     public function add(Request $req)
     {
         $data = Customer::add($req);
-        if ($data == '201') {
+        if ($data == '400') {
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'Duplicate primary key'
+                    'message' => 'Error'
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -61,13 +61,13 @@ class CustomerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $data
-            ], Response::HTTP_OK);
+            ], Response::HTTP_CREATED);
         }
     }
     public function edit(Request $req)
     {
         $data = Customer::edit($req);
-        if ($data == '201') {
+        if ($data == '400') {
             return response()->json(
                 [
                     'success' => false,

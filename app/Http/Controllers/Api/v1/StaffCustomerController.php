@@ -49,19 +49,27 @@ class StaffCustomerController extends Controller
     public function add(Request $request)
     {
         $data = Personal::add($request);
-        if ($data == '201') {
+        if ($data == '400') {
             return response()->json(
                 [
                     'success' => false,
-                    'message' =>  'Error'
+                    'message' => 'Error'
                 ],
                 Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($data == '409') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'exist PNL_NO'
+                ],
+                Response::HTTP_CONFLICT
             );
         } else {
             return response()->json([
                 'success' => true,
                 'data' => $data
-            ], Response::HTTP_OK);
+            ], Response::HTTP_CREATED);
         }
     }
     public function edit(Request $request)

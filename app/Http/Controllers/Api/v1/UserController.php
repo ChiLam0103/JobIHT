@@ -14,32 +14,30 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $data = Users::login($request);
-        $permission = Permission::des($data->USER_NO);
-        if ($data) {
-            if ($data == '401') {
-                return response()->json(
-                    [
-                        'success' => false,
-                        'data' => $data,
-                        'message' => 'Invalid User or Password1'
-                    ],
-                    Response::HTTP_BAD_REQUEST
-                );
-            } else {
-                return response()->json([
-                    'success' => true,
-                    'data' => $data,
-                    'permission' => $permission,
-                ], Response::HTTP_OK);
-            }
-        } else {
+        if ($data == '401') {
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'Invalid User or Password2'
+                    'message' => 'PASSWORD không đúng'
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+        } elseif ($data == '400' ||$data=='404') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng nhập USER và PASSWORD của bạn!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $permission = Permission::des($data->USER_NO);
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'permission' => $permission,
+                'message' => 'Chúc mừng bạn đã đăng nhập thành công'
+            ], Response::HTTP_OK);
         }
     }
     public function list()

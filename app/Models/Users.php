@@ -8,22 +8,23 @@ use Illuminate\Support\Facades\DB;
 
 class Users extends Model
 {
-
     public static function login($request)
     {
         try {
-            $user = DB::table(config('constants.USER_TABLE'))
-                ->where('USER_NO', $request->user_no)
-                ->where('USER_PWD', $request->user_pwd)
-                ->first();
-            if ($user) {
-                return $user;
+            if ($request->user_no && $request->user_pwd) {
+                $user = DB::table(config('constants.USER_TABLE'))
+                    ->where('USER_NO', $request->user_no)
+                    ->first();
+                if (trim($request->user_pwd) == trim($user->USER_PWD)) {
+                    return $user;
+                } else {
+                    return '401';
+                }
             } else {
-                //sai thong tin
-                return '401';
+                return '404';
             }
         } catch (Exception $e) {
-            return $e;
+            return '400';
         }
     }
     public static function list()

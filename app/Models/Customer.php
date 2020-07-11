@@ -27,39 +27,63 @@ class Customer extends Model
             return $e;
         }
     }
-    public static function checkNo($no)
+    public static function generateNo($type)
     {
-        $data = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_NO', $no)->count();
-        return $data;
+        $name = '';
+        switch ($type) {
+            case 1:
+                $name = "KH";
+                break;
+            case 2:
+                $name = "HT";
+                break;
+            case 3:
+                $name = "DL";
+                break;
+            case 4:
+                $name = "NX";
+                break;
+            default:
+                $name = "CUST_TYPE không có trong danh sách";
+        }
+
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $count = DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_TYPE', $type)->count();
+        $count = (int) $count + 1;
+
+        do {
+            $no = sprintf($name . "%05d", $count);
+            $count++;
+        } while (DB::table(config('constants.CUSTOMER_TABLE'))->where('CUST_NO', $no)->first());
+        return $no;
     }
     public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            if (Customer::checkNo($request->CUST_NO) == 0) {
-                DB::table(config('constants.CUSTOMER_TABLE'))->insert(
-                    [
-                        'CUST_TYPE' => $request['CUST_TYPE'],
-                        'CUST_NO' => $request['CUST_NO'],
-                        'CUST_NAME' => $request['CUST_NAME'],
-                        'CUST_CNAME' => $request['CUST_CNAME'],
-                        'CUST_ADDRESS' => $request['CUST_ADDRESS'],
-                        'CUST_TEL1' => $request['CUST_TEL1'],
-                        'CUST_TEL2' => $request['CUST_TEL2'],
-                        'CUST_FAX' => $request['CUST_FAX'],
-                        'CUST_TAX' => $request['CUST_TAX'],
-                        'CUST_BOSS' => $request['CUST_BOSS'],
-                        'INPUT_USER' => $request['INPUT_USER'],
-                        'INPUT_DT' => date("YmdHis"),
-                        'TEN_DON_VI' => $request['TEN_DON_VI'],
-                        'BRANCH_ID' => $request['BRANCH_ID'],
-                    ]
-                );
-                $data = Customer::des($request['CUST_NO'], $request['CUST_TYPE']);
-                return $data;
-            } 
+            $CUST_NO = Customer::generateNo($request['CUST_TYPE']);
+            DB::table(config('constants.CUSTOMER_TABLE'))->insert(
+                [
+                    'CUST_TYPE' => $request['CUST_TYPE'],
+                    'CUST_NO' => $CUST_NO,
+                    'CUST_NAME' => $request['CUST_NAME'],
+                    'CUST_CNAME' => $request['CUST_CNAME'],
+                    'CUST_ADDRESS' => $request['CUST_ADDRESS'],
+                    'CUST_TEL1' => $request['CUST_TEL1'],
+                    'CUST_TEL2' => $request['CUST_TEL2'],
+                    'CUST_FAX' => $request['CUST_FAX'],
+                    'CUST_TAX' => $request['CUST_TAX'],
+                    'CUST_BOSS' => $request['CUST_BOSS'],
+                    'INPUT_USER' => $request['INPUT_USER'],
+                    'INPUT_DT' => date("YmdHis"),
+                    'TEN_DON_VI' => $request['TEN_DON_VI'],
+                    'BRANCH_ID' => $request['BRANCH_ID'],
+                ]
+            );
+            $data = Customer::des($CUST_NO, $request['CUST_TYPE']);
+            return $data;
         } catch (\Exception $e) {
-            return '201';
+            return '400';
         }
     }
     public static function edit($request)
@@ -87,7 +111,7 @@ class Customer extends Model
             $data = Customer::des($request['CUST_NO'], $request['CUST_TYPE']);
             return $data;
         } catch (\Exception $e) {
-            return '201';
+            return '400';
         }
     }
     public static function remove($request)
