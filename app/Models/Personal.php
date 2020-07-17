@@ -27,19 +27,20 @@ class Personal extends Model
     public static function generateNo()
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $count = DB::table(config('constants.PERSONAL_TABLE'))->count();
-        $count = (int) $count + 1;
-        do {
-            $no = sprintf( "NV%'.05d", $count);
-            $count++;
-        } while (DB::table(config('constants.PERSONAL_TABLE'))->where('PNL_NO', $no)->first());
+        $count = DB::table(config('constants.PERSONAL_TABLE'))
+            ->where('BRANCH_ID', 'IHTVN1')
+            ->select('PNL_NO')
+            ->orderByDesc('PNL_NO')
+            ->first();
+        $no=(int)$count->PNL_NO;
+        $no++;
         return $no;
     }
     public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            $PNL_NO=Personal::generateNo();
+            $PNL_NO = Personal::generateNo();
             DB::table(config('constants.PERSONAL_TABLE'))->insert(
                 [
                     'PNL_NO' => $PNL_NO,

@@ -1,12 +1,13 @@
 <?php
 
-// use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 header('Access-Control-Allow-Origin: *');
 //Access-Control-Allow-Origin: *
 header('Access-Control-Allow-Methods:  POST, GET, OPTIONS, PUT, DELETE');
 header('Access-Control-Allow-Headers:  Content-Type, X-Auth-Token, Origin, Authorization');
+
 Route::namespace('Api\v1')->group(function () {
     //web
     Route::group(['prefix' => 'v1'], function () {
@@ -82,6 +83,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'JobStartController@edit');
                 Route::get('remove-check/{id}', 'JobStartController@removeCheck');
                 Route::post('remove', 'JobStartController@remove');
+                Route::get('print/{id}', 'JobStartController@print');
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
@@ -134,7 +136,17 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'paid-debit'], function () {
                 Route::get('list-pending', 'DebitNoteController@listPending');
                 Route::get('list-paid', 'DebitNoteController@listPaid');
-                // Route::post('change-paid', 'DebitNoteController@changePaid');
+                Route::post('change', 'DebitNoteController@change');
+            });
+            //6. bang kiem tra du lieu
+            Route::group(['prefix' => 'check-data'], function () {
+                Route::get('/', 'DebitNoteController@checkData');
+            });
+             //8. chi phi tien tau/cuoc cont
+             Route::group(['prefix' => 'boat-fee'], function () {
+                Route::get('list-boat-month-m', 'BoatFeeController@listBoatMonthM');
+                Route::get('list-fee-month-m', 'BoatFeeController@listFeeMonthM');
+                Route::get('des-month', 'BoatFeeController@desMonth');
             });
         });
     });

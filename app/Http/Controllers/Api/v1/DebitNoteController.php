@@ -229,9 +229,27 @@ class DebitNoteController extends Controller
             );
         }
     }
-    public function changePaid(Request $request)
+    public function change(Request $request)
     {
-        $data = DebitNoteM::changePaid($request);
+        $data = DebitNoteM::change($request);
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => 'Bạn đã thay đổi xác nhận thanh toán thành công'
+            ], Response::HTTP_OK);
+        }
+    }
+    public function checkData(Request $request)
+    {
+        $data = DebitNoteM::checkData($request);
         if ($data == '201') {
             return response()->json(
                 [

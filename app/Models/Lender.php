@@ -10,13 +10,19 @@ class Lender extends Model
     // C,T,U
     public static function list()
     {
-        $data = DB::table(config('constants.LENDER_TABLE'))->orderBy('LENDER_NO', 'desc')->take(100)->get();
+        $data = DB::table('LENDER as l')
+        ->rightJoin('LENDER_TYPE as lt','l.LENDER_TYPE','lt.LENDER_TYPE')
+        ->select('lt.LENDER_NAME','l.*')
+        ->orderBy('l.LENDER_NO', 'desc')->take(9000)->get();
         return $data;
     }
     public static function des($id)
     {
-        $data = DB::table(config('constants.LENDER_TABLE'))
-            ->where('LENDER_NO', $id)->first();
+        $data = DB::table('LENDER as l')
+        ->join('LENDER_TYPE as lt','l.LENDER_TYPE','lt.LENDER_TYPE')
+        ->leftJoin('CUSTOMER as c','l.CUST_NO','c.CUST_NO')
+        ->select('lt.LENDER_NAME','c.CUST_NAME','l.*')
+            ->where('l.LENDER_NO', $id)->first();
         return $data;
     }
     public static function generateLenderNo()

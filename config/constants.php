@@ -18,6 +18,8 @@ return [
     'PRO_MENU_TABLE'=>'PRO_MENU',
     'DEBIT_NOTE_D_TABLE'=>'DEBIT_NOTE_D',
     'DEBIT_NOTE_M_TABLE'=>'DEBIT_NOTE_M',
+    'BOAT_FEE_M_TABLE'=>'BOAT_FEE_M',
+    'BOAT_FEE_D_TABLE'=>'BOAT_FEE_D',
 ]
 ?>
 

@@ -138,4 +138,19 @@ class JobStartController extends Controller
             );
         }
     }
+    public function print($id)
+    {
+        $data = JobStart::print($id);
+        if ($data) {
+            return view('print\job-start')->with('data', $data);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
 }

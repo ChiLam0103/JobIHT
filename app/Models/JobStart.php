@@ -19,7 +19,7 @@ class JobStart extends Model
     public static function listNotCreatedOrder()
     {
         $data = DB::table('JOB_START as js')
-            ->leftJoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
+            ->leftJoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
             ->whereNull('jm.JOB_NO')
             ->orderBy('js.JOB_NO', 'desc')
             ->select('js.*')
@@ -81,11 +81,11 @@ class JobStart extends Model
                         'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
                     ]
                 );
-                $data = JobStart::des($job_no);
-                return $data;
-            } catch (\Exception $e) {
-                return '201';
-            }
+            $data = JobStart::des($job_no);
+            return $data;
+        } catch (\Exception $e) {
+            return '201';
+        }
     }
     public static function edit($request)
     {
@@ -122,11 +122,11 @@ class JobStart extends Model
                         'JOB_CAM_NO' =>  $request['JOB_CAM_NO'],
                     ]
                 );
-                $data = JobStart::des($request['JOB_NO']);
-                return $data;
-            } catch (\Exception $e) {
-                return '201';
-            }
+            $data = JobStart::des($request['JOB_NO']);
+            return $data;
+        } catch (\Exception $e) {
+            return '201';
+        }
     }
 
     public static function remove($request)
@@ -144,7 +144,7 @@ class JobStart extends Model
     {
         try {
             $exist = DB::table('JOB_START as js')
-                ->leftjoin('JOB_ORDER_M as jm','js.JOB_NO','=','jm.JOB_NO')
+                ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
                 ->where('js.JOB_NO', $id)
                 ->count();
             if ($exist == 0) {
@@ -154,6 +154,21 @@ class JobStart extends Model
                 //khong the xoa
                 return '201';
             }
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function print($id)
+    {
+        try {
+            $data =  DB::table('JOB_START as js')
+                ->leftJoin('CUSTOMER as c','js.CUST_NO','c.CUST_NO')
+                ->leftJoin('PERSONAL as p1','js.NV_CHUNGTU','p1.PNL_NO')
+                ->leftJoin('PERSONAL as p2','js.NV_GIAONHAN','p2.PNL_NO')
+                ->where('js.JOB_NO', $id)
+                ->select('c.CUST_NAME','c.CUST_TAX','c.CUST_ADDRESS','p1.PNL_NAME as NV_CHUNGTU_1','p2.PNL_NAME as NV_GIAONHAN_2','js.*')
+                ->first();
+            return $data;
         } catch (\Exception $e) {
             return $e;
         }
