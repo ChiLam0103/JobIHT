@@ -30,6 +30,24 @@ class JobStartController extends Controller
             );
         }
     }
+    public function search($request)
+    {
+        $data = JobStart::search($request);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function listNotCreatedOrder()
     {
         $data = JobStart::listNotCreatedOrder();
@@ -128,21 +146,6 @@ class JobStartController extends Controller
                 'success' => true,
                 'data' => $data
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
-    public function print($id)
-    {
-        $data = JobStart::print($id);
-        if ($data) {
-            return view('print\job-start')->with('data', $data);
         } else {
             return response()->json(
                 [

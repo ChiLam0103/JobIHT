@@ -64,7 +64,7 @@ class JobM extends Model
             $data = JobM::des($request['JOB_NO']);
             return $data;
         } catch (\Exception $e) {
-            return '201';
+            return $e;
         }
     }
     public static function edit($request)

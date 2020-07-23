@@ -54,7 +54,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('/', 'BranchController@list');
             });
         });
-        //II.system manager 
+        //II.system manager
         Route::group(['prefix' => 'system'], function () {
             Route::post('login', 'UserController@login');
             //info
@@ -72,18 +72,18 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'PermissionController@edit');
             });
         });
-        //III.file manager 
+        //III.file manager
         Route::group(['prefix' => 'file'], function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('/', 'JobStartController@list');
+                Route::get('search/q={request}', 'JobStartController@search');
                 Route::get('not-created', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
                 Route::post('edit', 'JobStartController@edit');
                 Route::get('remove-check/{id}', 'JobStartController@removeCheck');
                 Route::post('remove', 'JobStartController@remove');
-                Route::get('print/{id}', 'JobStartController@print');
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
@@ -147,6 +147,21 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('list-boat-month-m', 'BoatFeeController@listBoatMonthM');
                 Route::get('list-fee-month-m', 'BoatFeeController@listFeeMonthM');
                 Route::get('des-month', 'BoatFeeController@desMonth');
+            });
+        });
+        //print
+        Route::group(['prefix' => 'print'], function () {
+            Route::group(['prefix' => 'job-start'], function () {
+                Route::get('jobno={id}', 'PrintController@jobStart');
+            });
+            Route::group(['prefix' => 'job-order'], function () {
+                Route::get('jobno={id}', 'PrintController@jobOrder');
+                // Route::get('custno={id}', 'PrintController@jobOrder_Customer');
+                // Route::get('todate={todate}/fromdate={fromdate}', 'PrintController@jobOrder_Date');
+            });
+            Route::group(['prefix' => 'refund'], function () {
+                //1.hang tau, 2.khach hang, 3.dai ly
+                Route::get('type={type}/id={id}/jobno={jobno}/todate={todate}/fromdate={fromdate}', 'PrintController@refund');
             });
         });
     });

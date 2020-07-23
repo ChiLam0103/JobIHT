@@ -10,8 +10,27 @@ class JobStart extends Model
 {
     public static function list()
     {
-        $data = DB::table(config('constants.JOB_START_TABLE'))
-            ->orderBy('JOB_NO', 'desc')
+        $data = DB::table('JOB_START as js')
+            ->orderBy('js.JOB_NO', 'desc')
+            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->select('c.CUST_NAME','js.*')
+            ->take(1000)
+            ->get();
+        return $data;
+    }
+    public static function search($request)
+    {
+        $data = DB::table('JOB_START as js')
+            ->orderBy('js.JOB_NO', 'desc')
+            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->where(function ($query) use ($request) {
+                $query->where('js.JOB_NO','LIKE','%'.$request.'%')
+                      ->orWhere('js.BILL_NO','LIKE','%'.$request.'%')
+                      ->orWhere('js.NOTE','LIKE','%'.$request.'%')
+                      ->orWhere('js.NV_CHUNGTU','LIKE','%'.$request.'%')
+                      ->orWhere('c.CUST_NAME','LIKE','%'.$request.'%');
+            })
+            ->select('c.CUST_NAME','js.*')
             ->take(1000)
             ->get();
         return $data;
@@ -29,7 +48,11 @@ class JobStart extends Model
     }
     public static function des($id)
     {
-        $data = DB::table(config('constants.JOB_START_TABLE'))->where('JOB_NO', $id)->first();
+        $data = DB::table('JOB_START as js')
+        ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+        ->select('c.CUST_NAME','js.*')
+        ->where('js.JOB_NO', $id)
+        ->first();
         return $data;
     }
     public static function generateJobNo()
@@ -73,7 +96,7 @@ class JobStart extends Model
                         'BRANCH_ID' =>  $request['BRANCH_ID'],
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'],
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         'BILL_NO' =>  $request['BILL_NO'],
                         'NW' =>  $request['NW'],
                         'GW' =>  $request['GW'],
@@ -110,7 +133,7 @@ class JobStart extends Model
                         'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
                         'POL' =>  $request['POL'],
                         'POD' =>  $request['POD'],
-                        'ETA_ETD' =>  $request['ETA_ETD'],
+                        'ETA_ETD' =>  date("Ymd", strtotime($request['ETA_ETD'])),
                         'BRANCH_ID' =>  $request['BRANCH_ID'],
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'],
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
@@ -158,19 +181,5 @@ class JobStart extends Model
             return $e;
         }
     }
-    public static function print($id)
-    {
-        try {
-            $data =  DB::table('JOB_START as js')
-                ->leftJoin('CUSTOMER as c','js.CUST_NO','c.CUST_NO')
-                ->leftJoin('PERSONAL as p1','js.NV_CHUNGTU','p1.PNL_NO')
-                ->leftJoin('PERSONAL as p2','js.NV_GIAONHAN','p2.PNL_NO')
-                ->where('js.JOB_NO', $id)
-                ->select('c.CUST_NAME','c.CUST_TAX','c.CUST_ADDRESS','p1.PNL_NAME as NV_CHUNGTU_1','p2.PNL_NAME as NV_GIAONHAN_2','js.*')
-                ->first();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
+
 }
