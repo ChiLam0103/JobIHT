@@ -18,7 +18,32 @@ class JobM extends Model
             ->get();
         return $data;
     }
+    public static function search($type,$value)
+    {
+        $a = DB::table('JOB_ORDER_M as jom')
+            ->orderBy('jom.JOB_NO', 'desc')
+            ->leftjoin('CUSTOMER as c', 'jom.CUST_NO', '=', 'c.CUST_NO');
 
+            if($type=='1'){//jobno
+                $a->where('jom.JOB_NO','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='2') {//bill no
+                $a->where('jom.BILL_NO','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='3') {//note
+                $a->where('jom.NOTE','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='4') {//nhan vien chung tu
+                $a->where('jom.NV_CHUNGTU','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='5') {//ten khach hang
+                $a->where('c.CUST_NAME','LIKE','%'.$value.'%');
+            }
+            $data=$a->select('c.CUST_NAME','jom.*')
+            ->take(1000)
+            ->get();
+        return $data;
+    }
     public static function des($id)
     {
         $data = DB::table('JOB_START as js')
@@ -45,7 +70,7 @@ class JobM extends Model
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'],
                         'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         'BILL_NO' =>  $request['BILL_NO'],
                         'NW' =>  $request['NW'],
                         'GW' =>  $request['GW'],
@@ -82,7 +107,7 @@ class JobM extends Model
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'],
                         'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         'BILL_NO' =>  $request['BILL_NO'],
                         'NW' =>  $request['NW'],
                         'GW' =>  $request['GW'],

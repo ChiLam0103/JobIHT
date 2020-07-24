@@ -25,6 +25,20 @@ class JobOrderController extends Controller
                  Response::HTTP_BAD_REQUEST);
            }
     }
+    public function search($type,$value){
+        $data=JobM::search($type,$value);
+        if($data){
+             return response()->json([
+                    'success' => true,
+                    'data'=>$data
+                ], Response::HTTP_OK);
+           }else{
+            return response()->json( [
+                'success' => false,
+                'message' => 'null'],
+                 Response::HTTP_BAD_REQUEST);
+           }
+    }
     public function des($id){
         $job_m=JobM::des($id);
 

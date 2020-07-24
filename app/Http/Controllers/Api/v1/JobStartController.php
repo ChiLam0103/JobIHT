@@ -30,9 +30,9 @@ class JobStartController extends Controller
             );
         }
     }
-    public function search($request)
+    public function search($type,$value)
     {
-        $data = JobStart::search($request);
+        $data = JobStart::search($type,$value);
         if ($data) {
             return response()->json([
                 'success' => true,

@@ -77,7 +77,7 @@ Route::namespace('Api\v1')->group(function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('/', 'JobStartController@list');
-                Route::get('search/q={request}', 'JobStartController@search');
+                Route::get('search/type={type}&value={value}', 'JobStartController@search');
                 Route::get('not-created', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
@@ -87,6 +87,7 @@ Route::namespace('Api\v1')->group(function () {
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
+                Route::get('search/type={type}&value={value}', 'JobOrderController@search');
                 Route::get('des/{id}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
                 Route::post('edit', 'JobOrderController@edit');
@@ -157,11 +158,11 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('jobno={id}', 'PrintController@jobOrder');
                 // Route::get('custno={id}', 'PrintController@jobOrder_Customer');
-                // Route::get('todate={todate}/fromdate={fromdate}', 'PrintController@jobOrder_Date');
+                Route::get('todate={todate}&fromdate={fromdate}', 'PrintController@jobOrder_Date');
             });
             Route::group(['prefix' => 'refund'], function () {
                 //1.hang tau, 2.khach hang, 3.dai ly
-                Route::get('type={type}/id={id}/jobno={jobno}/todate={todate}/fromdate={fromdate}', 'PrintController@refund');
+                Route::get('type={type}&id={id}&jobno={jobno}&todate={todate}&fromdate={fromdate}', 'PrintController@refund');
             });
         });
     });

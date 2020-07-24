@@ -74,9 +74,19 @@ class PrintController extends Controller
     }
     public function refund($type,$id,$jobno,$todate,$fromdate)
     {
+        $type_name="HÃNG TÀU";
+        if($type==2){
+            $type_name="KHÁCH HÀNG";
+        }
+        elseif($type==3){
+            $type_name="ĐẠI LÝ";
+        }
         $data = Prints::refund($type,$id,$jobno,$todate,$fromdate);
         if ($data) {
-            return view('print\refund')->with('data', $data);
+            return view('print\refund',[
+                'data'=> $data,
+                'type_name'=>$type_name
+                ]);
         } else {
             return response()->json(
                 [

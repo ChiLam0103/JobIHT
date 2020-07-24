@@ -52,12 +52,25 @@ class Prints extends Model
     public static function refund($type,$id,$jobno,$todate,$fromdate)
     {
         try {
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('CUSTOMER as c','jom.CUST_NO','c.CUST_NO')
-                ->leftJoin('LENDER as l','jom.JOB_NO','l.JOB_NO')
-                ->where('jom.JOB_NO', $id)
-                ->select('c.CUST_NAME','l.LENDER_NO','jom.*')
-                ->first();
+            $a = DB::table('JOB_ORDER_M as jom')
+                ->leftJoin('JOB_ORDER_D as jod','jom.JOB_NO','jod.JOB_NO')
+                ->rightJoin('CUSTOMER as c','jom.CUST_NO','c.CUST_NO');
+            //check loai 1.hang tau 2.khach hang 3.dai ly
+            if($type=='3'){
+                $a->where('jod.ORDER_TYPE', '7');
+            }elseif ($type=='2') {
+                $a->where('jod.ORDER_TYPE', '6');
+            }else{
+                $a->where('jod.ORDER_TYPE', '5')
+                ->where('c.CUST_TYPE', '2');
+            }
+            //check id cua loai
+            if($id!=null){
+                $a->where('c.CUST_NO',$id);
+            }
+
+           $data= $a->select('c.CUST_NO','c.CUST_NAME','jod.*')->get();
+            dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;

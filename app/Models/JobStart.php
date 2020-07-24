@@ -18,19 +18,28 @@ class JobStart extends Model
             ->get();
         return $data;
     }
-    public static function search($request)
+    public static function search($type,$value)
     {
-        $data = DB::table('JOB_START as js')
+        $a = DB::table('JOB_START as js')
             ->orderBy('js.JOB_NO', 'desc')
-            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
-            ->where(function ($query) use ($request) {
-                $query->where('js.JOB_NO','LIKE','%'.$request.'%')
-                      ->orWhere('js.BILL_NO','LIKE','%'.$request.'%')
-                      ->orWhere('js.NOTE','LIKE','%'.$request.'%')
-                      ->orWhere('js.NV_CHUNGTU','LIKE','%'.$request.'%')
-                      ->orWhere('c.CUST_NAME','LIKE','%'.$request.'%');
-            })
-            ->select('c.CUST_NAME','js.*')
+            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO');
+
+            if($type=='1'){//jobno
+                $a->where('js.JOB_NO','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='2') {//bill no
+                $a->where('js.BILL_NO','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='3') {//note
+                $a->where('js.NOTE','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='4') {//nhan vien chung tu
+                $a->where('js.NV_CHUNGTU','LIKE','%'.$value.'%');
+            }
+            elseif ($type=='5') {//ten khach hang
+                $a->where('c.CUST_NAME','LIKE','%'.$value.'%');
+            }
+            $data=$a->select('c.CUST_NAME','js.*')
             ->take(1000)
             ->get();
         return $data;
@@ -137,7 +146,7 @@ class JobStart extends Model
                         'BRANCH_ID' =>  $request['BRANCH_ID'],
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'],
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'],
+                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         'BILL_NO' =>  $request['BILL_NO'],
                         'NW' =>  $request['NW'],
                         'GW' =>  $request['GW'],
