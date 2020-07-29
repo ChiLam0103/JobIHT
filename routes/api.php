@@ -93,10 +93,6 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'JobOrderController@edit');
                 Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
                 Route::post('remove', 'JobOrderController@remove');
-
-                Route::post('add-d', 'JobOrderController@addOrderD');
-                Route::post('edit-d', 'JobOrderController@editOrderD');
-                Route::post('remove-d', 'JobOrderController@removeOrderD');
             });
             Route::group(['prefix' => 'approved'], function () {
                 Route::get('list-pending', 'JobOrderController@listPending');

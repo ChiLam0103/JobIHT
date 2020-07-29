@@ -18,28 +18,24 @@ class JobM extends Model
             ->get();
         return $data;
     }
-    public static function search($type,$value)
+    public static function search($type, $value)
     {
         $a = DB::table('JOB_ORDER_M as jom')
             ->orderBy('jom.JOB_NO', 'desc')
             ->leftjoin('CUSTOMER as c', 'jom.CUST_NO', '=', 'c.CUST_NO');
 
-            if($type=='1'){//jobno
-                $a->where('jom.JOB_NO','LIKE','%'.$value.'%');
-            }
-            elseif ($type=='2') {//bill no
-                $a->where('jom.BILL_NO','LIKE','%'.$value.'%');
-            }
-            elseif ($type=='3') {//note
-                $a->where('jom.NOTE','LIKE','%'.$value.'%');
-            }
-            elseif ($type=='4') {//nhan vien chung tu
-                $a->where('jom.NV_CHUNGTU','LIKE','%'.$value.'%');
-            }
-            elseif ($type=='5') {//ten khach hang
-                $a->where('c.CUST_NAME','LIKE','%'.$value.'%');
-            }
-            $data=$a->select('c.CUST_NAME','jom.*')
+        if ($type == '1') { //jobno
+            $a->where('jom.JOB_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '2') { //bill no
+            $a->where('jom.BILL_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '3') { //note
+            $a->where('jom.NOTE', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '4') { //nhan vien chung tu
+            $a->where('jom.NV_CHUNGTU', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '5') { //ten khach hang
+            $a->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+        }
+        $data = $a->select('c.CUST_NAME', 'jom.*')
             ->take(1000)
             ->get();
         return $data;
@@ -61,29 +57,29 @@ class JobM extends Model
                 ->insert(
                     [
                         'JOB_NO' => $request['JOB_NO'],
-                        'ORDER_DATE' => $request['ORDER_DATE'],
-                        'CUST_NO' => $request['CUST_NO'],
-                        'CONSIGNEE' => $request['CONSIGNEE'],
-                        'SHIPPER' => $request['SHIPPER'],
-                        'ORDER_FROM' =>  $request['ORDER_FROM'],
-                        'ORDER_TO' =>  $request['ORDER_TO'],
-                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
-                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
-                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
-                        'BILL_NO' =>  $request['BILL_NO'],
-                        'NW' =>  $request['NW'],
-                        'GW' =>  $request['GW'],
-                        'POL' =>  $request['POL'],
-                        'POD' =>  $request['POD'],
-                        'ETD_ETA' =>  $request['ETD_ETA'],
-                        'PO_NO' =>  $request['PO_NO'],
-                        'INVOICE_NO' =>  $request['INVOICE_NO'],
-                        'NOTE' =>  $request['NOTE'],
+                        'ORDER_DATE' => date('Ymd', strtotime($request['ORDER_DATE'])),
+                        'CUST_NO' => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
+                        'CONSIGNEE' => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
+                        'SHIPPER' => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
+                        'ORDER_FROM' =>  $request['ORDER_FROM'] != 'undefined' ? $request['ORDER_FROM'] : '',
+                        'ORDER_TO' =>  $request['ORDER_TO'] != 'undefined' ? $request['ORDER_TO'] : '',
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
+                        'BILL_NO' =>  $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
+                        'NW' =>  $request['NW'] != 'undefined' ? $request['NW'] : '',
+                        'GW' =>  $request['GW'] != 'undefined' ? $request['GW'] : '',
+                        'POL' =>  $request['POL'] != 'undefined' ? $request['POL'] : '',
+                        'POD' =>  $request['POD'] != 'undefined' ? $request['POD'] : '',
+                        'ETD_ETA' =>  $request['ETD_ETA'] != 'undefined' ? $request['ETD_ETA'] : '',
+                        'PO_NO' =>  $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
+                        'INVOICE_NO' =>  $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
+                        'NOTE' =>  $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
                         'CHK_MK' =>  "N",
-                        'INPUT_USER' =>  $request['INPUT_USER'],
+                        'INPUT_USER' =>  $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
                         'INPUT_DT' =>  date("YmdHis"),
-                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+                        'BRANCH_ID' =>  $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
                     ]
                 );
             $data = JobM::des($request['JOB_NO']);
@@ -100,26 +96,26 @@ class JobM extends Model
                 ->where('JOB_NO', $request['JOB_NO'])
                 ->update(
                     [
-                        'CONSIGNEE' => $request['CONSIGNEE'],
-                        'SHIPPER' => $request['SHIPPER'],
-                        'ORDER_FROM' =>  $request['ORDER_FROM'],
-                        'ORDER_TO' =>  $request['ORDER_TO'],
-                        'CONTAINER_NO' =>  $request['CONTAINER_NO'],
-                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'],
-                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' =>   date('Ymd', strtotime($request['CUSTOMS_DATE'])),
-                        'BILL_NO' =>  $request['BILL_NO'],
-                        'NW' =>  $request['NW'],
-                        'GW' =>  $request['GW'],
-                        'POL' =>  $request['POL'],
-                        'POD' =>  $request['POD'],
-                        'ETD_ETA' =>  $request['ETD_ETA'],
-                        'PO_NO' =>  $request['PO_NO'],
-                        'INVOICE_NO' =>  $request['INVOICE_NO'],
-                        'NOTE' =>  $request['NOTE'],
-                        'MODIFY_USER' =>  $request['MODIFY_USER'],
+                        'CONSIGNEE' => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
+                        'SHIPPER' => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
+                        'ORDER_FROM' =>  $request['ORDER_FROM'] != 'undefined' ? $request['ORDER_FROM'] : '',
+                        'ORDER_TO' =>  $request['ORDER_TO'] != 'undefined' ? $request['ORDER_TO'] : '',
+                        'CONTAINER_NO' =>  $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
+                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
+                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
+                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
+                        'BILL_NO' =>  $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
+                        'NW' =>  $request['NW'] != 'undefined' ? $request['NW'] : '',
+                        'GW' =>  $request['GW'] != 'undefined' ? $request['GW'] : '',
+                        'POL' =>  $request['POL'] != 'undefined' ? $request['POL'] : '',
+                        'POD' =>  $request['POD'] != 'undefined' ? $request['POD'] : '',
+                        'ETD_ETA' =>  $request['ETD_ETA'] != 'undefined' ? $request['ETD_ETA'] : '',
+                        'PO_NO' =>  $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
+                        'INVOICE_NO' =>  $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
+                        'NOTE' =>  $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                        'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                         'MODIFY_DT' =>  date("YmdHis"),
-                        'BRANCH_ID' =>  $request['BRANCH_ID'],
+                        'BRANCH_ID' =>  $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
 
                     ]
                 );

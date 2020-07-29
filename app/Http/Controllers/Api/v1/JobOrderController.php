@@ -92,8 +92,9 @@ class JobOrderController extends Controller
         }
     }
     public function edit(Request $request){
-        $data=JobM::edit($request);
-        if ($data == '201') {
+        $job_m=JobM::edit($request);
+        $job_d=JobD::change($request);
+        if ($job_d == '201') {
             return response()->json(
                 [
                     'success' => false,
@@ -104,7 +105,8 @@ class JobOrderController extends Controller
         } else {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'job_m' => $job_m,
+                'job_d' => $job_d,
             ], Response::HTTP_OK);
         }
     }

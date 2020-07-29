@@ -128,11 +128,11 @@
                     <li>Số Tạm Ứng</li>
                     <li>Date</li>
                     <li>J/O No</li>
-                    <li>Shipper</li>
+                    <li>Shipper </li>
                     <li>Consignee</li>
                     <li>From</li>
                     <li>Container Qty</li>
-                    <li>POL</li>
+                    <li>POL </li>
                 </ul>
             </nav>
             <nav class="tab-right">
@@ -200,7 +200,7 @@
                     <th>KCN</th>
                 </tr>
                 @foreach($order_d as $order)
-                    @if($pay->PAY_NO==$order->ORDER_TYPE)
+                    @if($pay->PAY_NO == $order->ORDER_TYPE)
                         <tr>
                             <td>{{ $order->SER_NO }}</td>
                             <td>{{ $order->DESCRIPTION }}</td>
@@ -216,15 +216,15 @@
                             {{ $total_kcn += (int) $order->INDUSTRY_ZONE_AMT }}
                         </span>
                     @endif
-                @endforeach
-                <tr class="amount">
-                    <td></td>
-                    <td>Toal Amount</td>
-                    <td></td>
-                    <td>{{ number_format($sum_port) }}<i class="display-none">{{ $sum_port = 0 }}</i></td>
-                    <td>{{ number_format($sum_kcn) }}<i class="display-none">{{ $sum_kcn = 0 }}</i></td>
-                    <td></td>
-                </tr>
+            @endforeach
+            <tr class="amount">
+                <td></td>
+                <td>Toal Amount</td>
+                <td></td>
+                <td>{{ number_format($sum_port) }}<i class="display-none">{{ $sum_port = 0 }}</i></td>
+                <td>{{ number_format($sum_kcn) }}<i class="display-none">{{ $sum_kcn = 0 }}</i></td>
+                <td></td>
+            </tr>
             </table>
         @endforeach
         <table class="table" style="margin-top: 1em">

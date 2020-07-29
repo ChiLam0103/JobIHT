@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
-    //1.customer, 2.carriers, 3.agent, 4.garage
+    //1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
     public static function list($type)
     {
         $data = DB::table('CUSTOMER as c')
