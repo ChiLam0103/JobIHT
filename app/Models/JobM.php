@@ -12,7 +12,8 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->select('jm.*')
+            ->leftjoin('CUSTOMER as c', 'jm.CUST_NO', '=', 'c.CUST_NO')
+            ->select('c.CUST_NAME','jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
             ->take(1000)
             ->get();

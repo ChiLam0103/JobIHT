@@ -146,6 +146,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('des-month', 'BoatFeeController@desMonth');
             });
         });
+
         //print
         Route::group(['prefix' => 'print'], function () {
             Route::group(['prefix' => 'job-start'], function () {

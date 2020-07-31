@@ -25,7 +25,6 @@
     @page {
         size: A4 landscape;
         margin: 0;
-        /* size: landscape; */
     }
 
     @media print {
@@ -73,14 +72,6 @@
     table {
         width: 100%;
     }
-
-    .footer th {
-        text-align: center;
-    }
-
-    .display-none {
-        display: none;
-    }
     .amount td {
         font-weight: bold;
     }
@@ -124,28 +115,12 @@
                 </tr>
             @endforeach
                 <tr  class="amount">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>Tong tien</td>
+                    <td colspan="5"></td>
+                    <td colspan="3">TỔNG TIỀN:</td>
                     <td>1</td>
                     <td>2</td>
                     <td colspan="2">3</td>
                 </tr>
         </table>
-        <div class="footer">
-            <table>
-                <tr>
-                    <th>Acounting</th>
-                    <th>G.M</th>
-                    <th>Im & Ex.M</th>
-                    <th>Applicant</th>
-                </tr>
-            </table>
-        </div>
     </div>
 </body>
