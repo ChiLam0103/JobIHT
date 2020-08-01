@@ -64,20 +64,20 @@ class Customer extends Model
             $CUST_NO = Customer::generateNo($request['CUST_TYPE']);
             DB::table(config('constants.CUSTOMER_TABLE'))->insert(
                 [
-                    'CUST_TYPE' => $request['CUST_TYPE'],
+                    'CUST_TYPE' => $request['CUST_TYPE'] != 'undefined' ? $request['CUST_TYPE'] : '1',
                     'CUST_NO' => $CUST_NO,
-                    'CUST_NAME' => $request['CUST_NAME'],
-                    'CUST_CNAME' => $request['CUST_CNAME'],
-                    'CUST_ADDRESS' => $request['CUST_ADDRESS'],
-                    'CUST_TEL1' => $request['CUST_TEL1'],
-                    'CUST_TEL2' => $request['CUST_TEL2'],
-                    'CUST_FAX' => $request['CUST_FAX'],
-                    'CUST_TAX' => $request['CUST_TAX'],
-                    'CUST_BOSS' => $request['CUST_BOSS'],
-                    'INPUT_USER' => $request['INPUT_USER'],
+                    'CUST_NAME' => $request['CUST_NAME'] != 'undefined' ? $request['CUST_NAME'] : '',
+                    'CUST_CNAME' => $request['CUST_CNAME'] != 'undefined' ? $request['CUST_CNAME'] : '',
+                    'CUST_ADDRESS' => $request['CUST_ADDRESS'] != 'undefined' ? $request['CUST_ADDRESS'] : '',
+                    'CUST_TEL1' => $request['CUST_TEL1'] != 'undefined' ? $request['CUST_TEL1'] : '',
+                    'CUST_TEL2' => $request['CUST_TEL2'] != 'undefined' ? $request['CUST_TEL2'] : '',
+                    'CUST_FAX' => $request['CUST_FAX'] != 'undefined' ? $request['CUST_FAX'] : '',
+                    'CUST_TAX' => $request['CUST_TAX'] != 'undefined' ? $request['CUST_TAX'] : '',
+                    'CUST_BOSS' => $request['CUST_BOSS'] != 'undefined' ? $request['CUST_BOSS'] : '',
+                    'INPUT_USER' => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
                     'INPUT_DT' => date("YmdHis"),
-                    'TEN_DON_VI' => $request['TEN_DON_VI'],
-                    'BRANCH_ID' => $request['BRANCH_ID'],
+                    'TEN_DON_VI' => $request['TEN_DON_VI'] != 'undefined' ? $request['TEN_DON_VI'] : '',
+                    'BRANCH_ID' => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
                 ]
             );
             $data = Customer::des($CUST_NO, $request['CUST_TYPE']);
@@ -95,17 +95,18 @@ class Customer extends Model
                 ->where('CUST_NO', $request['CUST_NO'])
                 ->update(
                     [
-                        'CUST_NAME' => $request['CUST_NAME'],
-                        'CUST_CNAME' => $request['CUST_CNAME'],
-                        'CUST_ADDRESS' => $request['CUST_ADDRESS'],
-                        'CUST_TEL1' => $request['CUST_TEL1'],
-                        'CUST_TEL2' => $request['CUST_TEL2'],
-                        'CUST_FAX' => $request['CUST_FAX'],
-                        'CUST_TAX' => $request['CUST_TAX'],
-                        'CUST_BOSS' => $request['CUST_BOSS'],
-                        'MODIFY_USER' =>  $request['MODIFY_USER'],
+                        'CUST_TYPE' => $request['CUST_TYPE'] != 'undefined' ? $request['CUST_TYPE'] : '1',
+                        'CUST_NAME' => $request['CUST_NAME'] != 'undefined' ? $request['CUST_NAME'] : '',
+                        'CUST_CNAME' => $request['CUST_CNAME'] != 'undefined' ? $request['CUST_CNAME'] : '',
+                        'CUST_ADDRESS' => $request['CUST_ADDRESS'] != 'undefined' ? $request['CUST_ADDRESS'] : '',
+                        'CUST_TEL1' => $request['CUST_TEL1'] != 'undefined' ? $request['CUST_TEL1'] : '',
+                        'CUST_TEL2' => $request['CUST_TEL2'] != 'undefined' ? $request['CUST_TEL2'] : '',
+                        'CUST_FAX' => $request['CUST_FAX'] != 'undefined' ? $request['CUST_FAX'] : '',
+                        'CUST_TAX' => $request['CUST_TAX'] != 'undefined' ? $request['CUST_TAX'] : '',
+                        'CUST_BOSS' => $request['CUST_BOSS'] != 'undefined' ? $request['CUST_BOSS'] : '',
+                        'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                         'MODIFY_DT' => date("YmdHis"),
-                        'TEN_DON_VI' => $request['TEN_DON_VI'],
+                        'TEN_DON_VI' => $request['TEN_DON_VI'] != 'undefined' ? $request['TEN_DON_VI'] : '',
                     ]
                 );
             $data = Customer::des($request['CUST_NO'], $request['CUST_TYPE']);

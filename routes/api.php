@@ -20,7 +20,6 @@ Route::namespace('Api\v1')->group(function () {
             Route::get('list-header', 'MenuController@listMenuGroup');
             Route::get('list-sidebar', 'MenuController@listMenu');
         });
-
         //I.data basic
         Route::group(['prefix' => 'data-basic'], function () {
             Route::group(['prefix' => 'company'], function () {

@@ -11,7 +11,7 @@ class DebitNoteM extends Model
     {
         $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))->orderBy('JOB_NO', 'desc')->take(100)->get();
         return $data;
-    }      
+    }
     public static function listNotCreated()
     {
         $data = DB::table('JOB_ORDER_M as jom')
@@ -50,35 +50,35 @@ class DebitNoteM extends Model
             DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
                 ->insert(
                     [
-                        'JOB_NO' => $request['JOB_NO'],
-                        'CUST_NO' => $request['CUST_NO'],
-                        "DEBIT_DATE" => date("Ymd"),
-                        "CONSIGNEE" => $request['CONSIGNEE'],
-                        "SHIPPER" => $request['SHIPPER'],
-                        "TRANS_FROM" => $request['TRANS_FROM'],
-                        "TRANS_TO" => $request['TRANS_TO'],
-                        "CONTAINER_NO" => $request['CONTAINER_NO'],
-                        "CONTAINER_QTY" => $request['CONTAINER_QTY'],
-                        "CUSTOMS_NO" => $request['CUSTOMS_NO'],
-                        "CUSTOMS_DATE" => $request['CUSTOMS_DATE'],
-                        "CUST_NO" => $request['CUST_NO'],
-                        "BILL_NO" => $request['BILL_NO'],
-                        "NW" => $request['NW'],
-                        "GW" => $request['GW'],
-                        "POL" => $request['POL'],
-                        "POD" => $request['POD'],
-                        "ETD_ETA" => $request['ETD_ETA'],
-                        "PO_NO" => $request['PO_NO'],
-                        "ORDER_NO" => $request['ORDER_NO'],
+                        'JOB_NO' => $request['JOB_NO'] != 'undefined' ? $request['JOB_NO'] : '',
+                        'CUST_NO' => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
+                        "CONSIGNEE" => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
+                        "SHIPPER" => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
+                        "TRANS_FROM" => $request['TRANS_FROM'] != 'undefined' ? $request['TRANS_FROM'] : '',
+                        "TRANS_TO" => $request['TRANS_TO'] != 'undefined' ? $request['TRANS_TO'] : '',
+                        "CONTAINER_NO" => $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
+                        "CONTAINER_QTY" => $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
+                        "CUSTOMS_NO" => $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
+                        "CUSTOMS_DATE" => $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
+                        "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
+                        "BILL_NO" => $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
+                        "NW" => $request['NW'] != 'undefined' ? $request['NW'] : '',
+                        "GW" => $request['GW'] != 'undefined' ? $request['GW'] : '',
+                        "POL" => $request['POL'] != 'undefined' ? $request['POL'] : '',
+                        "POD" => $request['POD'] != 'undefined' ? $request['POD'] : '',
+                        "ETD_ETA" => $request['ETD_ETA'] != 'undefined' ? $request['ETD_ETA'] : '',
+                        "PO_NO" => $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
+                        "ORDER_NO" => $request['ORDER_NO'] != 'undefined' ? $request['ORDER_NO'] : '',
                         "PAYMENT_CHK" => 'N',
-                        "INVOICE_NO" => $request['INVOICE_NO'],
-                        "NOTE" => $request['NOTE'],
-                        "CUST_NO2" => $request['CUST_NO2'],
-                        "CUST_NO3" => $request['CUST_NO3'],
-                        "CUST_NO4" => $request['CUST_NO4'],
-                        "CUST_NO5" => $request['CUST_NO5'],
-                        "BRANCH_ID" => $request['BRANCH_ID'],
-                        "INPUT_USER" => $request['INPUT_USER'],
+                        "INVOICE_NO" => $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
+                        "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                        "CUST_NO2" => $request['CUST_NO2'] != 'undefined' ? $request['CUST_NO2'] : '',
+                        "CUST_NO3" => $request['CUST_NO3'] != 'undefined' ? $request['CUST_NO3'] : '',
+                        "CUST_NO4" => $request['CUST_NO4'] != 'undefined' ? $request['CUST_NO4'] : '',
+                        "CUST_NO5" => $request['CUST_NO5'] != 'undefined' ? $request['CUST_NO5'] : '',
+                        "DEBIT_DATE" => date("Ymd"),
+                        "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
+                        "INPUT_USER" => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
                         "INPUT_DT" => date("YmdHis"),
                     ]
                 );
@@ -96,31 +96,29 @@ class DebitNoteM extends Model
                 ->where('JOB_NO', $request['JOB_NO'])
                 ->update(
                     [
-                        'CUST_NO' => $request['CUST_NO'],
-                        "DEBIT_DATE" => date("Ymd"),
-                        "CONSIGNEE" => $request['CONSIGNEE'],
-                        "SHIPPER" => $request['SHIPPER'],
-                        "TRANS_FROM" => $request['TRANS_FROM'],
-                        "TRANS_TO" => $request['TRANS_TO'],
-                        "CONTAINER_NO" => $request['CONTAINER_NO'],
-                        "CONTAINER_QTY" => $request['CONTAINER_QTY'],
-                        "CUSTOMS_NO" => $request['CUSTOMS_NO'],
-                        "CUSTOMS_DATE" => $request['CUSTOMS_DATE'],
-                        "CUST_NO" => $request['CUST_NO'],
-                        "BILL_NO" => $request['BILL_NO'],
-                        "NW" => $request['NW'],
-                        "GW" => $request['GW'],
-                        "POL" => $request['POL'],
-                        "POD" => $request['POD'],
-                        "ETD_ETA" => $request['ETD_ETA'],
-                        "PO_NO" => $request['PO_NO'],
-                        "ORDER_NO" => $request['ORDER_NO'],
-                        "INVOICE_NO" => $request['INVOICE_NO'],
-                        "NOTE" => $request['NOTE'],
-                        "CUST_NO2" => $request['CUST_NO2'],
-                        "CUST_NO3" => $request['CUST_NO3'],
-                        "CUST_NO4" => $request['CUST_NO4'],
-                        "CUST_NO5" => $request['CUST_NO5'],
+                        "CONSIGNEE" => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
+                        "SHIPPER" => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
+                        "TRANS_FROM" => $request['TRANS_FROM'] != 'undefined' ? $request['TRANS_FROM'] : '',
+                        "TRANS_TO" => $request['TRANS_TO'] != 'undefined' ? $request['TRANS_TO'] : '',
+                        "CONTAINER_NO" => $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
+                        "CONTAINER_QTY" => $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
+                        "CUSTOMS_NO" => $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
+                        "CUSTOMS_DATE" => $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
+                        "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
+                        "BILL_NO" => $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
+                        "NW" => $request['NW'] != 'undefined' ? $request['NW'] : '',
+                        "GW" => $request['GW'] != 'undefined' ? $request['GW'] : '',
+                        "POL" => $request['POL'] != 'undefined' ? $request['POL'] : '',
+                        "POD" => $request['POD'] != 'undefined' ? $request['POD'] : '',
+                        "ETD_ETA" => $request['ETD_ETA'] != 'undefined' ? $request['ETD_ETA'] : '',
+                        "PO_NO" => $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
+                        "ORDER_NO" => $request['ORDER_NO'] != 'undefined' ? $request['ORDER_NO'] : '',
+                        "INVOICE_NO" => $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
+                        "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                        "CUST_NO2" => $request['CUST_NO2'] != 'undefined' ? $request['CUST_NO2'] : '',
+                        "CUST_NO3" => $request['CUST_NO3'] != 'undefined' ? $request['CUST_NO3'] : '',
+                        "CUST_NO4" => $request['CUST_NO4'] != 'undefined' ? $request['CUST_NO4'] : '',
+                        "CUST_NO5" => $request['CUST_NO5'] != 'undefined' ? $request['CUST_NO5'] : '',
                         'MODIFY_USER' =>  $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
@@ -182,7 +180,6 @@ class DebitNoteM extends Model
                     ->rightJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
                     ->where('dnm.PAYMENT_CHK', 'Y')
                     ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
-               
             } elseif ($request->TYPE == "2") { //da thanh toan
                 $a = DB::table('DEBIT_NOTE_M as dnm')
                     ->join('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')

@@ -45,8 +45,9 @@ class JobM extends Model
     {
         $data = DB::table('JOB_START as js')
             ->rightjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->leftjoin('CUSTOMER as c', 'jm.CUST_NO', '=', 'c.CUST_NO')
             ->where('jm.JOB_NO', $id)
-            ->select('jm.*')
+            ->select('c.CUST_NAME','jm.*')
             ->first();
         return $data;
     }
@@ -58,7 +59,7 @@ class JobM extends Model
                 ->insert(
                     [
                         'JOB_NO' => $request['JOB_NO'],
-                        'ORDER_DATE' => date('Ymd', strtotime($request['ORDER_DATE'])),
+                        'ORDER_DATE' => date("Ymd"),
                         'CUST_NO' => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
                         'CONSIGNEE' => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
                         'SHIPPER' => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
