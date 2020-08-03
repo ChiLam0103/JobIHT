@@ -148,6 +148,7 @@ Route::namespace('Api\v1')->group(function () {
 
         //print
         Route::group(['prefix' => 'print'], function () {
+            //II. báo biểu hồ sơ
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('jobno={id}', 'PrintController@jobStart');
             });
@@ -159,6 +160,11 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'refund'], function () {
                 //1.hang tau, 2.khach hang, 3.dai ly
                 Route::get('type={type}&id={id}&jobno={jobno}&todate={todate}&fromdate={fromdate}', 'PrintController@refund');
+            });
+            Route::group(['prefix' => 'statistic'], function () {
+                //thống kê tạo job
+                Route::get('created-job/cust={cust}&user={user}&todate={todate}&fromdate={fromdate}', 'PrintController@statisticCreatedJob');
+                Route::get('user-import-job/cust={cust}&user={user}&todate={todate}&fromdate={fromdate}', 'PrintController@statisticUserImportJob');
             });
         });
     });

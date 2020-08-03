@@ -82,13 +82,59 @@ class PrintController extends Controller
         }
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $todate = $todate != 'null' ? $todate : '';
+        $todate = $todate != 'null' ? $todate : '19000101';
         $fromdate = $fromdate != 'null' ? $fromdate : $today;
         $data = Prints::refund($type, $id, $jobno, $todate, $fromdate);
         if ($data) {
             return view('print\refund', [
                 'data' => $data,
                 'type_name' => $type_name,
+                'todate' => $todate,
+                'fromdate' => $fromdate
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function statisticCreatedJob($cust, $user, $todate, $fromdate)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $todate = $todate != 'null' ? $todate : '';
+        $fromdate = $fromdate != 'null' ? $fromdate : $today;
+        $data = Prints::statisticCreatedJob($cust, $user, $todate, $fromdate);
+        if ($data) {
+            return view('print\statistic-created-job', [
+                'data' => $data,
+                'todate' => $todate,
+                'fromdate' => $fromdate
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function statisticUserImportJob($cust, $user, $todate, $fromdate)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $todate = $todate != 'null' ? $todate : '';
+        $fromdate = $fromdate != 'null' ? $fromdate : $today;
+        $data = Prints::statisticUserImportJob($cust, $user, $todate, $fromdate);
+        if ($data) {
+            return view('print\statistic-created-job', [
+                'data' => $data,
                 'todate' => $todate,
                 'fromdate' => $fromdate
             ]);

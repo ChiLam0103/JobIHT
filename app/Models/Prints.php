@@ -68,7 +68,7 @@ class Prints extends Model
                 $a->where('jod.ORDER_TYPE', '6');
             } elseif ($type == '3') {
                 $a->where('jod.ORDER_TYPE', '7');
-            }else{
+            } else {
                 $a->where('jod.ORDER_TYPE', '5');
             }
             //CUST_NO
@@ -82,8 +82,62 @@ class Prints extends Model
             if ($todate || $fromdate) {
                 $a->whereBetween('jod.INPUT_DT', [$to_date, $from_date]);
             }
-            $data = $a->select('c.CUST_NO','c.CUST_NAME','jod.*')
-            ->orderBy('c.CUST_NO')->take(10)->get();
+            $data = $a->select('c.CUST_NO', 'c.CUST_NAME', 'jod.*')
+                ->orderBy('c.CUST_NO')->take(9000)->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function statisticCreatedJob($cust, $user, $todate, $fromdate)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $today = date("Ymd");
+            $to_date = ($todate ? $todate : '19000101');
+            $from_date = ($fromdate ? $fromdate : $today);
+            $a =  DB::table('JOB_START as js')
+                ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
+                ->leftJoin('PERSONAL as p', 'js.NV_CHUNGTU', 'p.PNL_NO')
+                ->leftJoin('USERM as u', 'js.INPUT_USER', 'u.USER_NO')
+                ->where('js.BRANCH_ID', 'IHTVN1');
+            if ($cust != 'null') {
+                $a->where('js.CUST_NO', $cust);
+            }
+            if ($user != 'null') {
+                $a->where('js.INPUT_USER', $user);
+            }
+            if ($todate || $fromdate) {
+                $a->whereBetween('js.INPUT_DT', [$to_date, $from_date]);
+            }
+            $data = $a->select('c.CUST_NAME', 'u.USER_NAME', 'p.PNL_NAME', 'js.*')->take(9000)->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function statisticUserImportJob($cust, $user, $todate, $fromdate)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $today = date("Ymd");
+            $to_date = ($todate ? $todate : '19000101');
+            $from_date = ($fromdate ? $fromdate : $today);
+            $a =  DB::table('JOB_START as js')
+                ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
+                ->leftJoin('PERSONAL as p', 'js.NV_CHUNGTU', 'p.PNL_NO')
+                ->leftJoin('USERM as u', 'js.INPUT_USER', 'u.USER_NO')
+                ->where('js.BRANCH_ID', 'IHTVN1');
+            if ($cust != 'null') {
+                $a->where('js.CUST_NO', $cust);
+            }
+            if ($user != 'null') {
+                $a->where('js.INPUT_USER', $user);
+            }
+            if ($todate || $fromdate) {
+                $a->whereBetween('js.INPUT_DT', [$to_date, $from_date]);
+            }
+            $data = $a->select('c.CUST_NAME', 'u.USER_NAME', 'p.PNL_NAME', 'js.*')->take(9000)->get();
             return $data;
         } catch (\Exception $e) {
             return $e;
