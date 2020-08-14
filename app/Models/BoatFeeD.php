@@ -7,14 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class BoatFeeD extends Model
 {
-    public static function desMonth($request)
+    public static function desMonth($type,$value)
     {
         $data = DB::table(config('constants.BOAT_FEE_D_TABLE'))
         ->where('BRANCH_ID','IHTVN1')
-        ->where('BOAT_FEE_MONTH',$request->BOAT_FEE_MONTH)
-        ->where('FEE_TYPE',$request->FEE_TYPE)
+        ->where('BOAT_FEE_MONTH',$value)
+        ->where('FEE_TYPE',$type)
         ->get();
         return $data;
     }
-  
+    public static function edit($request)
+    {
+        dd($request);
+        // $data = DB::table(config('constants.BOAT_FEE_D_TABLE'))
+        // ->where('BRANCH_ID','IHTVN1')
+        // ->where('BOAT_FEE_MONTH',$value)
+        // ->where('FEE_TYPE',$type)
+        // ->get();
+        // return $data;
+    }
 }

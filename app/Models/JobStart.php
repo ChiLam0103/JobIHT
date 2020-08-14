@@ -36,7 +36,7 @@ class JobStart extends Model
             $a->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
         }
         $data = $a->select('c.CUST_NAME', 'js.*')
-            ->take(1000)
+            ->take(9000)
             ->get();
         return $data;
     }

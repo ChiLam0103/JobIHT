@@ -16,6 +16,23 @@ class Lender extends Model
         ->orderBy('l.LENDER_NO', 'desc')->take(9000)->get();
         return $data;
     }
+    public static function search($type, $value)
+    {
+        //type=1 (advance no), 2.advance person, 3.job no
+        $a = DB::table('LENDER as l');
+
+        if ($type == '1') { //advance no
+            $a->where('l.LENDER_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '2') { //advance person
+            $a->where('l.PNL_NAME', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '3') { //job no
+            $a->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
+        }
+        $data = $a->select( 'l.*')
+            ->take(9000)
+            ->get();
+        return $data;
+    }
     public static function des($id)
     {
         $data = DB::table('LENDER as l')

@@ -66,12 +66,15 @@
         text-align: center;
         font-size: 13px;
     }
-    .table .amount td{
+
+    .table .amount td {
         border: none;
     }
+
     table {
         width: 100%;
     }
+
 </style>
 
 <body onload="window.print();">
@@ -89,16 +92,16 @@
                 <th>ORDER FROM</th>
                 <th>ORDER TO</th>
                 <th>CONTAINER QTY</th>
-                <th >CONTAINER NO</th>
+                <th>CONTAINER NO</th>
                 <th>POL</th>
                 <th>ETA ETD</th>
                 <th>POD</th>
                 <th>USER TẠO JOB</th>
             </tr>
-            @foreach($data as $item)
+            @foreach ($data as $item)
                 <tr>
                     <td>{{ $item->JOB_NO }}</td>
-                    <td>{{  date('Y/m/d', strtotime($item->JOB_DATE)) }}</td>
+                    <td>{{ date('Y/m/d', strtotime($item->JOB_DATE)) }}</td>
                     <td>{{ $item->CUST_NAME }}</td>
                     <td>{{ $item->PNL_NAME }}</td>
                     <td>{{ $item->ORDER_FROM }}</td>

@@ -47,9 +47,27 @@ class BoatFeeController extends Controller
             );
         }
     }
-    public function desMonth(Request $request)
+    public function desMonth($type, $value)
     {
-        $data = BoatFeeD::desMonth($request);
+        $data = BoatFeeD::desMonth($type, $value);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function edit(Request $request)
+    {
+        $data = BoatFeeD::edit($request);
         if ($data) {
             return response()->json([
                 'success' => true,

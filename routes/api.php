@@ -71,7 +71,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'PermissionController@edit');
             });
         });
-        //III.file manager
+        //III.file manager(quan ly ho so)
         Route::group(['prefix' => 'file'], function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
@@ -87,7 +87,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
                 Route::get('search/type={type}&value={value}', 'JobOrderController@search');
-                Route::get('des/{id}', 'JobOrderController@des');
+                Route::get('des/job={id}&type={TYPE}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
                 Route::post('edit', 'JobOrderController@edit');
                 Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
@@ -104,11 +104,12 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('list-note', 'PayController@listPayNote');
             });
         });
-        //IV. payment manager
+        //IV. payment manager(quan ly thu chi)
         Route::group(['prefix' => 'payment'], function () {
-            //1.quan ly thu chi
+            //1.phieu chi tam ung
             Route::group(['prefix' => 'advance-slip'], function () {
                 Route::get('/', 'LenderController@list');
+                Route::get('search/type={type}&value={value}', 'LenderController@search');
                 Route::get('des/{id}', 'LenderController@des');
                 Route::post('add', 'LenderController@add');
                 Route::post('edit', 'LenderController@edit');
@@ -117,12 +118,13 @@ Route::namespace('Api\v1')->group(function () {
             //3.yeu cau thanh toan
             Route::group(['prefix' => 'debit-note'], function () {
                 Route::get('/', 'DebitNoteController@list');
+                Route::get('search/type={type}&value={value}', 'DebitNoteController@search');
                 Route::get('not-created', 'DebitNoteController@listNotCreated');
                 Route::get('des/{id}', 'DebitNoteController@des');
                 Route::post('add', 'DebitNoteController@add');
                 Route::post('edit', 'DebitNoteController@edit');
                 Route::get('remove-check/{id}', 'DebitNoteController@removeCheck');
-                Route::post('remove', 'DebitNoteController@remove');
+                Route::post('remove', 'DebitNoteContro ller@remove');
 
                 Route::post('add-d', 'DebitNoteController@addDebitD');
                 Route::post('edit-d', 'DebitNoteController@editDebitD');
@@ -142,25 +144,31 @@ Route::namespace('Api\v1')->group(function () {
              Route::group(['prefix' => 'boat-fee'], function () {
                 Route::get('list-boat-month-m', 'BoatFeeController@listBoatMonthM');
                 Route::get('list-fee-month-m', 'BoatFeeController@listFeeMonthM');
-                Route::get('des-month', 'BoatFeeController@desMonth');
+                Route::get('des-month/type={FEE_TYPE}&value={BOAT_FEE_MONTH}', 'BoatFeeController@desMonth');
+                Route::post('edit', 'BoatFeeController@edit');
             });
         });
 
         //print
         Route::group(['prefix' => 'print'], function () {
             //II. báo biểu hồ sơ
+
+            // 1.in phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('jobno={id}', 'PrintController@jobStart');
             });
+            //2.in job order
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('jobno={id}', 'PrintController@jobOrder');
                 // Route::get('custno={id}', 'PrintController@jobOrder_Customer');
                 Route::get('todate={todate}&fromdate={fromdate}', 'PrintController@jobOrder_Date');
             });
+            //3.bao bieu refund
             Route::group(['prefix' => 'refund'], function () {
                 //1.hang tau, 2.khach hang, 3.dai ly
                 Route::get('type={type}&id={id}&jobno={jobno}&todate={todate}&fromdate={fromdate}', 'PrintController@refund');
             });
+            //4.thong ke job order
             Route::group(['prefix' => 'statistic'], function () {
                 //thống kê tạo job
                 Route::get('created-job/cust={cust}&user={user}&todate={todate}&fromdate={fromdate}', 'PrintController@statisticCreatedJob');

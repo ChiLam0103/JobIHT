@@ -23,7 +23,8 @@ class JobM extends Model
     {
         $a = DB::table('JOB_ORDER_M as jom')
             ->orderBy('jom.JOB_NO', 'desc')
-            ->leftjoin('CUSTOMER as c', 'jom.CUST_NO', '=', 'c.CUST_NO');
+            ->leftjoin('CUSTOMER as c', 'jom.CUST_NO', '=', 'c.CUST_NO')
+            ->where('jom.BRANCH_ID','IHTVN1');
 
         if ($type == '1') { //jobno
             $a->where('jom.JOB_NO', 'LIKE', '%' . $value . '%');

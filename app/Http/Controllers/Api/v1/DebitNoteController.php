@@ -29,6 +29,24 @@ class DebitNoteController extends Controller
             );
         }
     }
+    public function search($type,$value)
+    {
+        $data = DebitNoteM::search($type,$value);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function listNotCreated()
     {
         $data = DebitNoteM::listNotCreated();

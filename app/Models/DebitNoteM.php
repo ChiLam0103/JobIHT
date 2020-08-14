@@ -12,6 +12,26 @@ class DebitNoteM extends Model
         $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))->orderBy('JOB_NO', 'desc')->take(100)->get();
         return $data;
     }
+    public static function search($type, $value)
+    {
+
+        $a = DB::table('DEBIT_NOTE_M as dnm')->where('dnm.BRANCH_ID','IHTVN1');
+
+        if ($type == '1') { //job no
+            $a->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '2') { //customer no
+            $a->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '3') { //container no
+            $a->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == '4') { //customns no
+            $a->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+        }
+        $data = $a->select('dnm.*')
+            ->orderBy('dnm.JOB_NO', 'desc')
+            ->take(9000)
+            ->get();
+        return $data;
+    }
     public static function listNotCreated()
     {
         $data = DB::table('JOB_ORDER_M as jom')

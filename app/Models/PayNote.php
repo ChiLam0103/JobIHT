@@ -9,8 +9,8 @@ class PayNote extends Model
 {
     public static function listPayNote()
     {
-        $data = DB::table(config('constants.PAY_NOTE_TABLE'))->get();
+        $data = DB::table(config('constants.PAY_NOTE_TABLE'))->select('PAY_DESCRIPTION')->get();
         return $data;
     }
-   
+
 }
