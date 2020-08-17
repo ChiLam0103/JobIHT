@@ -89,7 +89,9 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('search/type={type}&value={value}', 'JobOrderController@search');
                 Route::get('des/job={id}&type={TYPE}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
+                Route::post('add-d', 'JobOrderController@addJobD');
                 Route::post('edit', 'JobOrderController@edit');
+                Route::post('edit-d', 'JobOrderController@editJobD');
                 Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
                 Route::post('remove', 'JobOrderController@remove');
             });

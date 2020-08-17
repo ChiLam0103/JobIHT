@@ -10,11 +10,9 @@ class JobD extends Model
     public static function getJob($id, $type)
     {
         $a = "";
-        $a = DB::table('JOB_ORDER_M as jm')
-            ->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')
+        $a = DB::table('JOB_ORDER_D as jd')
             ->leftJoin('PAY_TYPE as pt', 'jd.ORDER_TYPE', '=', 'pt.PAY_NO')
-            ->where('jm.JOB_NO', $id);
-
+            ->where('jd.JOB_NO', $id);
         if ($type == 'JOB_ORDER') {
             $data = $a->select(
                 'pt.PAY_NAME as ORDER_TYPE_NAME',
@@ -53,6 +51,7 @@ class JobD extends Model
                 'jd.MODIFY_USER',
                 'jd.MODIFY_DT'
             )
+                // ->selectRaw('(jd.PRICE * jd.QTY) + (jd.PRICE * jd.QTY)/jd.TAX_NOTE AS PRICE_TAX_AFFTER')
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
         }
@@ -74,55 +73,52 @@ class JobD extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            if ($request->TYPE = 'JOB_ORDER') {
-                foreach ($request->data as $res) {
-                    $ser_no = JobD::generateSerNo($request->JOB_NO, $res['ORDER_TYPE']);
-                    DB::table(config('constants.JOB_D_TABLE'))
-                        ->insert(
-                            [
-                                "JOB_NO" => $request->JOB_NO,
-                                "ORDER_TYPE" => $res['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
-                                "SER_NO" => $ser_no,
-                                "DESCRIPTION" => $res['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                                "REV_TYPE" => $res['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : '',
-                                "INV_NO" => $res['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                                "PORT_AMT" => $res['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : '',
-                                "INDUSTRY_ZONE_AMT" => $res['INDUSTRY_ZONE_AMT'] != 'undefined' ? $request['INDUSTRY_ZONE_AMT'] : '',
-                                "NOTE" => $res['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                                "THANH_TOAN_MK" => $res['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
-                                "BRANCH_ID" => $res['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
-                                "INPUT_USER" => $res['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
-                                "INPUT_DT" => date("YmdHis")
-                            ]
-                        );
-                }
-            } else {
-                foreach ($request->data as $res) {
-                    $ser_no = JobD::generateSerNo($request->JOB_NO, $res['ORDER_TYPE']);
-                    DB::table(config('constants.JOB_D_TABLE'))
-                        ->insert(
-                            [
-                                "JOB_NO" => $request->JOB_NO,
-                                "ORDER_TYPE" => $res['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
-                                "SER_NO" => $ser_no,
-                                "DESCRIPTION" => $res['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                                "UNIT" => $res['UNIT'] != 'undefined' ? $request['UNIT'] : '',
-                                "QTY" => $res['QTY'] != 'undefined' ? $request['QTY'] : '',
-                                "PRICE" => $res['PRICE'] != 'undefined' ? $request['PRICE'] : '',
-                                "TAX_NOTE" => $res['TAX_NOTE'] != 'undefined' ? $request['TAX_NOTE'] : '',
-                                "TAX_AMT" => $res['TAX_AMT'] != 'undefined' ? $request['TAX_AMT'] : '',
-                                "NOTE" => $res['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                                "THANH_TOAN_MK" => $res['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
-                                "BRANCH_ID" => $res['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
-                                "INPUT_USER" => $res['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
-                                "INPUT_DT" => date("YmdHis")
-                            ]
-                        );
-                }
-            }
+            $ser_no = JobD::generateSerNo($request->JOB_NO, $request['ORDER_TYPE']);
 
-            return '200';
+            if ($request->TYPE == 'JOB_ORDER') {
+                DB::table(config('constants.JOB_D_TABLE'))
+                    ->insert(
+                        [
+                            "JOB_NO" => $request->JOB_NO,
+                            "ORDER_TYPE" => $request['ORDER_TYPE'] != '' ? $request['ORDER_TYPE'] : '',
+                            "SER_NO" => $ser_no,
+                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => $request['REV_TYPE'] != '' ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => $request['INV_NO'] != '' ? $request['INV_NO'] : '',
+                            "PORT_AMT" => $request['PORT_AMT'] != '' ? $request['PORT_AMT'] : '',
+                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != '' ? $request['INDUSTRY_ZONE_AMT'] : '',
+                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : 'N',
+                            "BRANCH_ID" => $request['BRANCH_ID'] != '' ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => $request['INPUT_USER'] != '' ? $request['INPUT_USER'] : '',
+                            "INPUT_DT" => date("YmdHis")
+                        ]
+                    );
+            } elseif ($request->TYPE == 'JOB_ORDER_BOAT') {
+                DB::table(config('constants.JOB_D_TABLE'))
+                    ->insert(
+                        [
+                            "JOB_NO" => $request->JOB_NO,
+                            "ORDER_TYPE" => $request['ORDER_TYPE'] != '' ? $request['ORDER_TYPE'] : '',
+                            "SER_NO" => $ser_no,
+                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
+                            "UNIT" => $request['UNIT'] != '' ? $request['UNIT'] : '',
+                            "QTY" => $request['QTY'] != '' ? $request['QTY'] : '',
+                            "PRICE" => $request['PRICE'] != '' ? $request['PRICE'] : '',
+                            "TAX_NOTE" => $request['TAX_NOTE'] != '' ? $request['TAX_NOTE'] : '',
+                            "TAX_AMT" => $request['TAX_AMT'] != '' ? $request['TAX_AMT'] : '',
+                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : 'N',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
+                            "BRANCH_ID" => $request['BRANCH_ID'] != '' ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => $request['INPUT_USER'] != '' ? $request['INPUT_USER'] : '',
+                            "INPUT_DT" => date("YmdHis")
+                        ]
+                    );
+            }
+            $data = JobD::getJob($request->JOB_NO, $request->TYPE);
+            return $data;
         } catch (\Exception $e) {
+            dd($e);
             return '201';
         }
     }
@@ -131,77 +127,52 @@ class JobD extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $JOB_NO = $request->JOB_NO;
-            JobD::remove($JOB_NO);
-            if ($request->TYPE = 'JOB_ORDER') {
-                foreach ($request->data as $res) {
-                    $ser_no = JobD::generateSerNo($JOB_NO, $res['ORDER_TYPE']);
-                    DB::table(config('constants.JOB_D_TABLE'))
-                        ->insert(
-                            [
-                                "JOB_NO" => $JOB_NO,
-                                "ORDER_TYPE" => $res['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
-                                "SER_NO" => $ser_no,
-                                "DESCRIPTION" => $res['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                                "REV_TYPE" => $res['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : '',
-                                "INV_NO" => $res['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                                "PORT_AMT" => $res['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : '',
-                                "INDUSTRY_ZONE_AMT" => $res['INDUSTRY_ZONE_AMT'] != 'undefined' ? $request['INDUSTRY_ZONE_AMT'] : '',
-                                "NOTE" => $res['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                                "THANH_TOAN_MK" => $res['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
-                                'MODIFY_USER' =>  $res['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
-                                'MODIFY_DT' =>  date("YmdHis"),
-                            ]
-                        );
-                }
-            } else {
-                foreach ($request->data as $res) {
-                    $ser_no = JobD::generateSerNo($JOB_NO, $res['ORDER_TYPE']);
-                    DB::table(config('constants.JOB_D_TABLE'))
-                        ->insert(
-                            [
-                                "JOB_NO" => $request->JOB_NO,
-                                "ORDER_TYPE" => $res['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
-                                "SER_NO" => $ser_no,
-                                "DESCRIPTION" => $res['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                                "UNIT" => $res['UNIT'] != 'undefined' ? $request['UNIT'] : '',
-                                "QTY" => $res['QTY'] != 'undefined' ? $request['QTY'] : '',
-                                "PRICE" => $res['PRICE'] != 'undefined' ? $request['PRICE'] : '',
-                                "TAX_NOTE" => $res['TAX_NOTE'] != 'undefined' ? $request['TAX_NOTE'] : '',
-                                "TAX_AMT" => $res['TAX_AMT'] != 'undefined' ? $request['TAX_AMT'] : '',
-                                "NOTE" => $res['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                                "THANH_TOAN_MK" => $res['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
-                                'MODIFY_USER' =>  $res['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
-                                'MODIFY_DT' =>  date("YmdHis"),
-                            ]
-                        );
-                }
+            if ($request->TYPE == 'JOB_ORDER') {
+                DB::table(config('constants.JOB_D_TABLE'))
+                    ->where('JOB_NO', $JOB_NO)
+                    ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                    ->where('SER_NO', $request['SER_NO'])
+                    ->update(
+                        [
+                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => $request['REV_TYPE'] != '' ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => $request['INV_NO'] != '' ? $request['INV_NO'] : '',
+                            "PORT_AMT" => $request['PORT_AMT'] ,
+                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'],
+                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
+                            'MODIFY_USER' =>  $request['MODIFY_USER'] != '' ? $request['MODIFY_USER'] : '',
+                            'MODIFY_DT' =>  date("YmdHis"),
+                        ]
+                    );
+            } elseif ($request->TYPE == 'JOB_ORDER_BOAT') {
+                DB::table(config('constants.JOB_D_TABLE'))
+                    ->where('JOB_NO', $JOB_NO)
+                    ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                    ->where('SER_NO', $request['SER_NO'])
+                    ->update(
+                        [
+                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
+                            "UNIT" => $request['UNIT'] != '' ? $request['UNIT'] : '',
+                            "QTY" => $request['QTY'],
+                            "PRICE" => $request['PRICE'],
+                            "TAX_NOTE" => $request['TAX_NOTE'],
+                            "TAX_AMT" => $request['TAX_AMT'],
+                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
+                            'MODIFY_USER' =>  $request['MODIFY_USER'] != '' ? $request['MODIFY_USER'] : '',
+                            'MODIFY_DT' =>  date("YmdHis"),
+                        ]
+                    );
             }
-            return '200';
+            $data = JobD::getJob($request->JOB_NO, $request->TYPE);
+            return $data;
         } catch (\Exception $e) {
+            dd($e);
             return '201';
         }
     }
-    public static function change($request)
-    {
-        try {
-            $count = DB::table(config('constants.JOB_D_TABLE'))
-                ->where('JOB_NO',  $request['JOB_NO'])
-                ->count();
-            if ($count == 0) {
-                $data = JobD::add($request);
-            } else {
-                $data = JobD::edit($request);
-            }
-            if ($data == '200') {
-                $data = JobD::getJob($request['JOB_NO'], $request->TYPE);
-            } else {
-                $data = 'Lỗi vui lòng kiểm tra lại!!! ';
-            }
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
+
     public static function remove($JOB_NO)
     {
         DB::table(config('constants.JOB_D_TABLE'))

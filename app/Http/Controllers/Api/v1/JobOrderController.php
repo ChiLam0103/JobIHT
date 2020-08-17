@@ -100,11 +100,45 @@ class JobOrderController extends Controller
             ], Response::HTTP_OK);
         }
     }
-
+    public function addJobD(Request $request)
+    {
+        $data = JobD::add($request);
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
+    }
     public function edit(Request $request)
     {
         $job_m = JobM::edit($request);
-        $job_d = JobD::change($request);
+        if ($job_m == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $job_m,
+            ], Response::HTTP_OK);
+        }
+    }
+    public function editJobD(Request $request)
+    {
+        $job_d = JobD::edit($request);
         if ($job_d == '201') {
             return response()->json(
                 [
@@ -116,12 +150,10 @@ class JobOrderController extends Controller
         } else {
             return response()->json([
                 'success' => true,
-                'job_m' => $job_m,
-                'job_d' => $job_d,
+                'data' => $job_d,
             ], Response::HTTP_OK);
         }
     }
-
     public function removeCheck($id)
     {
         $data = JobM::removeCheck($id);
