@@ -120,7 +120,7 @@
 
 <body onload="window.print();">
     <div id="page" class="page">
-        <div class="title">JOB ORDER</div>
+        <div class="title">JOB ORDER & BOOK TÀU</div>
 
         <div class="tab">
             <nav class="tab-left-2">
@@ -185,59 +185,61 @@
                 </ul>
             </nav>
         </div>
-        @foreach($pay_type as $pay)
+        @foreach ($pay_type as $pay)
             <h4>{{ $pay->PAY_NAME }}</h4>
             <table class="table">
                 <tr>
-                    <th rowspan="2" style="width: 5%">NO</th>
-                    <th rowspan="2" style="width: 40%">Description</th>
-                    <th rowspan="2" style="width: 10%">REV</th>
-                    <th colspan="2">Amount</th>
-                    <th rowspan="2" style="width: 20%"></th>
+                    <th style="width: 5%">NO</th>
+                    <th style="width: 25%">Description</th>
+                    <th style="width: 10%">Amount</th>
+                    <th style="width: 5%">Số lượng</th>
+                    <th style="width: 15%">Giá trước thuế</th>
+                    <th style="width: 10%">Tiền thuế</th>
+                    <th style="width: 15%">Tổng tiền</th>
+                    <th style="width: 15%">Note</th>
                 </tr>
-                <tr>
-                    <th>Cảng</th>
-                    <th>KCN</th>
-                </tr>
-                @foreach($order_d as $order)
-                    @if($pay->PAY_NO==$order->ORDER_TYPE)
+                @foreach ($order_d as $order)
+                    @if ($pay->PAY_NO == $order->ORDER_TYPE)
+                    <span class="display-none">
+                        {{ $giaSauThue = $order->PRICE + $order->PRICE * ($order->TAX_NOTE / 100) }}
+                        {{ $tongTien = $giaSauThue * $order->QTY }}
+                    </span>
                         <tr>
                             <td>{{ $order->SER_NO }}</td>
-                            <td>{{ $order->DESCRIPTION }}</td>
-                            <td>{{ $order->REV_TYPE }} </td>
+                            <td style="text-align: left;">{{ $order->DESCRIPTION }}</td>
                             <td>{{ $order->PORT_AMT ? number_format($order->PORT_AMT) : '' }}</td>
-                            <td>{{ $order->INDUSTRY_ZONE_AMT ? number_format($order->INDUSTRY_ZONE_AMT) : '' }}</td>
-                            <td></td>
+                            <td>{{ $order->QTY ? number_format($order->QTY) : '' }}</td>
+                            <td>{{ $order->PRICE ? number_format($order->PRICE) : '' }}</td>
+                            <td>{{ $order->TAX_AMT ? number_format($order->TAX_AMT) : '' }}</td>
+                            <td>{{ number_format($tongTien) }}</td>
+                            <td>{{ $order->NOTE }}</td>
                         </tr>
                         <span class="display-none">
-                            {{ $sum_port += (int) $order->PORT_AMT }}
                             {{ $total_port += (int) $order->PORT_AMT }}
-                            {{ $sum_kcn += (int) $order->INDUSTRY_ZONE_AMT }}
-                            {{ $total_kcn += (int) $order->INDUSTRY_ZONE_AMT }}
+                            {{ $total_tienTruocThue += (int) $order->PRICE }}
+                            {{ $total_tienThue += (int) $order->TAX_AMT }}
+                            {{ $total_tongTien += (int) $tongTien}}
                         </span>
                     @endif
                 @endforeach
-                <tr class="amount">
-                    <td></td>
-                    <td>Toal Amount</td>
-                    <td></td>
-                    <td>{{ number_format($sum_port) }}<i class="display-none">{{ $sum_port = 0 }}</i></td>
-                    <td>{{ number_format($sum_kcn) }}<i class="display-none">{{ $sum_kcn = 0 }}</i></td>
-                    <td></td>
-                </tr>
             </table>
         @endforeach
         <table class="table" style="margin-top: 1em">
             <tr>
                 <th style="width: 5%"></th>
-                <th style="width: 40%">TOAL AMOUNT</th>
-                <th style="width: 10%"></th>
-                <th colspan="2">{{ number_format($total_port + $total_kcn) }}</th>
-                <th style="width: 20%"></th>
+                <th style="width: 25%">TOAL AMOUNT</th>
+                <th style="width: 10%">{{ number_format($total_port) }}</th>
+                <th style="width: 5%"></th>
+                <th style="width: 15%">{{ number_format($total_tienTruocThue) }}</th>
+                <th style="width: 10%">{{ number_format($total_tienThue) }}</th>
+                <th style="width: 15%">{{ number_format($total_tongTien) }}</th>
+                <th style="width: 15%"></th>
             </tr>
             <tr>
                 <td></td>
                 <td>Profit</td>
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

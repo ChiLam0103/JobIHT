@@ -12,40 +12,35 @@ use App\Models\PayType;
 
 class PrintController extends Controller
 {
-
-    public function jobStart($id)
+    //1 in phieu theo doi
+    public function jobStart($jobfrom, $jobto)
     {
-        $data = Prints::jobStart($id);
-        if ($data) {
-            return view('print\job-start')->with('data', $data);
+        $job = Prints::jobStart($jobfrom, $jobto);
+        if ($job) {
+            return view('print\job-start\job')->with('job', $job);
         } else {
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'null'
+                    'message' => 'PHẢI CHỌN JOB THEO THỨ TỰ NHỎ ĐẾN LỚN'
                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }
     }
-    public function jobOrder($id)
+    //2 in job order
+    public function jobOrder($jobno)
     {
-        $order_m = Prints::jobOrder($id);
-        $order_d = Prints::jobOrder_D($id);
-        $pay_type = PayType::listPayType_JobNo($id);
-        $sum_port = 0;
-        $sum_kcn = 0;
+        $order_m = Prints::jobOrder($jobno);
+        $order_d = Prints::jobOrder_D($jobno);
+        $pay_type = PayType::listPayType_JobNo($jobno);
         $total_port = 0;
-        $total_kcn = 0;
         if ($order_m) {
-            return view('print\job-order', [
+            return view('print\job-order\job', [
                 'data' => $order_m,
                 'order_d' => $order_d,
                 'pay_type' => $pay_type,
-                'sum_port' => $sum_port,
-                'sum_kcn' => $sum_kcn,
                 'total_port' => $total_port,
-                'total_kcn' => $total_kcn
             ]);
         } else {
             return response()->json(
@@ -57,11 +52,46 @@ class PrintController extends Controller
             );
         }
     }
-    public function jobOrder_Date($todate, $fromdate)
+    public function jobOrderBoat($jobno)
     {
-        $data = Prints::jobOrder_Date($todate, $fromdate);
-        if ($data) {
-            return view('print\job-start')->with('data', $data);
+        $order_m = Prints::jobOrder($jobno);
+        $order_d = Prints::jobOrder_D($jobno);
+        $pay_type = PayType::listPayType_JobNo($jobno);
+        $total_port = 0;
+        $total_tienTruocThue = 0;
+        $total_tienThue = 0;
+        $total_tongTien = 0;
+
+        if ($order_m) {
+            return view('print\job-order\job-boat', [
+                'data' => $order_m,
+                'order_d' => $order_d,
+                'pay_type' => $pay_type,
+                'total_port' => $total_port,
+                'total_tienTruocThue' => $total_tienTruocThue,
+                'total_tienThue' => $total_tienThue,
+                'total_tongTien' => $total_tongTien,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function jobOrder_Date($fromdate, $todate)
+    {
+        $job_m = Prints::jobOrder_Date($fromdate, $todate);
+        $job_d = Prints::getJobOrder_D($fromdate, $todate);
+        // dd($job_d);
+        if ($job_m) {
+            return view('print\job-order\date', [
+                'job_m' => $job_m,
+                'job_d' => $job_d
+            ]);
         } else {
             return response()->json(
                 [

@@ -128,11 +128,11 @@
                     <li>Số Tạm Ứng</li>
                     <li>Date</li>
                     <li>J/O No</li>
-                    <li>Shipper </li>
+                    <li>Shipper</li>
                     <li>Consignee</li>
                     <li>From</li>
                     <li>Container Qty</li>
-                    <li>POL </li>
+                    <li>POL</li>
                 </ul>
             </nav>
             <nav class="tab-right">
@@ -189,57 +189,36 @@
             <h4>{{ $pay->PAY_NAME }}</h4>
             <table class="table">
                 <tr>
-                    <th rowspan="2" style="width: 5%">NO</th>
-                    <th rowspan="2" style="width: 40%">Description</th>
-                    <th rowspan="2" style="width: 10%">REV</th>
-                    <th colspan="2">Amount</th>
-                    <th rowspan="2" style="width: 20%"></th>
-                </tr>
-                <tr>
-                    <th>Cảng</th>
-                    <th>KCN</th>
+                    <th style="width: 5%">NO</th>
+                    <th style="width: 50%">Description</th>
+                    <th style="width: 20%">Amount</th>
+                    <th style="width: 25%">Note</th>
                 </tr>
                 @foreach($order_d as $order)
-                    @if($pay->PAY_NO == $order->ORDER_TYPE)
+                    @if($pay->PAY_NO==$order->ORDER_TYPE)
                         <tr>
                             <td>{{ $order->SER_NO }}</td>
-                            <td>{{ $order->DESCRIPTION }}</td>
-                            <td>{{ $order->REV_TYPE }} </td>
+                            <td style="text-align: left;">{{ $order->DESCRIPTION }}</td>
                             <td>{{ $order->PORT_AMT ? number_format($order->PORT_AMT) : '' }}</td>
-                            <td>{{ $order->INDUSTRY_ZONE_AMT ? number_format($order->INDUSTRY_ZONE_AMT) : '' }}</td>
-                            <td></td>
+                            <td>{{ $order->NOTE }}</td>
                         </tr>
                         <span class="display-none">
-                            {{ $sum_port += (int) $order->PORT_AMT }}
                             {{ $total_port += (int) $order->PORT_AMT }}
-                            {{ $sum_kcn += (int) $order->INDUSTRY_ZONE_AMT }}
-                            {{ $total_kcn += (int) $order->INDUSTRY_ZONE_AMT }}
                         </span>
                     @endif
-            @endforeach
-            <tr class="amount">
-                <td></td>
-                <td>Toal Amount</td>
-                <td></td>
-                <td>{{ number_format($sum_port) }}<i class="display-none">{{ $sum_port = 0 }}</i></td>
-                <td>{{ number_format($sum_kcn) }}<i class="display-none">{{ $sum_kcn = 0 }}</i></td>
-                <td></td>
-            </tr>
+                @endforeach
             </table>
         @endforeach
         <table class="table" style="margin-top: 1em">
             <tr>
                 <th style="width: 5%"></th>
-                <th style="width: 40%">TOAL AMOUNT</th>
-                <th style="width: 10%"></th>
-                <th colspan="2">{{ number_format($total_port + $total_kcn) }}</th>
-                <th style="width: 20%"></th>
+                <th style="width: 50%">TOAL AMOUNT</th>
+                <th style="width: 20%">{{ number_format($total_port) }}</th>
+                <th style="width: 25%"></th>
             </tr>
             <tr>
                 <td></td>
                 <td>Profit</td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
             </tr>

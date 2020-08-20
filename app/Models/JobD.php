@@ -12,7 +12,8 @@ class JobD extends Model
         $a = "";
         $a = DB::table('JOB_ORDER_D as jd')
             ->leftJoin('PAY_TYPE as pt', 'jd.ORDER_TYPE', '=', 'pt.PAY_NO')
-            ->where('jd.JOB_NO', $id);
+            ->where('jd.JOB_NO', $id)
+            ->where('jd.BRANCH_ID','IHTVN1');
         if ($type == 'JOB_ORDER') {
             $data = $a->select(
                 'pt.PAY_NAME as ORDER_TYPE_NAME',
@@ -27,7 +28,8 @@ class JobD extends Model
                 'jd.INPUT_USER',
                 'jd.INPUT_DT',
                 'jd.MODIFY_USER',
-                'jd.MODIFY_DT'
+                'jd.MODIFY_DT',
+                'jd.THANH_TOAN_MK'
             )
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
@@ -49,7 +51,8 @@ class JobD extends Model
                 'jd.INPUT_USER',
                 'jd.INPUT_DT',
                 'jd.MODIFY_USER',
-                'jd.MODIFY_DT'
+                'jd.MODIFY_DT',
+                'jd.THANH_TOAN_MK'
             )
                 // ->selectRaw('(jd.PRICE * jd.QTY) + (jd.PRICE * jd.QTY)/jd.TAX_NOTE AS PRICE_TAX_AFFTER')
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
@@ -63,6 +66,7 @@ class JobD extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $count = DB::table(config('constants.JOB_D_TABLE'))
             ->where('JOB_NO', $job_no)
+            ->where('BRANCH_ID','IHTVN1')
             ->where('ORDER_TYPE', $order_type)
             ->count();
         $count = (int) $count + 1;
@@ -80,17 +84,17 @@ class JobD extends Model
                     ->insert(
                         [
                             "JOB_NO" => $request->JOB_NO,
-                            "ORDER_TYPE" => $request['ORDER_TYPE'] != '' ? $request['ORDER_TYPE'] : '',
+                            "ORDER_TYPE" => $request['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
                             "SER_NO" => $ser_no,
-                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
-                            "REV_TYPE" => $request['REV_TYPE'] != '' ? $request['REV_TYPE'] : 'N',
-                            "INV_NO" => $request['INV_NO'] != '' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'] != '' ? $request['PORT_AMT'] : '',
-                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != '' ? $request['INDUSTRY_ZONE_AMT'] : '',
-                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : 'N',
-                            "BRANCH_ID" => $request['BRANCH_ID'] != '' ? $request['BRANCH_ID'] : 'IHTVN1',
-                            "INPUT_USER" => $request['INPUT_USER'] != '' ? $request['INPUT_USER'] : '',
+                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
+                            "PORT_AMT" => $request['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : '',
+                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != 'undefined' ? $request['INDUSTRY_ZONE_AMT'] : '',
+                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : 'N',
+                            "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
                             "INPUT_DT" => date("YmdHis")
                         ]
                     );
@@ -99,18 +103,18 @@ class JobD extends Model
                     ->insert(
                         [
                             "JOB_NO" => $request->JOB_NO,
-                            "ORDER_TYPE" => $request['ORDER_TYPE'] != '' ? $request['ORDER_TYPE'] : '',
+                            "ORDER_TYPE" => $request['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
                             "SER_NO" => $ser_no,
-                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
-                            "UNIT" => $request['UNIT'] != '' ? $request['UNIT'] : '',
-                            "QTY" => $request['QTY'] != '' ? $request['QTY'] : '',
-                            "PRICE" => $request['PRICE'] != '' ? $request['PRICE'] : '',
-                            "TAX_NOTE" => $request['TAX_NOTE'] != '' ? $request['TAX_NOTE'] : '',
-                            "TAX_AMT" => $request['TAX_AMT'] != '' ? $request['TAX_AMT'] : '',
-                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : 'N',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
-                            "BRANCH_ID" => $request['BRANCH_ID'] != '' ? $request['BRANCH_ID'] : 'IHTVN1',
-                            "INPUT_USER" => $request['INPUT_USER'] != '' ? $request['INPUT_USER'] : '',
+                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
+                            "UNIT" => $request['UNIT'] != 'undefined' ? $request['UNIT'] : '',
+                            "QTY" => $request['QTY'] != 'undefined' ? $request['QTY'] : '',
+                            "PRICE" => $request['PRICE'] != 'undefined' ? $request['PRICE'] : '',
+                            "TAX_NOTE" => $request['TAX_NOTE'] != 'undefined' ? $request['TAX_NOTE'] : '',
+                            "TAX_AMT" => $request['TAX_AMT'] != 'undefined' ? $request['TAX_AMT'] : '',
+                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : 'N',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
+                            "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
                             "INPUT_DT" => date("YmdHis")
                         ]
                     );
@@ -134,14 +138,14 @@ class JobD extends Model
                     ->where('SER_NO', $request['SER_NO'])
                     ->update(
                         [
-                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
-                            "REV_TYPE" => $request['REV_TYPE'] != '' ? $request['REV_TYPE'] : 'N',
-                            "INV_NO" => $request['INV_NO'] != '' ? $request['INV_NO'] : '',
+                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
                             "PORT_AMT" => $request['PORT_AMT'] ,
                             "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'],
-                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
-                            'MODIFY_USER' =>  $request['MODIFY_USER'] != '' ? $request['MODIFY_USER'] : '',
+                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
+                            'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                             'MODIFY_DT' =>  date("YmdHis"),
                         ]
                     );
@@ -152,15 +156,15 @@ class JobD extends Model
                     ->where('SER_NO', $request['SER_NO'])
                     ->update(
                         [
-                            "DESCRIPTION" => $request['DESCRIPTION'] != '' ? $request['DESCRIPTION'] : '',
-                            "UNIT" => $request['UNIT'] != '' ? $request['UNIT'] : '',
+                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
+                            "UNIT" => $request['UNIT'] != 'undefined' ? $request['UNIT'] : '',
                             "QTY" => $request['QTY'],
                             "PRICE" => $request['PRICE'],
                             "TAX_NOTE" => $request['TAX_NOTE'],
                             "TAX_AMT" => $request['TAX_AMT'],
-                            "NOTE" => $request['NOTE'] != '' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != '' ? $request['THANH_TOAN_MK'] : '',
-                            'MODIFY_USER' =>  $request['MODIFY_USER'] != '' ? $request['MODIFY_USER'] : '',
+                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
+                            'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                             'MODIFY_DT' =>  date("YmdHis"),
                         ]
                     );

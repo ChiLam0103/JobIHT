@@ -12,9 +12,7 @@
     }
 
     .page {
-        /* width: 21cm; */
         overflow: hidden;
-        /* min-height: 297mm; */
         padding: 0.5cm;
         margin-left: auto;
         margin-right: auto;

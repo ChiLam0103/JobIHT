@@ -157,13 +157,14 @@ Route::namespace('Api\v1')->group(function () {
 
             // 1.in phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
-                Route::get('jobno={id}', 'PrintController@jobStart');
+                Route::get('fromjob={fromjob}&tojob={tojob}', 'PrintController@jobStart');
             });
             //2.in job order
             Route::group(['prefix' => 'job-order'], function () {
-                Route::get('jobno={id}', 'PrintController@jobOrder');
+                Route::get('jobno={jobno}', 'PrintController@jobOrder');
+                Route::get('boat/jobno={jobno}', 'PrintController@jobOrderBoat');
                 // Route::get('custno={id}', 'PrintController@jobOrder_Customer');
-                Route::get('todate={todate}&fromdate={fromdate}', 'PrintController@jobOrder_Date');
+                Route::get('fromdate={fromdate}&todate={todate}', 'PrintController@jobOrder_Date');
             });
             //3.bao bieu refund
             Route::group(['prefix' => 'refund'], function () {

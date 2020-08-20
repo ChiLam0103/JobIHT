@@ -13,6 +13,7 @@ class JobStart extends Model
         $data = DB::table('JOB_START as js')
             ->orderBy('js.JOB_NO', 'desc')
             ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->where('js.BRANCH_ID','IHTVN1')
             ->select('c.CUST_NAME', 'js.JOB_NO')
             ->take(1000)
             ->get();
@@ -22,7 +23,8 @@ class JobStart extends Model
     {
         $a = DB::table('JOB_START as js')
             ->orderBy('js.JOB_NO', 'desc')
-            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO');
+            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->where('js.BRANCH_ID','IHTVN1');
 
         if ($type == '1') { //jobno
             $a->where('js.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -45,6 +47,7 @@ class JobStart extends Model
         $data = DB::table('JOB_START as js')
             ->leftJoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
             ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->where('js.BRANCH_ID','IHTVN1')
             ->whereNull('jm.JOB_NO')
             ->orderBy('js.JOB_NO', 'desc')
             ->select('c.CUST_NAME', 'js.JOB_NO')
@@ -58,6 +61,7 @@ class JobStart extends Model
             ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
             ->select('c.CUST_NAME', 'js.*')
             ->where('js.JOB_NO', $id)
+            ->where('js.BRANCH_ID','IHTVN1')
             ->first();
         return $data;
     }

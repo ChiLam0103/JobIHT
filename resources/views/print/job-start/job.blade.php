@@ -97,9 +97,11 @@
     .footer th {
         text-align: center
     }
-
+    .tab-form li p{
+        border-bottom: 1px dashed;
+    }
 </style>
-
+@foreach ($job as $data)
 <body onload="window.print();">
     <div id="page" class="page">
         <div class="title">I.H.T LOGISTICS CO.,LTD</div>
@@ -170,7 +172,7 @@
                     <nav class="padding-left-15">
                         <ul>
                             <li>
-                                <p>a. Tờ khai:<i class="hr"></i></p>
+                                <p>a. Tờ khai:</p>
                             </li>
                             <li>
                                 <p>b. Packing list:</p>
@@ -179,19 +181,19 @@
                                 <p>c.Invoice:</p>
                             </li>
                             <li>
-                                <p>d: Hợp đồng</p>
+                                <p>d. Hợp đồng:</p>
                             </li>
                             <li>
-                                <p>e: Định mức</p>
+                                <p>e. Định mức:</p>
                             </li>
                             <li>
-                                <p>f: Bill</p>
+                                <p>f. Bill:</p>
                             </li>
                             <li>
-                                <p>g: Giấy phép</p>
+                                <p>g. Giấy phép:</p>
                             </li>
                             <li>
-                                <p>h: Chứng từ khác</p>
+                                <p>h. Chứng từ khác:</p>
                             </li>
                         </ul>
                     </nav>
@@ -230,3 +232,5 @@
         </div>
     </div>
 </body>
+@endforeach
+
