@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Models\Prints;
+use App\Models\PrintFile;
 use App\Models\PayType;
 
 
-class PrintController extends Controller
+class PrintFileController extends Controller
 {
     //1 in phieu theo doi
-    public function jobStart($jobfrom, $jobto)
+    public function jobStart($fromjob, $tojob)
     {
-        $job = Prints::jobStart($jobfrom, $jobto);
+        $job = PrintFile::jobStart($fromjob, $tojob);
         if ($job) {
-            return view('print\job-start\job')->with('job', $job);
+            return view('print\file\job-start\job')->with('job', $job);
         } else {
             return response()->json(
                 [
@@ -31,12 +30,12 @@ class PrintController extends Controller
     //2 in job order
     public function jobOrder($jobno)
     {
-        $order_m = Prints::jobOrder($jobno);
-        $order_d = Prints::jobOrder_D($jobno);
+        $order_m = PrintFile::jobOrder($jobno);
+        $order_d = PrintFile::jobOrder_D($jobno);
         $pay_type = PayType::listPayType_JobNo($jobno);
         $total_port = 0;
         if ($order_m) {
-            return view('print\job-order\job', [
+            return view('print\file\job-order\job', [
                 'data' => $order_m,
                 'order_d' => $order_d,
                 'pay_type' => $pay_type,
@@ -54,8 +53,8 @@ class PrintController extends Controller
     }
     public function jobOrderBoat($jobno)
     {
-        $order_m = Prints::jobOrder($jobno);
-        $order_d = Prints::jobOrder_D($jobno);
+        $order_m = PrintFile::jobOrder($jobno);
+        $order_d = PrintFile::jobOrder_D($jobno);
         $pay_type = PayType::listPayType_JobNo($jobno);
         $total_port = 0;
         $total_tienTruocThue = 0;
@@ -63,7 +62,7 @@ class PrintController extends Controller
         $total_tongTien = 0;
 
         if ($order_m) {
-            return view('print\job-order\job-boat', [
+            return view('print\file\job-order\job-boat', [
                 'data' => $order_m,
                 'order_d' => $order_d,
                 'pay_type' => $pay_type,
@@ -82,13 +81,33 @@ class PrintController extends Controller
             );
         }
     }
-    public function jobOrder_Date($fromdate, $todate)
+    public function getJobOrderCustomer($custno)
     {
-        $job_m = Prints::jobOrder_Date($fromdate, $todate);
-        $job_d = Prints::getJobOrder_D($fromdate, $todate);
-        // dd($job_d);
+
+        $job_m = PrintFile::getJobOrderCustomer($custno);
         if ($job_m) {
-            return view('print\job-order\date', [
+            return response()->json([
+                'success' => true,
+                'job_m' => $job_m,
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function jobOrderCustomer($custno, $jobno)
+    {
+
+        $job_m = PrintFile::jobOrderCustomer($custno, $jobno);
+        $job_d = PrintFile::jobOrderCustomer_D($custno, $jobno);
+        // dd($job_m,$job_d);
+        if ($job_m) {
+            return view('print\file\job-order\customer', [
                 'job_m' => $job_m,
                 'job_d' => $job_d
             ]);
@@ -102,7 +121,28 @@ class PrintController extends Controller
             );
         }
     }
-    public function refund($type, $id, $jobno, $todate, $fromdate)
+    public function jobOrder_Date($fromdate, $todate)
+    {
+        $job_m = PrintFile::jobOrder_Date($fromdate, $todate);
+        $job_d = PrintFile::getJobOrder_D($fromdate, $todate);
+        // dd($job_d);
+        if ($job_m) {
+            return view('print\file\job-order\date', [
+                'job_m' => $job_m,
+                'job_d' => $job_d
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    //3.bao bieu refund
+    public function refund($type, $id, $jobno, $fromdate, $todate)
     {
         $type_name = "HÃNG TÀU";
         if ($type == 2) {
@@ -112,11 +152,11 @@ class PrintController extends Controller
         }
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $todate = $todate != 'null' ? $todate : '19000101';
-        $fromdate = $fromdate != 'null' ? $fromdate : $today;
-        $data = Prints::refund($type, $id, $jobno, $todate, $fromdate);
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = PrintFile::refund($type, $id, $jobno, $fromdate, $todate);
         if ($data) {
-            return view('print\refund', [
+            return view('print\file\refund\index', [
                 'data' => $data,
                 'type_name' => $type_name,
                 'todate' => $todate,
@@ -132,15 +172,16 @@ class PrintController extends Controller
             );
         }
     }
-    public function statisticCreatedJob($cust, $user, $todate, $fromdate)
+    //4.thong ke
+    public function statisticCreatedJob($cust, $user, $fromdate, $todate)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $todate = $todate != 'null' ? $todate : '';
-        $fromdate = $fromdate != 'null' ? $fromdate : $today;
-        $data = Prints::statisticCreatedJob($cust, $user, $todate, $fromdate);
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = PrintFile::statisticCreatedJob($cust, $user, $fromdate, $todate);
         if ($data) {
-            return view('print\statistic-created-job', [
+            return view('print\file\statistic-job-order\created', [
                 'data' => $data,
                 'todate' => $todate,
                 'fromdate' => $fromdate
@@ -155,15 +196,15 @@ class PrintController extends Controller
             );
         }
     }
-    public function statisticUserImportJob($cust, $user, $todate, $fromdate)
+    public function statisticUserImportJob($cust, $user,  $fromdate, $todate)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $todate = $todate != 'null' ? $todate : '';
-        $fromdate = $fromdate != 'null' ? $fromdate : $today;
-        $data = Prints::statisticUserImportJob($cust, $user, $todate, $fromdate);
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = PrintFile::statisticUserImportJob($cust, $user, $fromdate, $todate);
         if ($data) {
-            return view('print\statistic-created-job', [
+            return view('print\file\statistic-job-order\user-import', [
                 'data' => $data,
                 'todate' => $todate,
                 'fromdate' => $fromdate

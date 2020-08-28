@@ -73,13 +73,16 @@
     .amount td {
         font-weight: bold;
     }
+    .text-align-left td{
+        text-align: left!important;
+    }
 </style>
 
 <body onload="window.print();">
     <div id="page" class="page">
-        <div class="title">BÁO CÁO REEFUND {{ $type_name }}</div>
-        <div class="title-sub"> TỪ NGÀY: {{ date('Y/m/d', strtotime($todate)) }} - ĐẾN NGÀY:
-            {{ date('Y/m/d', strtotime($fromdate)) }} </div>
+        <div class="title">BÁO CÁO REFUND {{ $type_name }}</div>
+        <div class="title-sub"> TỪ NGÀY: {{ date('Y/m/d', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ date('Y/m/d', strtotime($todate)) }} </div>
         <br>
         <table class="table">
             <tr>
@@ -97,7 +100,7 @@
                 <th>THANH TOÁN</th>
             </tr>
             @foreach($data as $item)
-                <tr>
+                <tr class="text-align-left">
                     <td>{{ $item->CUST_NO }}</td>
                     <td>{{ $item->CUST_NAME }}</td>
                     <td>{{ $item->JOB_NO }}</td>

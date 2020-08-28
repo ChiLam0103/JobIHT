@@ -109,7 +109,7 @@ Route::namespace('Api\v1')->group(function () {
         //IV. payment manager(quan ly thu chi)
         Route::group(['prefix' => 'payment'], function () {
             //1.phieu chi tam ung
-            Route::group(['prefix' => 'advance-slip'], function () {
+            Route::group(['prefix' => 'lender'], function () {
                 Route::get('/', 'LenderController@list');
                 Route::get('search/type={type}&value={value}', 'LenderController@search');
                 Route::get('des/{id}', 'LenderController@des');
@@ -142,8 +142,8 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'check-data'], function () {
                 Route::get('/', 'DebitNoteController@checkData');
             });
-             //8. chi phi tien tau/cuoc cont
-             Route::group(['prefix' => 'boat-fee'], function () {
+            //8. chi phi tien tau/cuoc cont
+            Route::group(['prefix' => 'boat-fee'], function () {
                 Route::get('list-boat-month-m', 'BoatFeeController@listBoatMonthM');
                 Route::get('list-fee-month-m', 'BoatFeeController@listFeeMonthM');
                 Route::get('des-month/type={FEE_TYPE}&value={BOAT_FEE_MONTH}', 'BoatFeeController@desMonth');
@@ -154,30 +154,42 @@ Route::namespace('Api\v1')->group(function () {
         //print
         Route::group(['prefix' => 'print'], function () {
             //II. báo biểu hồ sơ
+            Route::group(['prefix' => 'file'], function () {
+                // 1.in phieu theo doi
+                Route::group(['prefix' => 'job-start'], function () {
+                    Route::get('fromjob={fromjob}&tojob={tojob}', 'PrintFileController@jobStart');
+                });
+                //2.in job order
+                Route::group(['prefix' => 'job-order'], function () {
+                    Route::get('jobno={jobno}', 'PrintFileController@jobOrder');
+                    Route::get('boat/jobno={jobno}', 'PrintFileController@jobOrderBoat');
+                    Route::get('custno={id}&jobno={jobno}', 'PrintFileController@jobOrderCustomer');
+                    Route::get('custno={id}', 'PrintFileController@getJobOrderCustomer');
+                    Route::get('fromdate={fromdate}&todate={todate}', 'PrintFileController@jobOrder_Date');
+                });
+                //3.bao bieu refund
+                Route::group(['prefix' => 'refund'], function () {
+                    //1.hang tau, 2.khach hang, 3.dai ly
+                    Route::get('type={type}&id={id}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'PrintFileController@refund');
+                });
+                //4.thong ke job order
+                Route::group(['prefix' => 'statistic'], function () {
+                    //thống kê tạo job
+                    Route::get('created-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'PrintFileController@statisticCreatedJob');
+                    Route::get('user-import-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'PrintFileController@statisticUserImportJob');
+                });
+            });
+            //IV. payment manager(quan ly thu chi)
+            Route::group(['prefix' => 'payment'], function () {
+                //1.phieu chi tam ung
+                Route::group(['prefix' => 'advance-payment'], function () {
+                    //1.phieu chi
+                    Route::get('fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@lender_AdvancePayment');
+                    Route::get('advance-payment', 'PrintPaymentController@getAdvancePayment');
 
-            // 1.in phieu theo doi
-            Route::group(['prefix' => 'job-start'], function () {
-                Route::get('fromjob={fromjob}&tojob={tojob}', 'PrintController@jobStart');
-            });
-            //2.in job order
-            Route::group(['prefix' => 'job-order'], function () {
-                Route::get('jobno={jobno}', 'PrintController@jobOrder');
-                Route::get('boat/jobno={jobno}', 'PrintController@jobOrderBoat');
-                // Route::get('custno={id}', 'PrintController@jobOrder_Customer');
-                Route::get('fromdate={fromdate}&todate={todate}', 'PrintController@jobOrder_Date');
-            });
-            //3.bao bieu refund
-            Route::group(['prefix' => 'refund'], function () {
-                //1.hang tau, 2.khach hang, 3.dai ly
-                Route::get('type={type}&id={id}&jobno={jobno}&todate={todate}&fromdate={fromdate}', 'PrintController@refund');
-            });
-            //4.thong ke job order
-            Route::group(['prefix' => 'statistic'], function () {
-                //thống kê tạo job
-                Route::get('created-job/cust={cust}&user={user}&todate={todate}&fromdate={fromdate}', 'PrintController@statisticCreatedJob');
-                Route::get('user-import-job/cust={cust}&user={user}&todate={todate}&fromdate={fromdate}', 'PrintController@statisticUserImportJob');
+
+                });
             });
         });
     });
-
 });

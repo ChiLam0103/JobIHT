@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class Lender extends Model
 {
-    // C,T,U
+    // C:chi truc tiep,T: chi tam ung,U:phieu tam ung
     public static function list()
     {
         $data = DB::table('LENDER as l')
-        ->rightJoin('LENDER_TYPE as lt','l.LENDER_TYPE','lt.LENDER_TYPE')
-        ->select('lt.LENDER_NAME','l.*')
-        ->orderBy('l.LENDER_NO', 'desc')->take(9000)->get();
+            ->rightJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
+            ->select('lt.LENDER_NAME', 'l.*')
+            ->orderBy('l.LENDER_NO', 'desc')->take(9000)->get();
         return $data;
     }
     public static function search($type, $value)
@@ -28,7 +28,7 @@ class Lender extends Model
         } elseif ($type == '3') { //job no
             $a->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
         }
-        $data = $a->select( 'l.*')
+        $data = $a->select('l.*')
             ->take(9000)
             ->get();
         return $data;
@@ -36,9 +36,9 @@ class Lender extends Model
     public static function des($id)
     {
         $data = DB::table('LENDER as l')
-        ->join('LENDER_TYPE as lt','l.LENDER_TYPE','lt.LENDER_TYPE')
-        ->leftJoin('CUSTOMER as c','l.CUST_NO','c.CUST_NO')
-        ->select('lt.LENDER_NAME','c.CUST_NAME','l.*')
+            ->join('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
+            ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
+            ->select('lt.LENDER_NAME', 'c.CUST_NAME', 'l.*')
             ->where('l.LENDER_NO', $id)->first();
         return $data;
     }
@@ -67,7 +67,7 @@ class Lender extends Model
                         "PNL_NO" => $request['PNL_NO'],
                         "PNL_NAME" => $request['PNL_NAME'],
                         "DOR_NO" => $request['DOR_NO'],
-                        "TOTAL_AMT" => $request['TOTAL_AMT'],
+                        "AMOUNT_1" => $request['AMOUNT_1'],
                         "LEND_REASON" => $request['LEND_REASON'],
                         "JOB_NO" => $request['JOB_NO'],
                         "CUST_NO" => $request['CUST_NO'],
@@ -79,18 +79,18 @@ class Lender extends Model
                         "INPUT_DT" => date("YmdHis")
                     ]
                 );
-                $data = Lender::des($lender_no);
-                return $data;
-            } catch (\Exception $e) {
-                return '201';
-            }
+            $data = Lender::des($lender_no);
+            return $data;
+        } catch (\Exception $e) {
+            return '201';
+        }
     }
     public static function edit($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             DB::table(config('constants.LENDER_TABLE'))
-            ->where('LENDER_NO',$request['LENDER_NO'])
+                ->where('LENDER_NO', $request['LENDER_NO'])
                 ->update(
                     [
                         "LENDER_DATE" => date("Ymd"),
@@ -98,7 +98,10 @@ class Lender extends Model
                         "PNL_NO" => $request['PNL_NO'],
                         "PNL_NAME" => $request['PNL_NAME'],
                         "DOR_NO" => $request['DOR_NO'],
-                        "TOTAL_AMT" => $request['TOTAL_AMT'],
+                        "AMOUNT_2" => $request['AMOUNT_2'] ? $request['AMOUNT_2'] : "",
+                        "AMOUNT_3" => $request['AMOUNT_3'] ? $request['AMOUNT_3'] : "",
+                        "AMOUNT_4" => $request['AMOUNT_4'] ? $request['AMOUNT_4'] : "",
+                        "AMOUNT_5" => $request['AMOUNT_5'] ? $request['AMOUNT_5'] : "",
                         "LEND_REASON" => $request['LEND_REASON'],
                         "JOB_NO" => $request['JOB_NO'],
                         "CUST_NO" => $request['CUST_NO'],
@@ -109,11 +112,11 @@ class Lender extends Model
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
                 );
-                $data = Lender::des($request['LENDER_NO']);
-                return $data;
-            } catch (\Exception $e) {
-                return '201';
-            }
+            $data = Lender::des($request['LENDER_NO']);
+            return $data;
+        } catch (\Exception $e) {
+            return '201';
+        }
     }
     public static function remove($request)
     {

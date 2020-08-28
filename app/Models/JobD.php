@@ -13,7 +13,7 @@ class JobD extends Model
         $a = DB::table('JOB_ORDER_D as jd')
             ->leftJoin('PAY_TYPE as pt', 'jd.ORDER_TYPE', '=', 'pt.PAY_NO')
             ->where('jd.JOB_NO', $id)
-            ->where('jd.BRANCH_ID','IHTVN1');
+            ->where('jd.BRANCH_ID', 'IHTVN1');
         if ($type == 'JOB_ORDER') {
             $data = $a->select(
                 'pt.PAY_NAME as ORDER_TYPE_NAME',
@@ -34,9 +34,6 @@ class JobD extends Model
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
         } else {
-            $PRICE_TAX_AFFTER = 0;
-            $SUM = 0;
-
             $data = $a->select(
                 'pt.PAY_NAME as ORDER_TYPE_NAME',
                 'jd.ORDER_TYPE',
@@ -54,7 +51,8 @@ class JobD extends Model
                 'jd.MODIFY_DT',
                 'jd.THANH_TOAN_MK'
             )
-                // ->selectRaw('(jd.PRICE * jd.QTY) + (jd.PRICE * jd.QTY)/jd.TAX_NOTE AS PRICE_TAX_AFFTER')
+                ->selectRaw('(jd.PRICE + (jd.PRICE * jd.TAX_NOTE)/100 ) AS SAU_THUE')
+                ->selectRaw('((jd.PRICE + (jd.PRICE * jd.TAX_NOTE)/100)* jd.QTY) AS TONG_TIEN')
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
         }
@@ -66,7 +64,7 @@ class JobD extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $count = DB::table(config('constants.JOB_D_TABLE'))
             ->where('JOB_NO', $job_no)
-            ->where('BRANCH_ID','IHTVN1')
+            ->where('BRANCH_ID', 'IHTVN1')
             ->where('ORDER_TYPE', $order_type)
             ->count();
         $count = (int) $count + 1;
@@ -141,7 +139,7 @@ class JobD extends Model
                             "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
                             "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
                             "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'] ,
+                            "PORT_AMT" => $request['PORT_AMT'],
                             "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'],
                             "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
                             "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',

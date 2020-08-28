@@ -187,10 +187,11 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->leftJoin('CUSTOMER as c','jm.CUST_NO','c.CUST_NO')
             ->where('jm.CHK_MK', '!=', 'Y')
-            ->select('jm.*')
+            ->select('c.CUST_NAME','jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
-            ->take(1000)
+            ->take(9000)
             ->get();
         return $data;
     }
@@ -199,10 +200,11 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+            ->leftJoin('CUSTOMER as c','jm.CUST_NO','c.CUST_NO')
             ->where('jm.CHK_MK', 'Y')
-            ->select('jm.*')
+            ->select('c.CUST_NAME','jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
-            ->take(1000)
+            ->take(9000)
             ->get();
         return $data;
     }
