@@ -111,6 +111,7 @@ Route::namespace('Api\v1')->group(function () {
             //1.phieu chi tam ung
             Route::group(['prefix' => 'lender'], function () {
                 Route::get('/', 'LenderController@list');
+                Route::get('list-advance', 'LenderController@listAdvance');
                 Route::get('search/type={type}&value={value}', 'LenderController@search');
                 Route::get('des/{id}', 'LenderController@des');
                 Route::post('add', 'LenderController@add');
@@ -184,8 +185,12 @@ Route::namespace('Api\v1')->group(function () {
                 //1.phieu chi tam ung
                 Route::group(['prefix' => 'advance-payment'], function () {
                     //1.phieu chi
-                    Route::get('fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@lender_AdvancePayment');
-                    Route::get('advance-payment', 'PrintPaymentController@getAdvancePayment');
+                    Route::get('fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@advancePayment');//1.1 phieu chi
+                    Route::get('replenishment/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishment_AdvancePayment');//1.2 phieu bu
+                    Route::get('withdrawal/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@withdrawal_AdvancePayment');//1.3 phieu tra
+                    // Route::get('without-job/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@withoutJob_AdvancePayment');//1.4 phieu tam ung chua mo job order
+                    Route::get('advance/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@advance_AdvancePayment');//1.5 phieu tam ung
+                    Route::get('replenishment-withdrawal/moneyused={moneyused}&fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishmentWithdrawal_AdvancePayment');//1.6 phieu bu-tra tam ung
 
 
                 });

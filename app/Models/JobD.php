@@ -59,6 +59,12 @@ class JobD extends Model
 
         return $data;
     }
+    public static function getJobD($id){
+      return  DB::table(config('constants.JOB_D_TABLE'))
+        ->where('JOB_NO', $id)
+        ->select('JOB_NO','PORT_AMT')
+        ->get();
+    }
     public static function generateSerNo($job_no, $order_type)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');

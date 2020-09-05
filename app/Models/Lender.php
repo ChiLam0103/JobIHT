@@ -13,7 +13,19 @@ class Lender extends Model
         $data = DB::table('LENDER as l')
             ->rightJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
             ->select('lt.LENDER_NAME', 'l.*')
-            ->orderBy('l.LENDER_NO', 'desc')->take(9000)->get();
+            ->where('l.BRANCH_ID', 'IHTVN1')
+            ->orderBy('l.LENDER_NO', 'desc')
+            ->take(9000)->get();
+        return $data;
+    }
+    public static function listAdvance()
+    {
+        $data = DB::table('LENDER as l')
+            ->select( 'l.LENDER_NO')
+            ->where('l.BRANCH_ID', 'IHTVN1')
+            ->where('l.LENDER_TYPE', 'U')
+            ->orderBy('l.LENDER_NO', 'desc')
+            ->take(9000)->get();
         return $data;
     }
     public static function search($type, $value)
@@ -21,14 +33,15 @@ class Lender extends Model
         //type=1 (advance no), 2.advance person, 3.job no
         $a = DB::table('LENDER as l');
 
-        if ($type == '1') { //advance no
+        if ($type == '6') { //advance no
             $a->where('l.LENDER_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '2') { //advance person
+        } elseif ($type == '7') { //advance person
             $a->where('l.PNL_NAME', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '3') { //job no
+        } elseif ($type == '8') { //job no
             $a->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
         }
         $data = $a->select('l.*')
+            ->where('l.BRANCH_ID', 'IHTVN1')
             ->take(9000)
             ->get();
         return $data;
@@ -39,7 +52,9 @@ class Lender extends Model
             ->join('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
             ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
             ->select('lt.LENDER_NAME', 'c.CUST_NAME', 'l.*')
-            ->where('l.LENDER_NO', $id)->first();
+            ->where('l.LENDER_NO', $id)
+            ->where('l.BRANCH_ID', 'IHTVN1')
+            ->first();
         return $data;
     }
     public static function generateLenderNo()
