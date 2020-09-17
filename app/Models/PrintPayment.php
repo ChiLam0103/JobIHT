@@ -30,7 +30,7 @@ class PrintPayment extends Model
         }
     }
     //1.4.phieu tam ung chua mo job order
-    public static function withoutJob_AdvancePayment($fromdate, $todate)
+    public static function withoutJob($fromdate, $todate)
     {
         try {
             $data = DB::table('LENDER as l')
@@ -43,12 +43,71 @@ class PrintPayment extends Model
                         ->orWhere('jom.JOB_NO', null);
                 })
                 ->whereBetween('l.LENDER_DATE', [$fromdate, $todate])
-                ->select('c.CUST_NAME', 'l.LENDER_NO', 'l.JOB_NO', 'jod.JOB_NO as jod','jom.JOB_NO as jom')
+                ->select('c.CUST_NAME', 'l.LENDER_NO', 'l.JOB_NO', 'jod.JOB_NO as jod', 'jom.JOB_NO as jom')
                 ->take(100)
                 ->get();
             dd($data);
             return $data;
         } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    //1.7 thống kê phiếu tạm ứng
+    public static function statisticalAdvance($fromdate, $todate, $type)
+    {
+        try {
+            $lender_type = '';
+            if ($type == '7') {
+                $lender_type = 'T';
+            } elseif ($type == '10') {
+                $lender_type = 'C';
+            } else {
+                $lender_type = 'U';
+            }
+            $a = DB::table('LENDER as l')
+                ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.LENDER_NO')
+                ->where('l.LENDER_TYPE', $lender_type)
+                ->where('l.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('l.LENDER_DATE', [$fromdate, $todate]);
+            $data = $a->select('l.*', 'p.PNL_NAME as PNL_NAME2')
+                ->get();
+            return $data;
+        } catch (\Exception $e) {
+            dd($e);
+            return $e;
+        }
+    }
+    //8. phiếu bù
+    public static function statisticalAdvance2($fromdate, $todate, $type)
+    {
+        try {
+            $lender_type = '';
+            if ($type == '7' || $type == '8') {
+                $lender_type = 'T';
+            } elseif ($type == '10') {
+                $lender_type = 'C';
+            } else {
+                $lender_type = 'U';
+            }
+            $a = DB::table('LENDER as l')
+                ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.LENDER_NO')
+                ->where('l.LENDER_TYPE', $lender_type)
+                ->where('l.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('l.LENDER_DATE', [$fromdate, $todate])
+                ->rightJoin('JOB_ORDER_M as jom', 'jom.JOB_NO', 'l.JOB_NO')
+                // ->rightJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+                ->whereNotNull('jom.CUSTOMS_NO');
+            // if ($type == '8') {
+            // }
+
+            $data = $a->select('l.LENDER_NO','jom.*')
+                ->distinct()
+                ->take(10)
+                ->get();
+            dd($data);
+            return $data;
+        } catch (\Exception $e) {
+            dd($e);
             return $e;
         }
     }

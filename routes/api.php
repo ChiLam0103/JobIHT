@@ -116,6 +116,8 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('des/{id}', 'LenderController@des');
                 Route::post('add', 'LenderController@add');
                 Route::post('edit', 'LenderController@edit');
+                Route::post('add-d', 'LenderController@addD');
+                Route::post('edit-d', 'LenderController@editD');
                 Route::post('remove', 'LenderController@remove');
             });
             //3.yeu cau thanh toan
@@ -124,6 +126,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('search/type={type}&value={value}', 'DebitNoteController@search');
                 Route::get('not-created', 'DebitNoteController@listNotCreated');
                 Route::get('des/{id}', 'DebitNoteController@des');
+                Route::get('des-job-not-created/{id}', 'DebitNoteController@desJobNotCreated');
                 Route::post('add', 'DebitNoteController@add');
                 Route::post('edit', 'DebitNoteController@edit');
                 Route::get('remove-check/{id}', 'DebitNoteController@removeCheck');
@@ -186,11 +189,17 @@ Route::namespace('Api\v1')->group(function () {
                 Route::group(['prefix' => 'advance-payment'], function () {
                     //1.phieu chi
                     Route::get('fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@advancePayment');//1.1 phieu chi
-                    Route::get('replenishment/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishment_AdvancePayment');//1.2 phieu bu
-                    Route::get('withdrawal/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@withdrawal_AdvancePayment');//1.3 phieu tra
+                    Route::get('replenishment/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishment');//1.2 phieu bu
+                    Route::get('withdrawal/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@withdrawal');//1.3 phieu tra
                     // Route::get('without-job/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@withoutJob_AdvancePayment');//1.4 phieu tam ung chua mo job order
-                    Route::get('advance/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@advance_AdvancePayment');//1.5 phieu tam ung
-                    Route::get('replenishment-withdrawal/moneyused={moneyused}&fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishmentWithdrawal_AdvancePayment');//1.6 phieu bu-tra tam ung
+                    Route::get('advance/fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@advance');//1.5 phieu tam ung
+                    Route::get('replenishment-withdrawal/moneyused={moneyused}&fromadvance={fromadvance}&toadvance={toadvance}', 'PrintPaymentController@replenishmentWithdrawal');//1.6 phieu bu-tra tam ung
+
+                    Route::get('statistical-advance/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalAdvance');//1.7 thống kê phiếu tạm ứng
+                    Route::get('statistical-replenishment/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalReplenishment');//1.8 thống kê phiếu bù
+                    Route::get('statistical-withdrawal/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalWithdrawal');//1.9 thống kê phiếu trả
+                    Route::get('statistical-direct/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalDirect');//1.10 thống kê phiếu chi trực tiếp
+                    Route::get('statistical-replenishment-withdrawal/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalReplenishmentWithdrawal');//1.11 thống kê phiếu bù & trả
 
 
                 });

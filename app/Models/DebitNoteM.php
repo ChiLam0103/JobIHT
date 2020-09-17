@@ -15,7 +15,7 @@ class DebitNoteM extends Model
     public static function search($type, $value)
     {
 
-        $a = DB::table('DEBIT_NOTE_M as dnm')->where('dnm.BRANCH_ID','IHTVN1');
+        $a = DB::table('DEBIT_NOTE_M as dnm')->where('dnm.BRANCH_ID', 'IHTVN1');
 
         if ($type == '1') { //job no
             $a->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -36,8 +36,17 @@ class DebitNoteM extends Model
     {
         $data = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
-            ->whereNull('dnm.JOB_NO')->select('jom.*')
-            ->orderBy('jom.JOB_NO', 'desc')->take(100)->get();
+            ->whereNull('dnm.JOB_NO')->select('jom.JOB_NO')
+            ->orderBy('jom.JOB_NO', 'desc')->get();
+        return $data;
+    }
+
+    public static function desJobNotCreated($id)
+    {
+        $data = DB::table('JOB_ORDER_M as jom')
+            ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
+            ->where('jom.JOB_NO',$id)
+            ->whereNull('dnm.JOB_NO')->select('jom.*')->first();
         return $data;
     }
     public static function listPending()
@@ -80,7 +89,6 @@ class DebitNoteM extends Model
                         "CONTAINER_QTY" => $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
                         "CUSTOMS_NO" => $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
                         "CUSTOMS_DATE" => $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
-                        "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
                         "BILL_NO" => $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
                         "NW" => $request['NW'] != 'undefined' ? $request['NW'] : '',
                         "GW" => $request['GW'] != 'undefined' ? $request['GW'] : '',
@@ -124,7 +132,6 @@ class DebitNoteM extends Model
                         "CONTAINER_QTY" => $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
                         "CUSTOMS_NO" => $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
                         "CUSTOMS_DATE" => $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
-                        "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
                         "BILL_NO" => $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
                         "NW" => $request['NW'] != 'undefined' ? $request['NW'] : '',
                         "GW" => $request['GW'] != 'undefined' ? $request['GW'] : '',

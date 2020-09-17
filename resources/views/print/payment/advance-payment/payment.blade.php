@@ -164,7 +164,7 @@
                 <div class="col-10 ">
                     <div class="col-3">
                         <span>金額:<span class="title-sub">
-                                {{ number_format($item->TOTAL_AMT) }}
+                                {{ number_format($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5) }}
                                 {{ $item->DOR_NO }}</span><br>Số tiền tạm ứng:&nbsp;</span>
                     </div>
                     <div class="col-7">
@@ -194,14 +194,14 @@
                     <span>已使用金額::&nbsp;<span class="title-sub">
                             @if ($type == 6)
                                 {{ number_format($moneyused) }}
-                            @else {
+                            @else
                                 @foreach ($job as $item2)
                                     @if ($item->JOB_NO == $item2->JOB_NO)
-                                        <span class="display-none">{{ $moneyspent += $item2->PORT_AMT }}</span>
+                                        <span class="display-none">{{ $moneyspent += ($item2->PORT_AMT + $item2->INDUSTRY_ZONE_AMT)}}</span>
                                     @endif
                                 @endforeach
                                 {{ number_format($moneyspent) }}
-                                }
+
                             @endif
                         </span>
                         <br>Số Tiền Đã Dùng:</span>
@@ -209,12 +209,12 @@
                 <div class="col-3">
                     <span>{{ $money_compensate_cn }}:&nbsp;<span class="title-sub">
                             @if ($type == 2)
-                                {{ number_format($moneyspent - $item->TOTAL_AMT) }}
+                                {{ number_format($moneyspent - ($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5)) }}
                             @elseif($type==3)
-                                {{ number_format($item->TOTAL_AMT - $moneyspent) }}
+                                {{ number_format($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5 - $moneyspent) }}
                             @elseif($type==6)
                                 @if ($item->LENDER_TYPE == 'U')
-                                    {{ number_format($item->TOTAL_AMT - $moneyused) }}
+                                    {{ number_format($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5 - $moneyused) }}
                                 @else
                                     {{ number_format($moneyused) }}
                                 @endif

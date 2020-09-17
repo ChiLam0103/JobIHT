@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\Cast\Double;
 
 class JobD extends Model
 {
@@ -62,7 +63,7 @@ class JobD extends Model
     public static function getJobD($id){
       return  DB::table(config('constants.JOB_D_TABLE'))
         ->where('JOB_NO', $id)
-        ->select('JOB_NO','PORT_AMT')
+        ->select('JOB_NO','PORT_AMT','INDUSTRY_ZONE_AMT')
         ->get();
     }
     public static function generateSerNo($job_no, $order_type)
@@ -93,8 +94,8 @@ class JobD extends Model
                             "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
                             "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
                             "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : '',
-                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != 'undefined' ? $request['INDUSTRY_ZONE_AMT'] : '',
+                            "PORT_AMT" => $request['PORT_AMT'] != null ? $request['PORT_AMT'] : '0',
+                            "INDUSTRY_ZONE_AMT" => trim($request['INDUSTRY_ZONE_AMT']) != null ? $request['INDUSTRY_ZONE_AMT'] : 0,
                             "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
                             "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : 'N',
                             "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
@@ -145,8 +146,10 @@ class JobD extends Model
                             "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
                             "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
                             "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'],
-                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'],
+                            "PORT_AMT" => $request['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : 0,
+                            // "INDUSTRY_ZONE_AMT" =>123,
+                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != null ? $request['INDUSTRY_ZONE_AMT'] : 0,
+
                             "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
                             "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
                             'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',

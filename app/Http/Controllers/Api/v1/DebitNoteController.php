@@ -29,9 +29,9 @@ class DebitNoteController extends Controller
             );
         }
     }
-    public function search($type,$value)
+    public function search($type, $value)
     {
-        $data = DebitNoteM::search($type,$value);
+        $data = DebitNoteM::search($type, $value);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -110,6 +110,24 @@ class DebitNoteController extends Controller
                 'success' => true,
                 'debit_note_m' => $data,
                 'debit_note_d' => $data2,
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function desJobNotCreated($id)
+    {
+        $data = DebitNoteM::desJobNotCreated($id);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
             ], Response::HTTP_OK);
         } else {
             return response()->json(

@@ -119,20 +119,23 @@
         border-collapse: collapse;
         text-align: center;
     }
-    #sign td{
+
+    #sign td {
         height: 10em;
     }
-    tr td{
+
+    tr td {
         font-size: 14px
     }
+
 </style>
 
 @foreach ($data as $item)
 
     <body onload="window.print();">
         <div id="page" class="page">
-        <p class="title">{{$title_vn}}</p>
-            <p class="title-2">{{$title_cn}}</p>
+            <p class="title">{{ $title_vn }}</p>
+            <p class="title-2">{{ $title_cn }}</p>
             <div class="col-10 border">
                 <div class="col-5">
                     <span>借支單號:&nbsp;<span class="title-sub">{{ $item->LENDER_NO }}</span> </span>
@@ -154,8 +157,8 @@
             <div class="border">
                 <div class="col-10 ">
                     <div class="col-3">
-                        @if ($type==1)
-                        <span>Job Order No:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
+                        @if ($type == 1)
+                            <span>Job Order No:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
                         @endif
                     </div>
                     <div class="col-7">
@@ -164,8 +167,8 @@
                 </div>
                 <div class="col-10">
                     <div class="col-3">
-                        @if ($type==1)
-                        <span>Số Job Đăng Ký:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
+                        @if ($type == 1)
+                            <span>Số Job Đăng Ký:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
                         @endif
                     </div>
                     <div class="col-2">
@@ -180,7 +183,8 @@
                 </div>
             </div>
             <div class="col-10 border">
-                <span>金額(Số tiền):&nbsp;<span class="title-sub"> {{ number_format($item->TOTAL_AMT) }}
+                <span>金額(Số tiền):&nbsp;<span class="title-sub">
+                        {{ number_format($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5) }}
                         {{ $item->DOR_NO }}</span></span>
             </div>
             <div class="col-10 border">
