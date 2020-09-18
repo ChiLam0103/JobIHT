@@ -30,8 +30,8 @@ class Lender extends Model
     }
     public static function search($type, $value)
     {
-        //type=1 (advance no), 2.advance person, 3.job no
-        $a = DB::table('LENDER as l');
+        //type=6 (advance no), 7.advance person, 8.job no
+        $a = DB::table('LENDER as l')->leftJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE');
 
         if ($type == '6') { //advance no
             $a->where('l.LENDER_NO', 'LIKE', '%' . $value . '%');
@@ -40,7 +40,7 @@ class Lender extends Model
         } elseif ($type == '8') { //job no
             $a->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
         }
-        $data = $a->select('l.*')
+        $data = $a->select('lt.LENDER_NAME', 'l.*')
             ->where('l.BRANCH_ID', 'IHTVN1')
             ->take(9000)
             ->get();
@@ -52,9 +52,9 @@ class Lender extends Model
             ->join('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
             ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
             ->leftJoin('JOB_ORDER_D as jod', 'jod.JOB_NO', 'l.JOB_NO')
-            ->select('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.TOTAL_AMT', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
+            ->select('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
             ->selectRaw('sum(jod.PORT_AMT) as  sum_PORT_AMT, sum(jod.INDUSTRY_ZONE_AMT) as sum_INDUSTRY_ZONE_AMT')
-            ->groupBy('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.TOTAL_AMT', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
+            ->groupBy('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
             ->where('l.LENDER_NO', $id)
             ->where('l.BRANCH_ID', 'IHTVN1')
             ->first();
@@ -85,11 +85,11 @@ class Lender extends Model
                         "PNL_NO" => $request['PNL_NO'] != 'undefined'  ? $request['PNL_NO'] : '',
                         "PNL_NAME" => $request['PNL_NAME'] != 'undefined' ? $request['PNL_NAME'] : '',
                         "DOR_NO" => $request['DOR_NO'] != 'undefined' ? $request['DOR_NO'] : '',
-                        "TOTAL_AMT" => $request['TOTAL_AMT'] != 'undefined' ? $request['TOTAL_AMT'] : 0,
-                        "AMOUNT_2" => 0,
-                        "AMOUNT_3" => 0,
-                        "AMOUNT_4" => 0,
-                        "AMOUNT_5" => 0,
+                        // "TOTAL_AMT" => $request['TOTAL_AMT'] != 'undefined' ? $request['TOTAL_AMT'] : 0,
+                        // "AMOUNT_2" => 0,
+                        // "AMOUNT_3" => 0,
+                        // "AMOUNT_4" => 0,
+                        // "AMOUNT_5" => 0,
                         "LEND_REASON" => $request['LEND_REASON'] != 'undefined'  ? $request['LEND_REASON'] : '',
                         "JOB_NO" => $request['JOB_NO'] != 'undefined' ? $request['JOB_NO'] : '',
                         "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
@@ -120,10 +120,10 @@ class Lender extends Model
                         "PNL_NO" => $request['PNL_NO'] != 'undefined'  ? $request['PNL_NO'] : '',
                         "PNL_NAME" => $request['PNL_NAME'] != 'undefined' ? $request['PNL_NAME'] : '',
                         "DOR_NO" => $request['DOR_NO'] != 'undefined' ? $request['DOR_NO'] : '',
-                        "AMOUNT_2" => $request['AMOUNT_2'] != 'undefined' ? $request['AMOUNT_2'] : 0,
-                        "AMOUNT_3" => $request['AMOUNT_3'] != 'undefined' ? $request['AMOUNT_3'] : 0,
-                        "AMOUNT_4" => $request['AMOUNT_4'] != 'undefined' ? $request['AMOUNT_4'] : 0,
-                        "AMOUNT_5" => $request['AMOUNT_5'] != 'undefined' ? $request['AMOUNT_5'] : 0,
+                        // "AMOUNT_2" => $request['AMOUNT_2'] != 'undefined' ? $request['AMOUNT_2'] : 0,
+                        // "AMOUNT_3" => $request['AMOUNT_3'] != 'undefined' ? $request['AMOUNT_3'] : 0,
+                        // "AMOUNT_4" => $request['AMOUNT_4'] != 'undefined' ? $request['AMOUNT_4'] : 0,
+                        // "AMOUNT_5" => $request['AMOUNT_5'] != 'undefined' ? $request['AMOUNT_5'] : 0,
                         "LEND_REASON" => $request['LEND_REASON'] != 'undefined'  ? $request['LEND_REASON'] : '',
                         "JOB_NO" => $request['JOB_NO'] != 'undefined' ? $request['JOB_NO'] : '',
                         "CUST_NO" => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',

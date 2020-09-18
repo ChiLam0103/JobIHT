@@ -29,7 +29,6 @@ class DebitNoteD extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $ser_no = DebitNoteD::generateSerNo($request->JOB_NO);
-
             DB::table(config('constants.DEBIT_NOTE_D_TABLE'))
                 ->insert(
                     [

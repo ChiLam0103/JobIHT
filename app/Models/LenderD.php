@@ -21,7 +21,7 @@ class LenderD extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $count = DB::table('LENDER_D')
             ->where('LENDER_NO', $LENDER_NO)
-            ->where('LENDER_NO', 'IHTVN1')
+            ->where('BRANCH_ID', 'IHTVN1')
             ->count();
         $count = (int) $count + 1;
         $data = sprintf("%'.02d", $count);
@@ -31,7 +31,7 @@ class LenderD extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            $serno = Lender::generateLenderNo();
+            $serno = LenderD::generateSerNo($request['LENDER_NO']);
             DB::table('LENDER_D')
                 ->insert(
                     [
@@ -42,7 +42,8 @@ class LenderD extends Model
                         "INPUT_DT" => date("YmdHis"),
                         'NOTE' => $request['NOTE'],
                         "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1'
-                    ]);
+                    ]
+                );
             $data = LenderD::des($request['LENDER_NO']);
             return $data;
         } catch (\Exception $e) {
@@ -64,7 +65,7 @@ class LenderD extends Model
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
                 );
-            $data = Lender::des($request['LENDER_NO']);
+            $data = LenderD::des($request['LENDER_NO']);
             return $data;
         } catch (\Exception $e) {
             return '201';
