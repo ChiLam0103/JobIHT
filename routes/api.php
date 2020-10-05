@@ -144,7 +144,7 @@ Route::namespace('Api\v1')->group(function () {
             });
             //6. bang kiem tra du lieu
             Route::group(['prefix' => 'check-data'], function () {
-                Route::get('/', 'DebitNoteController@checkData');
+                Route::post('/', 'DebitNoteController@checkData');
             });
             //8. chi phi tien tau/cuoc cont
             Route::group(['prefix' => 'boat-fee'], function () {
@@ -154,7 +154,6 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit', 'BoatFeeController@edit');
             });
         });
-
         //print
         Route::group(['prefix' => 'print'], function () {
             //II. báo biểu hồ sơ
@@ -174,7 +173,7 @@ Route::namespace('Api\v1')->group(function () {
                 //3.bao bieu refund
                 Route::group(['prefix' => 'refund'], function () {
                     //1.hang tau, 2.khach hang, 3.dai ly
-                    Route::get('type={type}&id={id}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'PrintFileController@refund');
+                    Route::get('type={type}&custno={custno}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'PrintFileController@refund');
                 });
                 //4.thong ke job order
                 Route::group(['prefix' => 'statistic'], function () {

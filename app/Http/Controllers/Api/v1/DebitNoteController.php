@@ -68,9 +68,14 @@ class DebitNoteController extends Controller
     public function listPending()
     {
         $data = DebitNoteM::listPending();
+        $total=0;
+        foreach($data as $item){
+            $total+=$item->sum_AMT;
+        }
         if ($data) {
             return response()->json([
                 'success' => true,
+                'total'=>$total,
                 'data' => $data
             ], Response::HTTP_OK);
         } else {
@@ -86,9 +91,14 @@ class DebitNoteController extends Controller
     public function listPaid()
     {
         $data = DebitNoteM::listPaid();
+        $total=0;
+        foreach($data as $item){
+            $total+=$item->sum_AMT;
+        }
         if ($data) {
             return response()->json([
                 'success' => true,
+                'total'=>$total,
                 'data' => $data
             ], Response::HTTP_OK);
         } else {

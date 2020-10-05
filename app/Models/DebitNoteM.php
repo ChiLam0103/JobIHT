@@ -9,13 +9,19 @@ class DebitNoteM extends Model
 {
     public static function list()
     {
-        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))->orderBy('JOB_NO', 'desc')->take(100)->get();
+        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+            ->orderBy('JOB_NO', 'desc')
+            ->where('BRANCH_ID', 'IHTVN1')
+            ->whereNotIn('PAYMENT_CHK', ['Y'])
+            ->take(1000)->get();
         return $data;
     }
     public static function search($type, $value)
     {
 
-        $a = DB::table('DEBIT_NOTE_M as dnm')->where('dnm.BRANCH_ID', 'IHTVN1');
+        $a = DB::table('DEBIT_NOTE_M as dnm')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->whereNotIn('dnm.PAYMENT_CHK', ['Y']);
 
         if ($type == '1') { //job no
             $a->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -37,6 +43,7 @@ class DebitNoteM extends Model
         $data = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
             ->whereNull('dnm.JOB_NO')->select('jom.JOB_NO')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->orderBy('jom.JOB_NO', 'desc')->get();
         return $data;
     }
@@ -45,30 +52,48 @@ class DebitNoteM extends Model
     {
         $data = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
-            ->where('jom.JOB_NO',$id)
+            ->where('jom.JOB_NO', $id)
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->whereNull('dnm.JOB_NO')->select('jom.*')->first();
         return $data;
     }
     public static function listPending()
     {
-        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+        $data = DB::table('DEBIT_NOTE_M as dnm')
+            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
+            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
             ->where(function ($query) {
-                $query->where('PAYMENT_CHK', null)
-                    ->orWhere('PAYMENT_CHK', 'N');
+                $query->where('dnm.PAYMENT_CHK', null)
+                    ->orWhere('dnm.PAYMENT_CHK', 'N');
             })
-            ->orderBy('JOB_NO', 'desc')->take(100)->get();
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->orderBy('dnm.JOB_NO', 'desc')
+            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
+            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
+            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
+            ->take(5000)
+            ->get();
         return $data;
     }
     public static function listPaid()
     {
-        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-            ->where('PAYMENT_CHK', 'Y')
-            ->orderBy('JOB_NO', 'desc')->take(1000)->get();
+        $data = DB::table('DEBIT_NOTE_M as dnm')
+            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
+            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
+            ->where('dnm.PAYMENT_CHK', 'Y')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->orderBy('dnm.JOB_NO', 'desc')
+            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
+            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
+            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
+            ->take(5000)
+            ->get();
         return $data;
     }
     public static function des($id)
     {
         $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+            ->where('BRANCH_ID', 'IHTVN1')
             ->where('JOB_NO', $id)->first();
         return $data;
     }
@@ -172,23 +197,19 @@ class DebitNoteM extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             if ($request->TYPE == 1) {
-                foreach ($request->JOB as $job) {
-                    DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-                        ->where('JOB_NO', $job["JOB_NO"])
-                        ->update([
-                            "PAYMENT_CHK" => "Y",
-                            "PAYMENT_DATE" => date("Ymd")
-                        ]);
-                }
+                DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+                    ->where('JOB_NO', $request["JOB_NO"])
+                    ->update([
+                        "PAYMENT_CHK" => "Y",
+                        "PAYMENT_DATE" => date("Ymd")
+                    ]);
             } else {
-                foreach ($request->JOB as $job) {
-                    DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-                        ->where('JOB_NO', $job["JOB_NO"])
-                        ->update([
-                            "PAYMENT_CHK" => "N",
-                            "PAYMENT_DATE" => date("Ymd")
-                        ]);
-                }
+                DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
+                    ->where('JOB_NO', $request["JOB_NO"])
+                    ->update([
+                        "PAYMENT_CHK" => "N",
+                        "PAYMENT_DATE" => date("Ymd")
+                    ]);
             }
             return '200';
         } catch (\Exception $e) {
@@ -200,40 +221,41 @@ class DebitNoteM extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $today = date("Ymd");
-            $to_date = ($request->TO_DATE ? $request->TO_DATE : '19000101');
-            $from_date = ($request->FROM_DATE ? $request->FROM_DATE : $today);
+            $from_date = ($request->FROM_DATE != 'undefined' ? $request->FROM_DATE : '19000101');
+            $to_date = ($request->TO_DATE != 'undefined' ? $request->TO_DATE : $today);
             if ($request->TYPE == "1") { //chua thanh toan
                 $a = DB::table('DEBIT_NOTE_M as dnm')
-                    ->rightJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-                    ->where('dnm.PAYMENT_CHK', 'Y')
-                    ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
-            } elseif ($request->TYPE == "2") { //da thanh toan
-                $a = DB::table('DEBIT_NOTE_M as dnm')
-                    ->join('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                    ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
                     ->where('dnm.PAYMENT_CHK', null)
                     ->orWhere('dnm.PAYMENT_CHK', 'N')
                     ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
+            } elseif ($request->TYPE == "2") { //da thanh toan
+                $a = DB::table('DEBIT_NOTE_M as dnm')
+                    ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                    ->where('dnm.PAYMENT_CHK', 'Y')
+                    ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
             } elseif ($request->TYPE == "3") { //tat ca
                 $a = DB::table('DEBIT_NOTE_M as dnm')
-                    ->rightJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                    ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
                     ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
             } elseif ($request->TYPE == "4") { //loi nhuan
                 $a = DB::table('DEBIT_NOTE_M as dnm')
-                    ->rightJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-                    ->join('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
+                    ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                    ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
                     ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', DB::raw('SUM(dnd.PRICE) as PRICE'))
                     ->groupBy('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME');
             }
-            if ($request->JOB_NO) {
+            if ($request->JOB_NO != 'undefined') {
                 $a->where('dnm.JOB_NO', $request->JOB_NO);
             }
-            if ($request->CUST_NO) {
+            if ($request->CUST_NO != 'undefined') {
                 $a->where('dnm.CUST_NO', $request->CUST_NO);
             }
-            if ($request->TO_DATE || $request->FROM_DATE) {
-                $a->whereBetween('dnm.PAYMENT_DATE', [$to_date, $from_date]);
-            }
-            $data = $a->take(1000)->get();
+            $data = $a->take(1000)
+                ->where('dnm.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('dnm.PAYMENT_DATE', [$from_date, $to_date])
+                ->orderByDesc('dnm.JOB_NO')
+                ->get();
             return $data;
         } catch (\Exception $e) {
             return '201';

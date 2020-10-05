@@ -8,7 +8,6 @@ use Illuminate\Http\Response;
 use App\Models\PrintFile;
 use App\Models\PayType;
 
-
 class PrintFileController extends Controller
 {
     //1 in phieu theo doi
@@ -142,7 +141,7 @@ class PrintFileController extends Controller
         }
     }
     //3.bao bieu refund
-    public function refund($type, $id, $jobno, $fromdate, $todate)
+    public function refund($type, $custno, $jobno, $fromdate, $todate)
     {
         $type_name = "HÃNG TÀU";
         if ($type == 2) {
@@ -150,11 +149,8 @@ class PrintFileController extends Controller
         } elseif ($type == 3) {
             $type_name = "ĐẠI LÝ";
         }
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $today = date("Ymd");
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
-        $data = PrintFile::refund($type, $id, $jobno, $fromdate, $todate);
+
+        $data = PrintFile::refund($type, $custno, $jobno, $fromdate, $todate);
         if ($data) {
             return view('print\file\refund\index', [
                 'data' => $data,
@@ -175,10 +171,7 @@ class PrintFileController extends Controller
     //4.thong ke
     public function statisticCreatedJob($cust, $user, $fromdate, $todate)
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $today = date("Ymd");
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
+
         $data = PrintFile::statisticCreatedJob($cust, $user, $fromdate, $todate);
         if ($data) {
             return view('print\file\statistic-job-order\created', [
@@ -198,14 +191,13 @@ class PrintFileController extends Controller
     }
     public function statisticUserImportJob($cust, $user,  $fromdate, $todate)
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $today = date("Ymd");
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
+
         $data = PrintFile::statisticUserImportJob($cust, $user, $fromdate, $todate);
+        $job_d = PrintFile::statisticUserImportJob_D($cust, $user, $fromdate, $todate);
         if ($data) {
             return view('print\file\statistic-job-order\user-import', [
                 'data' => $data,
+                'job_d' => $job_d,
                 'todate' => $todate,
                 'fromdate' => $fromdate
             ]);

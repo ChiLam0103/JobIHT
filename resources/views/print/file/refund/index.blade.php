@@ -64,18 +64,23 @@
         text-align: center;
         font-size: 13px;
     }
-    .table .amount td{
+
+    .table .amount td {
         border: none;
     }
+
     table {
         width: 100%;
     }
+
     .amount td {
         font-weight: bold;
     }
-    .text-align-left td{
-        text-align: left!important;
+
+    .text-align-left td {
+        text-align: left !important;
     }
+
 </style>
 
 <body onload="window.print();">
@@ -86,9 +91,9 @@
         <br>
         <table class="table">
             <tr>
-                <th>MÃ {{ $type_name }}</th>
-                <th>TÊN {{ $type_name }}</th>
-                <th>JOB NO</th>
+                <th>MÃ {{ $type_name == 'ĐẠI LÝ' ? 'KHÁCH HÀNG' : $type_name }}</th>
+                <th>TÊN {{ $type_name == 'ĐẠI LÝ' ? 'KHÁCH HÀNG' : $type_name }}</th>
+                <th style="width: 8%">JOB NO</th>
                 <th>STT</th>
                 <th>DESCRIPTION</th>
                 <th>ĐVT</th>
@@ -97,31 +102,33 @@
                 <th>THÀNH TIỀN<br> TRƯỚC THUẾ</th>
                 <th>TIỀN THUẾ</th>
                 <th>THÀNH TIỀN<br> SAU THUẾ</th>
-                <th>THANH TOÁN</th>
+                <th style="width: 10%">THANH TOÁN</th>
             </tr>
-            @foreach($data as $item)
+            @foreach ($data as $item)
                 <tr class="text-align-left">
-                    <td>{{ $item->CUST_NO }}</td>
-                    <td>{{ $item->CUST_NAME }}</td>
+                    <td>{{ $type_name == 'ĐẠI LÝ' ? $item->CUST_NO2 : $item->CUST_NO }}</td>
+                    <td>{{ $type_name == 'ĐẠI LÝ' ? $item->CUST_NAME2 : $item->CUST_NAME }}</td>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ $item->SER_NO }}</td>
                     <td>{{ $item->DESCRIPTION }}</td>
                     <td>{{ (int) $item->UNIT }}</td>
                     <td>{{ number_format($item->QTY) }}</td>
                     <td>{{ number_format($item->PRICE) }}</td>
-                    <td>{{ number_format($item->TAX_AMT * $item->TAX_NOTE) }}</td>
+                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE) : number_format($item->TAX_AMT * $item->TAX_NOTE) }}
+                    </td>
                     <td>{{ number_format($item->TAX_AMT) }}</td>
-                    <td>{{ number_format($item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT) }}</td>
+                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE) : number_format($item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT) }}
+                    </td>
                     <td>{{ $item->THANH_TOAN_MK == 'Y' ? 'Đã thanh toán' : 'Chưa thanh toán' }}</td>
                 </tr>
             @endforeach
-                <tr  class="amount">
-                    <td colspan="5"></td>
-                    <td colspan="3">TỔNG TIỀN:</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td colspan="2">3</td>
-                </tr>
+            <tr class="amount">
+                <td colspan="5"></td>
+                <td colspan="3">TỔNG TIỀN:</td>
+                <td>1</td>
+                <td>2</td>
+                <td colspan="2">3</td>
+            </tr>
         </table>
     </div>
 </body>
