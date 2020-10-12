@@ -30,9 +30,9 @@ class JobStartController extends Controller
             );
         }
     }
-    public function search($type,$value)
+    public function search($type, $value)
     {
-        $data = JobStart::search($type,$value);
+        $data = JobStart::search($type, $value);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -110,6 +110,14 @@ class JobStartController extends Controller
                 [
                     'success' => false,
                     'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($data == '202') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn Khách Hàng!'
                 ],
                 Response::HTTP_BAD_REQUEST
             );

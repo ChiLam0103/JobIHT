@@ -58,41 +58,43 @@ class JobM extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
+            if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '') {
 
-            DB::table(config('constants.JOB_M_TABLE'))
-                ->insert(
-                    [
-                        'JOB_NO' => $request['JOB_NO'],
-                        'ORDER_DATE' => date("Ymd"),
-                        'CUST_NO' => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
-                        'CONSIGNEE' => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
-                        'SHIPPER' => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
-                        'ORDER_FROM' =>  $request['ORDER_FROM'] != 'undefined' ? $request['ORDER_FROM'] : '',
-                        'ORDER_TO' =>  $request['ORDER_TO'] != 'undefined' ? $request['ORDER_TO'] : '',
-                        'CONTAINER_NO' =>  $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
-                        'CONTAINER_QTY' =>  $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
-                        'CUSTOMS_NO' =>  $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
-                        'CUST_NO2' =>  $request['CUST_NO2'] != 'undefined' ? $request['CUST_NO2'] : '',
-                        'CUST_NO3' =>  $request['CUST_NO3'] != 'undefined' ? $request['CUST_NO3'] : '',
-                        'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
-                        'BILL_NO' =>  $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
-                        'NW' =>  $request['NW'] != 'undefined' ? $request['NW'] : '',
-                        'GW' =>  $request['GW'] != 'undefined' ? $request['GW'] : '',
-                        'POL' =>  $request['POL'] != 'undefined' ? $request['POL'] : '',
-                        'POD' =>  $request['POD'] != 'undefined' ? $request['POD'] : '',
-                        'ETD_ETA' =>  $request['ETD_ETA'] != 'undefined' ? date('Ymd', strtotime($request['ETD_ETA'])) : '',
-                        'PO_NO' =>  $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
-                        'INVOICE_NO' =>  $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
-                        'NOTE' =>  $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                        'CHK_MK' =>  "N",
-                        'INPUT_USER' =>  $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
-                        'INPUT_DT' =>  date("YmdHis"),
-                        'BRANCH_ID' =>  $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
+                DB::table(config('constants.JOB_M_TABLE'))
+                    ->insert(
+                        [
+                            'JOB_NO' => $request['JOB_NO'],
+                            'ORDER_DATE' => date("Ymd"),
+                            'CHK_MK' =>  "N",
+                            'CUST_NO' => $request['CUST_NO'] != 'undefined' ? $request['CUST_NO'] : '',
+                            'CONSIGNEE' => $request['CONSIGNEE'] != 'undefined' ? $request['CONSIGNEE'] : '',
+                            'SHIPPER' => $request['SHIPPER'] != 'undefined' ? $request['SHIPPER'] : '',
+                            'BILL_NO' =>  $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
+                            'ORDER_FROM' =>  $request['ORDER_FROM'] != 'undefined' ? $request['ORDER_FROM'] : '',
+                            'ORDER_TO' =>  $request['ORDER_TO'] != 'undefined' ? $request['ORDER_TO'] : '',
+                            'CUSTOMS_NO' =>  $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
+                            'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
+                            'INVOICE_NO' =>  $request['INVOICE_NO'] != 'undefined' ? $request['INVOICE_NO'] : '',
+                            'CONTAINER_NO' =>  $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
+                            'CONTAINER_QTY' =>  $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
+                            'NW' =>  $request['NW'] != 'undefined' ? $request['NW'] : '',
+                            'GW' =>  $request['GW'] != 'undefined' ? $request['GW'] : '',
+                            'POL' =>  $request['POL'] != 'undefined' ? $request['POL'] : '',
+                            'POD' =>  $request['POD'] != 'undefined' ? $request['POD'] : '',
+                            'ETD_ETA' =>  $request['ETD_ETA'] != 'undefined' ? date('Ymd', strtotime($request['ETD_ETA'])) : '',
+                            'PO_NO' =>  $request['PO_NO'] != 'undefined' ? $request['PO_NO'] : '',
+                            'NOTE' =>  $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
+                            'INPUT_USER' =>  $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
+                            'INPUT_DT' =>  date("YmdHis"),
+                            'BRANCH_ID' =>  $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
 
-                    ]
-                );
-            $data = JobM::des($request['JOB_NO']);
-            return $data;
+                        ]
+                    );
+                $data = JobM::des($request['JOB_NO']);
+                return $data;
+            } else {
+                return '202';
+            }
         } catch (\Exception $e) {
             return $e;
         }
@@ -112,8 +114,6 @@ class JobM extends Model
                         'CONTAINER_NO' =>  $request['CONTAINER_NO'] != 'undefined' ? $request['CONTAINER_NO'] : '',
                         'CONTAINER_QTY' =>  $request['CONTAINER_QTY'] != 'undefined' ? $request['CONTAINER_QTY'] : '',
                         'CUSTOMS_NO' =>  $request['CUSTOMS_NO'] != 'undefined' ? $request['CUSTOMS_NO'] : '',
-                        'CUST_NO2' =>  $request['CUST_NO2'] != 'undefined' ? $request['CUST_NO2'] : '',
-                        'CUST_NO3' =>  $request['CUST_NO3'] != 'undefined' ? $request['CUST_NO3'] : '',
                         'CUSTOMS_DATE' =>  $request['CUSTOMS_DATE'] != 'undefined' ? date('Ymd', strtotime($request['CUSTOMS_DATE'])) : '',
                         'BILL_NO' =>  $request['BILL_NO'] != 'undefined' ? $request['BILL_NO'] : '',
                         'NW' =>  $request['NW'] != 'undefined' ? $request['NW'] : '',
@@ -187,9 +187,9 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->leftJoin('CUSTOMER as c','jm.CUST_NO','c.CUST_NO')
+            ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
             ->where('jm.CHK_MK', '!=', 'Y')
-            ->select('c.CUST_NAME','jm.*')
+            ->select('c.CUST_NAME', 'jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
             ->take(9000)
             ->get();
@@ -200,9 +200,9 @@ class JobM extends Model
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->leftJoin('CUSTOMER as c','jm.CUST_NO','c.CUST_NO')
+            ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
             ->where('jm.CHK_MK', 'Y')
-            ->select('c.CUST_NAME','jm.*')
+            ->select('c.CUST_NAME', 'jm.*')
             ->orderBy('jm.JOB_NO', 'desc')
             ->take(9000)
             ->get();
