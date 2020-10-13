@@ -1,23 +1,47 @@
-@extends('layouts.app')
+<!DOCTYPE html>
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
+<html>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+<head>
 
-                    You are logged in!
-                </div>
+    <title>Laravel 5.7 Import Export Excel to database Example - ItSolutionStuff.com</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card bg-light mt-3">
+
+            <div class="card-header">
+
+                Laravel 5.7 Import Export Excel to database Example - ItSolutionStuff.com
+
             </div>
+
+            <div class="card-body">
+
+                <form action="" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <input type="file" name="file" class="form-control">
+
+                    <br>
+                    <a class="btn btn-warning" href="{{ route('exportDebt') }}">Export User Data</a>
+
+                </form>
+
+            </div>
+
         </div>
+
     </div>
-</div>
-@endsection
+
+</body>
+
+</html>

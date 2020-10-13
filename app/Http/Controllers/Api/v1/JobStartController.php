@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Models\JobStart;
-use App\Models\JobD;
-use App\Models\JobM;
 
 class JobStartController extends Controller
 {
@@ -164,4 +162,5 @@ class JobStartController extends Controller
             );
         }
     }
+
 }

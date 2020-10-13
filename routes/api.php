@@ -204,5 +204,9 @@ Route::namespace('Api\v1')->group(function () {
                 });
             });
         });
+         //export excel
+         Route::group(['prefix' => 'export'], function () {
+            Route::post('/', 'JobStartController@exportDebt');
+        });
     });
 });

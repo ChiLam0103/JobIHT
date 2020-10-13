@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Services\ExcelService;
+use App\Models\Users;
+use App\User;
 
+use App\Models\JobStart;
 class HomeController extends Controller
 {
     /**
@@ -11,10 +16,10 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     /**
      * Show the application dashboard.
@@ -24,5 +29,18 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+    public function excel()
+    {
+        return view('excel');
+    }
+    public function export()
+    {
+        return Excel::download(new Users, 'users.xlsx');
+    }
+    public function exportDebt( ExcelService $excelService)
+    {
+        $listResult=JobStart::list();
+        return $excelService->exportDebt($listResult);
     }
 }
