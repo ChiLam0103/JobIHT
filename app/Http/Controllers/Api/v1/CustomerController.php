@@ -16,7 +16,28 @@ class CustomerController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'type_name'=>$data['type_name'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listPage($type,$page)
+    {
+        $data = Customer::listPage($type,$page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'type_name'=>$data['type_name'],
+                'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
             return response()->json(

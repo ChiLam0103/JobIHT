@@ -30,14 +30,7 @@ class HomeController extends Controller
     {
         return view('home');
     }
-    public function excel()
-    {
-        return view('excel');
-    }
-    public function export()
-    {
-        return Excel::download(new Users, 'users.xlsx');
-    }
+
     public function exportDebt( ExcelService $excelService)
     {
         $listResult=JobStart::list();

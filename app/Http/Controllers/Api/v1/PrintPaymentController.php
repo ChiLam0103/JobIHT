@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 
 use App\Models\PrintPayment;
 use App\Models\JobD;
-
+use App\Models\Company;
 
 class PrintPaymentController extends Controller
 {
@@ -265,6 +265,32 @@ class PrintPaymentController extends Controller
                 'todate' => $todate,
                 'title' => $title,
                 'total' => $total,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'PHẢI CHỌN NGÀY THEO THỨ TỰ NHỎ ĐẾN LỚN'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    //2 phiếu yêu cầu thanh toán
+    public function debitNote($type = 'jobno', $formjobno, $tojobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = PrintPayment::debitNote($type, $formjobno, $tojobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
+        $company = Company::des('IHT');
+        if ($data) {
+            return view('print\payment\debit-note', [
+                'data' => $data,
+                'company'=>$company,
+                'fromdate' => $fromdate,
+                'todate' => $todate,
             ]);
         } else {
             return response()->json(

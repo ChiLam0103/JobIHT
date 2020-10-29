@@ -47,6 +47,44 @@ class BoatFeeController extends Controller
             );
         }
     }
+    public function listBoatMonthMPage($page)
+    {
+        $data = BoatFeeM::listBoatMonthMPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listFeeMonthMPage($page)
+    {
+        $data = BoatFeeM::listFeeMonthMPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function desMonth($type, $value)
     {
         $data = BoatFeeD::desMonth($type, $value);

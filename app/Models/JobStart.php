@@ -4,27 +4,50 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class JobStart extends Model
 {
-    public static function list()
+    public static function query()
     {
-        $data = DB::table('JOB_START as js')
-            ->orderBy('js.JOB_NO', 'desc')
-            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
-            ->where('js.BRANCH_ID', 'IHTVN1')
-            ->select('c.CUST_NAME', 'js.JOB_NO')
-            ->take(1000)
-            ->get();
-        return $data;
-    }
-    public static function search($type, $value)
-    {
-        $a = DB::table('JOB_START as js')
+        $query = DB::table('JOB_START as js')
             ->orderBy('js.JOB_NO', 'desc')
             ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
             ->where('js.BRANCH_ID', 'IHTVN1');
+        return $query;
+    }
+    public static function listPage($page)
+    {
+        try {
+            $take = 10;
+            $skip = ($page - 1) * $take;
+            $query =  JobStart::query();
+            $count = $query->count();
+            $data =  $query->skip($skip)
+                ->take($take)
+                ->select('c.CUST_NAME', 'js.JOB_NO')
+                ->get();
+            return ['total_page' => $count, 'list_job' => $data];
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function list()
+    {
+        try {
+            $take = 5000;
+            $query = JobStart::query();
+            $data =  $query
+                ->take($take)
+                ->select('c.CUST_NAME', 'js.JOB_NO')
+                ->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function search($type, $value)
+    {
+        $a = JobStart::query();
 
         if ($type == '1') { //jobno
             $a->where('js.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -44,24 +67,20 @@ class JobStart extends Model
     }
     public static function listNotCreatedOrder()
     {
-        $data = DB::table('JOB_START as js')
-            ->leftJoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
-            ->where('js.BRANCH_ID', 'IHTVN1')
+        $query = JobStart::query();
+        $take = 5000;
+        $data = $query->leftJoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
             ->whereNull('jm.JOB_NO')
-            ->orderBy('js.JOB_NO', 'desc')
             ->select('c.CUST_NAME', 'js.JOB_NO')
-            ->take(1000)
+            ->take($take)
             ->get();
         return $data;
     }
     public static function des($id)
     {
-        $data = DB::table('JOB_START as js')
-            ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
-            ->select('c.CUST_NAME', 'js.*')
+        $query = JobStart::query();
+        $data = $query->select('c.CUST_NAME', 'js.*')
             ->where('js.JOB_NO', $id)
-            ->where('js.BRANCH_ID', 'IHTVN1')
             ->first();
         return $data;
     }
@@ -76,7 +95,6 @@ class JobStart extends Model
         } while (DB::table(config('constants.JOB_START_TABLE'))->where('JOB_NO', $job_no)->first());
         return $job_no;
     }
-
     public static function add($request)
     {
         try {
@@ -157,32 +175,14 @@ class JobStart extends Model
             return '201';
         }
     }
-
     public static function remove($request)
     {
         try {
+           $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
             DB::table(config('constants.JOB_START_TABLE'))
                 ->where('JOB_NO', $request['JOB_NO'])
                 ->delete();
-            return '200';
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function removeCheck($id)
-    {
-        try {
-            $exist = DB::table('JOB_START as js')
-                ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-                ->where('js.JOB_NO', $id)
-                ->count();
-            if ($exist == 0) {
-                //co the xoa
-                return '200';
-            } else {
-                //khong the xoa
-                return '201';
-            }
+            return $title;
         } catch (\Exception $e) {
             return $e;
         }

@@ -10,6 +10,25 @@ use App\Models\JobStart;
 
 class JobStartController extends Controller
 {
+    public function listPage($page)
+    {
+        $data = JobStart::listPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list_job']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function list()
     {
         $data = JobStart::list();
@@ -129,24 +148,6 @@ class JobStartController extends Controller
     public function remove(Request $request)
     {
         $data = JobStart::remove($request);
-        if ($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
-    public function removeCheck($id)
-    {
-        $data = JobStart::removeCheck($id);
         if ($data) {
             return response()->json([
                 'success' => true,

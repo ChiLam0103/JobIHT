@@ -7,34 +7,59 @@ use Illuminate\Support\Facades\DB;
 
 class DebitNoteM extends Model
 {
+    public static function query()
+    {
+        $query = DB::table('DEBIT_NOTE_M as dnm')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->orderBy('dnm.JOB_NO', 'desc')
+            ->whereNotIn('dnm.PAYMENT_CHK', ['Y']);
+        return $query;
+    }
+    public static function queryPendingPaid()
+    {
+        $query = DB::table('DEBIT_NOTE_M as dnm')
+            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
+            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->orderBy('dnm.JOB_NO', 'desc')
+            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE')
+            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
+            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
+        return $query;
+    }
     public static function list()
     {
-        $data = DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-            ->orderBy('JOB_NO', 'desc')
-            ->where('BRANCH_ID', 'IHTVN1')
-            ->whereNotIn('PAYMENT_CHK', ['Y'])
-            ->take(1000)->get();
+        $take = 9000;
+        $query =  DebitNoteM::query();
+        $data =  $query->take($take)->get();
         return $data;
+    }
+    public static function listPage($page)
+    {
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  DebitNoteM::query();
+        $count = $query->count();
+        $data =  $query->skip($skip)
+            ->take($take)
+            ->get();
+        return ['total_page' => $count, 'list' => $data];
     }
     public static function search($type, $value)
     {
-
-        $a = DB::table('DEBIT_NOTE_M as dnm')
-            ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->whereNotIn('dnm.PAYMENT_CHK', ['Y']);
+        $take = 9000;
+        $query = DebitNoteM::query();
 
         if ($type == '1') { //job no
-            $a->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
+            $query->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
         } elseif ($type == '2') { //customer no
-            $a->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
+            $query->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
         } elseif ($type == '3') { //container no
-            $a->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+            $query->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
         } elseif ($type == '4') { //customns no
-            $a->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+            $query->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
         }
-        $data = $a->select('dnm.*')
-            ->orderBy('dnm.JOB_NO', 'desc')
-            ->take(9000)
+        $data = $query->take($take)
             ->get();
         return $data;
     }
@@ -47,7 +72,6 @@ class DebitNoteM extends Model
             ->orderBy('jom.JOB_NO', 'desc')->get();
         return $data;
     }
-
     public static function desJobNotCreated($id)
     {
         $data = DB::table('JOB_ORDER_M as jom')
@@ -59,36 +83,43 @@ class DebitNoteM extends Model
     }
     public static function listPending()
     {
-        $data = DB::table('DEBIT_NOTE_M as dnm')
-            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
-            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
-            ->where(function ($query) {
-                $query->where('dnm.PAYMENT_CHK', null)
-                    ->orWhere('dnm.PAYMENT_CHK', 'N');
-            })
-            ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->orderBy('dnm.JOB_NO', 'desc')
-            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
-            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
-            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
-            ->take(5000)
-            ->get();
+        $take = 5000;
+        $query =  DebitNoteM::queryPendingPaid();
+        $data =  $query->where(function ($query) {
+            $query->where('dnm.PAYMENT_CHK', null)
+                ->orWhere('dnm.PAYMENT_CHK', 'N');
+        })->take($take)->get();
         return $data;
     }
     public static function listPaid()
     {
-        $data = DB::table('DEBIT_NOTE_M as dnm')
-            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
-            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
-            ->where('dnm.PAYMENT_CHK', 'Y')
-            ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->orderBy('dnm.JOB_NO', 'desc')
-            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
-            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
-            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'PAYMENT_DATE')
-            ->take(5000)
-            ->get();
-        return $data;
+        $take = 5000;
+        $query =  DebitNoteM::queryPendingPaid();
+        $data =  $query->where('dnm.PAYMENT_CHK', 'Y')->take($take)->get();
+        return  $data;
+    }
+    public static function listPendingPage($page)
+    {
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  DebitNoteM::queryPendingPaid();
+        $count = $query->where(function ($query) {
+            $query->where('dnm.PAYMENT_CHK', null)
+                ->orWhere('dnm.PAYMENT_CHK', 'N');
+        })->count();
+
+        $data =  $query->skip($skip)->take($take)->get();
+        return ['total_page' => $count, 'list' => $data];
+    }
+    public static function listPaidPage($page)
+    {
+        $take = 10;
+        $total = 0;
+        $skip = ($page - 1) * $take;
+        $query =  DebitNoteM::queryPendingPaid();
+        $count = $query->where('dnm.PAYMENT_CHK', 'Y')->count();
+        $data =  $query->skip($skip)->take($take)->get();
+        return ['total_page' => $count, 'list' => $data];
     }
     public static function des($id)
     {

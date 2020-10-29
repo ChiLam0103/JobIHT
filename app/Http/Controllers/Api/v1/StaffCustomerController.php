@@ -28,6 +28,25 @@ class StaffCustomerController extends Controller
             );
         }
     }
+    public function listPage($page)
+    {
+        $data = Personal::listPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function des($id)
     {
         $data = Personal::des($id);

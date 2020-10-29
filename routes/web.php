@@ -14,10 +14,9 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/', 'UsersController@index');
+// Route::get('/', 'UsersController@index');
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('excel', 'HomeController@excel');
-Route::get('exportDebt', 'HomeController@exportDebt')->name('exportDebt');
+// Route::get('exportDebt', 'HomeController@exportDebt')->name('exportDebt');

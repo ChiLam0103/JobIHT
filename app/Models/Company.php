@@ -12,6 +12,11 @@ class Company extends Model
         $data = DB::table(config('constants.COMPANY_TABLE'))->get();
         return $data;
     }
+    public static function des($id)
+    {
+        $data = DB::table(config('constants.COMPANY_TABLE'))->where('COMP_NO',$id)->first();
+        return $data;
+    }
     public static function add($request)
     {
         try {
@@ -76,5 +81,5 @@ class Company extends Model
             return $e;
         }
     }
-   
+
 }

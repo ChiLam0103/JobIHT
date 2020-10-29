@@ -104,9 +104,9 @@
 @foreach ($job as $data)
 <body onload="window.print();">
     <div id="page" class="page">
-        <div class="title">I.H.T LOGISTICS CO.,LTD</div>
-        <div class="title-sub">TẦNG 3, TÒA NHÀ RIVERA PARK SÀI GÒN, SỐ 7/28 THÀNH THÁI, P.14, Q.10, TP.HCM <br> MST:
-            0303641267</div>
+    <div class="title">{{$company->COMP_NAME}}</div>
+        <div class="title-sub">{{$company->COMP_ADDRESS1}} <br> MST:
+            {{$company->COMP_TAX}}</div>
         <div class="title">PHIẾU THEO DÕI </div>
         <div class="title-sub"> JOB DATE: {{ date('Y/m/d', strtotime($data->JOB_DATE)) }}</div>
 

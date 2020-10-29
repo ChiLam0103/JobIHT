@@ -8,20 +8,72 @@ use Illuminate\Support\Facades\DB;
 class Customer extends Model
 {
     //1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
+    public static function query()
+    {
+        $query = DB::table('CUSTOMER as c')
+            ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
+            ->where('c.BRANCH_ID', 'IHTVN1');
+        return $query;
+    }
     public static function list($type)
     {
-        $data = DB::table('CUSTOMER as c')
-            ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
-            ->where('c.CUST_TYPE', $type)->select('c.*', 'b.BRANCH_NAME')->get();
-        return $data;
+        $type_name = "";
+        switch ($type) {
+            case 1:
+                $type_name = "Khách hàng";
+                break;
+            case 2:
+                $type_name = "Hãng tàu";
+                break;
+            case 3:
+                $type_name = "Đại lý";
+                break;
+            case 4:
+                $type_name = "Nhà xe";
+                break;
+            default:
+                break;
+        }
+        $take = 5000;
+        $query =  Customer::query();
+        $data =  $query->take($take)->select('c.*', 'b.BRANCH_NAME')->get();
+
+        return ['list' => $data, 'type_name' => $type_name];
+    }
+    public static function listPage($type, $page)
+    {
+        $type_name = "";
+        switch ($type) {
+            case 1:
+                $type_name = "Khách hàng";
+                break;
+            case 2:
+                $type_name = "Hãng tàu";
+                break;
+            case 3:
+                $type_name = "Đại lý";
+                break;
+            case 4:
+                $type_name = "Nhà xe";
+                break;
+            default:
+                break;
+        }
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  Customer::query();
+        $count = $query->where('c.CUST_TYPE', $type)->count();
+        $data =  $query->skip($skip)->take($take)->select('c.*', 'b.BRANCH_NAME')->get();
+
+        return ['total_page' => $count, 'list' => $data, 'type_name' => $type_name];
     }
     public static function des($id, $type)
     {
         try {
-            $data = DB::table('CUSTOMER as c')
-                ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
-                ->where('c.CUST_TYPE', $type)->where('c.CUST_NO', $id)
-                ->select('c.*', 'b.BRANCH_NAME')->first();
+            $query =  Customer::query();
+            $data =  $query->select('c.*', 'b.BRANCH_NAME')
+             ->where('c.CUST_TYPE', $type)
+             ->where('c.CUST_NO', $id)->first();
             return $data;
         } catch (\Exception $e) {
             return $e;

@@ -77,7 +77,7 @@ class PrintPayment extends Model
             return $e;
         }
     }
-    //8. phiếu bù
+    //1.8. phiếu bù
     public static function statisticalAdvance2($fromdate, $todate, $type)
     {
         try {
@@ -100,11 +100,35 @@ class PrintPayment extends Model
             // if ($type == '8') {
             // }
 
-            $data = $a->select('l.LENDER_NO','jom.*')
+            $data = $a->select('l.LENDER_NO', 'jom.*')
                 ->distinct()
                 ->take(10)
                 ->get();
             dd($data);
+            return $data;
+        } catch (\Exception $e) {
+            dd($e);
+            return $e;
+        }
+    }
+    //2 phiếu yêu cầu thanh toán
+    public static function debitNote($type, $formjobno, $tojobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
+    {
+        try {
+            if ($type == 'job_no') {
+                if ($formjobno && $tojobno  && $person && $phone) {
+                    $data = DB::table('DEBIT_NOTE_M as dnm')->get();
+                } else {
+                    return 201;
+                }
+            } elseif ($type == 'customer') {
+                if ($custno && $person && $phone) {
+                    //array job[]
+                }
+            } elseif ($type == 'debit_date') {
+                if ($fromdate && $todate && $debittype) {
+                }
+            }
             return $data;
         } catch (\Exception $e) {
             dd($e);

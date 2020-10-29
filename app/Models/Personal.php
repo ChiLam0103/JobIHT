@@ -7,20 +7,40 @@ use Illuminate\Support\Facades\DB;
 
 class Personal extends Model
 {
+    public static function query()
+    {
+        $query = DB::table('PERSONAL as p')
+            ->join('CKICO_BRANCH as b', 'p.BRANCH_ID', '=', 'b.BRANCH_ID')
+            ->where('p.BRANCH_ID', 'IHTVN1')
+            ->orderByDesc('p.PNL_NO');
+        return $query;
+    }
     public static function list()
     {
-        $data = DB::table('PERSONAL as p')
-            ->join('CKICO_BRANCH as b', 'p.BRANCH_ID', '=', 'b.BRANCH_ID')
-            ->where('p.BRANCH_ID', 'IHTVN1')->select('p.*', 'b.BRANCH_NAME')
-            ->orderByDesc('p.PNL_NO')
+        $take = 5000;
+        $query =  Personal::query();
+        $data =  $query
+            ->take($take)
+            ->select('p.*', 'b.BRANCH_NAME')
             ->get();
         return $data;
     }
+    public static function listPage($page)
+    {
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  Personal::query();
+        $count = $query->count();
+        $data =  $query->skip($skip)
+            ->take($take)
+            ->select('p.*', 'b.BRANCH_NAME')
+            ->get();
+        return ['total_page' => $count, 'list' => $data];
+    }
     public static function des($id)
     {
-        $data = DB::table('PERSONAL as p')
-            ->join('CKICO_BRANCH as b', 'p.BRANCH_ID', '=', 'b.BRANCH_ID')
-            ->where('p.BRANCH_ID', 'IHTVN1')->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
+        $query =  Personal::query();
+        $data =  $query->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
         return $data;
     }
 
@@ -32,7 +52,7 @@ class Personal extends Model
             ->select('PNL_NO')
             ->orderByDesc('PNL_NO')
             ->first();
-        $no=(int)$count->PNL_NO;
+        $no = (int)$count->PNL_NO;
         $no++;
         return $no;
     }

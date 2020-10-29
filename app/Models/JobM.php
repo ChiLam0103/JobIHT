@@ -7,38 +7,61 @@ use Illuminate\Support\Facades\DB;
 
 class JobM extends Model
 {
-    public static function list()
+    public static function query()
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $data = DB::table('JOB_START as js')
+        $query = DB::table('JOB_START as js')
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
             ->leftjoin('CUSTOMER as c', 'jm.CUST_NO', '=', 'c.CUST_NO')
-            ->select('c.CUST_NAME', 'jm.*')
-            ->where('jm.BRANCH_ID', 'IHTVN1')
             ->orderBy('jm.JOB_NO', 'desc')
-            ->take(1000)
-            ->get();
-        return $data;
+            ->where('jm.BRANCH_ID', 'IHTVN1');
+        return $query;
+    }
+    public static function list()
+    {
+        try {
+            $take = 5000;
+            $query =  JobM::query();
+            $data =  $query
+                ->take($take)
+                ->select('c.CUST_NAME', 'jm.JOB_NO')
+                ->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function listPage($page)
+    {
+        try {
+            $take = 10;
+            $skip = ($page - 1) * $take;
+            $query =  JobM::query();
+            $count = $query->count();
+            $data =  $query->skip($skip)
+                ->take($take)
+                ->select('c.CUST_NAME', 'jm.JOB_NO')
+                ->get();
+            return ['total_page' => $count, 'list_job' => $data];
+        } catch (\Exception $ex) {
+            return $ex;
+        }
     }
     public static function search($type, $value)
     {
-        $a = DB::table('JOB_ORDER_M as jom')
-            ->orderBy('jom.JOB_NO', 'desc')
-            ->leftjoin('CUSTOMER as c', 'jom.CUST_NO', '=', 'c.CUST_NO')
-            ->where('jom.BRANCH_ID', 'IHTVN1');
+        $query =  JobM::query();
 
         if ($type == '1') { //jobno
-            $a->where('jom.JOB_NO', 'LIKE', '%' . $value . '%');
+            $query->where('jom.JOB_NO', 'LIKE', '%' . $value . '%');
         } elseif ($type == '2') { //bill no
-            $a->where('jom.BILL_NO', 'LIKE', '%' . $value . '%');
+            $query->where('jom.BILL_NO', 'LIKE', '%' . $value . '%');
         } elseif ($type == '3') { //note
-            $a->where('jom.NOTE', 'LIKE', '%' . $value . '%');
+            $query->where('jom.NOTE', 'LIKE', '%' . $value . '%');
         } elseif ($type == '4') { //nhan vien chung tu
-            $a->where('jom.NV_CHUNGTU', 'LIKE', '%' . $value . '%');
+            $query->where('jom.NV_CHUNGTU', 'LIKE', '%' . $value . '%');
         } elseif ($type == '5') { //ten khach hang
-            $a->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+            $query->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
         }
-        $data = $a->select('c.CUST_NAME', 'jom.*')
+        $data = $query->select('c.CUST_NAME', 'jom.*')
             ->take(1000)
             ->get();
         return $data;
@@ -136,31 +159,26 @@ class JobM extends Model
             return '201';
         }
     }
-    public static function removeCheck($id)
-    {
-        try {
-            $exist = DB::table('JOB_ORDER_M as jm')
-                ->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')
-                ->where('jm.JOB_NO', $id)
-                ->count();
-            if ($exist == 0) {
-                //co the xoa
-                return '200';
-            } else {
-                //khong the xoa
-                return '201';
-            }
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
     public static function remove($request)
     {
         try {
-            DB::table(config('constants.JOB_M_TABLE'))
-                ->where('JOB_NO', $request['JOB_NO'])
-                ->delete();
-            return '200';
+            $title = '';
+            $query = DB::table('JOB_ORDER_M as jm')->where('jm.JOB_NO', $request['JOB_NO']);
+            //check CHK_MK
+            $check_chk_mk =  $query->where('jm.CHK_MK', 'Y')->first();
+            //check có dữ liệu trong job_order_d
+            $check_job_order_d =  $query->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')->select('jd.JOB_NO')->get();
+            if ($check_chk_mk == null && count($check_job_order_d) == 0) {
+                $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
+                DB::table('JOB_ORDER_M')->where('JOB_NO', $request['JOB_NO'])->delete();
+                return $title;
+            } elseif ($check_chk_mk != null) {
+                $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';
+                return $title;
+            } elseif (count($check_job_order_d) != 0) {
+                $title = 'Đã có dữ liệu chi tiết, không thể xóa!';
+                return $title;
+            }
         } catch (\Exception $e) {
             return $e;
         }
@@ -182,30 +200,39 @@ class JobM extends Model
             return '201';
         }
     }
-    public static function listPending()
+    public static function listPending($page)
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $data = DB::table('JOB_START as js')
-            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
-            ->where('jm.CHK_MK', '!=', 'Y')
-            ->select('c.CUST_NAME', 'jm.*')
-            ->orderBy('jm.JOB_NO', 'desc')
-            ->take(9000)
-            ->get();
-        return $data;
+        try {
+            $take = 10;
+            $skip = ($page - 1) * $take;
+            $query =  JobM::query();
+            $query->take($take)
+                ->where(function ($query) {
+                    $query->where('jm.CHK_MK', '!=', 'Y')
+                        ->orWhere('jm.CHK_MK', null);
+                })
+                ->select('c.CUST_NAME', 'jm.*');
+            $count = $query->count();
+            $data =  $query->skip($skip)->get();
+            return ['total_page' => (int)($count / $take), 'list_job' => $data];
+        } catch (\Exception $ex) {
+            return $ex;
+        }
     }
-    public static function listApproved()
+    public static function listApproved($page)
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $data = DB::table('JOB_START as js')
-            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
-            ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
-            ->where('jm.CHK_MK', 'Y')
-            ->select('c.CUST_NAME', 'jm.*')
-            ->orderBy('jm.JOB_NO', 'desc')
-            ->take(9000)
-            ->get();
-        return $data;
+        try {
+            $take = 10;
+            $skip = ($page - 1) * $take;
+            $query =  JobM::query();
+            $query->take($take)
+                ->where('jm.CHK_MK', 'Y')
+                ->select('c.CUST_NAME', 'jm.*');
+            $count = $query->count();
+            $data =  $query->skip($skip)->get();
+            return ['total_page' => (int)($count / $take), 'list_job' => $data];
+        } catch (\Exception $ex) {
+            return $ex;
+        }
     }
 }

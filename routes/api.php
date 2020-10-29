@@ -30,6 +30,7 @@ Route::namespace('Api\v1')->group(function () {
             });
             Route::group(['prefix' => 'customer'], function () {
                 Route::get('/type={type}', 'CustomerController@list');
+                Route::get('/type={type}/page={page}', 'CustomerController@listPage');
                 Route::get('des/id={id}/type={type}', 'CustomerController@des');
                 Route::post('add', 'CustomerController@add');
                 Route::post('edit', 'CustomerController@edit');
@@ -38,6 +39,7 @@ Route::namespace('Api\v1')->group(function () {
             //staff-customs(nhan vien hai quan)
             Route::group(['prefix' => 'staff-customs'], function () {
                 Route::get('/', 'StaffCustomerController@list');
+                Route::get('page={page}', 'StaffCustomerController@listPage');
                 Route::get('des/{id}', 'StaffCustomerController@des');
                 Route::post('add', 'StaffCustomerController@add');
                 Route::post('edit', 'StaffCustomerController@edit');
@@ -45,6 +47,7 @@ Route::namespace('Api\v1')->group(function () {
             });
             Route::group(['prefix' => 'type-cost'], function () {
                 Route::get('/', 'TypeCostController@list');
+                Route::get('page={page}', 'TypeCostController@listPage');
                 Route::post('add', 'TypeCostController@add');
                 Route::post('edit', 'TypeCostController@edit');
                 Route::post('remove', 'TypeCostController@remove');
@@ -75,29 +78,30 @@ Route::namespace('Api\v1')->group(function () {
         Route::group(['prefix' => 'file'], function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
-                Route::get('/', 'JobStartController@list');
+                Route::get('page={page}', 'JobStartController@listPage');
+                Route::get('', 'JobStartController@list');
                 Route::get('search/type={type}&value={value}', 'JobStartController@search');
                 Route::get('not-created', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
                 Route::post('edit', 'JobStartController@edit');
-                Route::get('remove-check/{id}', 'JobStartController@removeCheck');
                 Route::post('remove', 'JobStartController@remove');
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
+                Route::get('page={page}', 'JobOrderController@listPage');
                 Route::get('search/type={type}&value={value}', 'JobOrderController@search');
                 Route::get('des/job={id}&type={TYPE}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
                 Route::post('add-d', 'JobOrderController@addJobD');
                 Route::post('edit', 'JobOrderController@edit');
                 Route::post('edit-d', 'JobOrderController@editJobD');
-                Route::get('remove-check/{id}', 'JobOrderController@removeCheck');
                 Route::post('remove', 'JobOrderController@remove');
+                Route::post('remove-d', 'JobOrderController@removeJobD');
             });
             Route::group(['prefix' => 'approved'], function () {
-                Route::get('list-pending', 'JobOrderController@listPending');
-                Route::get('list-approved', 'JobOrderController@listApproved');
+                Route::get('list-pending/page={page}', 'JobOrderController@listPending');
+                Route::get('list-approved/page={page}', 'JobOrderController@listApproved');
                 Route::post('/', 'JobOrderController@approved');
             });
             //pay
@@ -110,7 +114,8 @@ Route::namespace('Api\v1')->group(function () {
         Route::group(['prefix' => 'payment'], function () {
             //1.phieu chi tam ung
             Route::group(['prefix' => 'lender'], function () {
-                Route::get('/', 'LenderController@list');
+                Route::get('', 'LenderController@list');
+                Route::get('page={page}', 'LenderController@listpage');
                 Route::get('list-advance', 'LenderController@listAdvance');
                 Route::get('search/type={type}&value={value}', 'LenderController@search');
                 Route::get('des/{id}', 'LenderController@des');
@@ -123,6 +128,7 @@ Route::namespace('Api\v1')->group(function () {
             //3.yeu cau thanh toan
             Route::group(['prefix' => 'debit-note'], function () {
                 Route::get('/', 'DebitNoteController@list');
+                Route::get('page={page}', 'DebitNoteController@listPage');
                 Route::get('search/type={type}&value={value}', 'DebitNoteController@search');
                 Route::get('not-created', 'DebitNoteController@listNotCreated');
                 Route::get('des/{id}', 'DebitNoteController@des');
@@ -138,8 +144,10 @@ Route::namespace('Api\v1')->group(function () {
             });
             //4. duyet thanh toan khach hang
             Route::group(['prefix' => 'paid-debit'], function () {
-                Route::get('list-pending', 'DebitNoteController@listPending');
                 Route::get('list-paid', 'DebitNoteController@listPaid');
+                Route::get('list-pending', 'DebitNoteController@listPending');
+                Route::get('list-paid/page={page}', 'DebitNoteController@listPaidPage');
+                Route::get('list-pending/page={page}', 'DebitNoteController@listPendingPage');
                 Route::post('change', 'DebitNoteController@change');
             });
             //6. bang kiem tra du lieu
@@ -150,6 +158,8 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'boat-fee'], function () {
                 Route::get('list-boat-month-m', 'BoatFeeController@listBoatMonthM');
                 Route::get('list-fee-month-m', 'BoatFeeController@listFeeMonthM');
+                Route::get('list-boat-month-m/page={page}', 'BoatFeeController@listBoatMonthMPage');
+                Route::get('list-fee-month-m/page={page}', 'BoatFeeController@listFeeMonthMPage');
                 Route::get('des-month/type={FEE_TYPE}&value={BOAT_FEE_MONTH}', 'BoatFeeController@desMonth');
                 Route::post('edit', 'BoatFeeController@edit');
             });
@@ -199,8 +209,10 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('statistical-withdrawal/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalWithdrawal');//1.9 thống kê phiếu trả
                     Route::get('statistical-direct/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalDirect');//1.10 thống kê phiếu chi trực tiếp
                     Route::get('statistical-replenishment-withdrawal/fromdate={fromdate}&todate={todate}', 'PrintPaymentController@statisticalReplenishmentWithdrawal');//1.11 thống kê phiếu bù & trả
-
-
+                });
+                //2. phiếu yêu cầu thanh toán
+                Route::group(['prefix' => 'debit-note'], function () {
+                    Route::get('type={type}&formjobno={formjobno}&tojobno={tojobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}', 'PrintPaymentController@debitNote');
                 });
             });
         });

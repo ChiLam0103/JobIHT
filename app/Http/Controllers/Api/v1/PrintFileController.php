@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 
 use App\Models\PrintFile;
 use App\Models\PayType;
+use App\Models\Company;
 
 class PrintFileController extends Controller
 {
@@ -14,8 +15,12 @@ class PrintFileController extends Controller
     public function jobStart($fromjob, $tojob)
     {
         $job = PrintFile::jobStart($fromjob, $tojob);
+        $company=Company::des('IHT');
         if ($job) {
-            return view('print\file\job-start\job')->with('job', $job);
+            return view('print\file\job-start\job', [
+                'job' => $job,
+                'company' => $company
+            ]);
         } else {
             return response()->json(
                 [

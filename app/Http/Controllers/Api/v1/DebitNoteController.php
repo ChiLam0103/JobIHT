@@ -29,6 +29,25 @@ class DebitNoteController extends Controller
             );
         }
     }
+    public function listPage($page)
+    {
+        $data = DebitNoteM::listPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function search($type, $value)
     {
         $data = DebitNoteM::search($type, $value);
@@ -100,6 +119,46 @@ class DebitNoteController extends Controller
                 'success' => true,
                 'total'=>$total,
                 'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listPendingPage($page)
+    {
+        $data = DebitNoteM::listPendingPage($page);
+
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listPaidPage($page)
+    {
+        $data = DebitNoteM::listPaidPage($page);
+
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
             return response()->json(

@@ -183,10 +183,28 @@ class JobD extends Model
             return '201';
         }
     }
-
-    public static function remove($JOB_NO)
+    public static function remove($request)
     {
-        DB::table(config('constants.JOB_D_TABLE'))
-            ->where('JOB_NO', $JOB_NO)->delete();
+        try {
+            $title = '';
+            $query = DB::table('JOB_ORDER_M as jm')->where('jm.JOB_NO', $request['JOB_NO']);
+            //check CHK_MK
+            $check_chk_mk =  $query->where('jm.CHK_MK', 'Y')->first();
+            //check có dữ liệu trong job_order_d
+            $check_job_order_d =  $query->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')->select('jd.JOB_NO')->get();
+            if ($check_chk_mk == null && count($check_job_order_d) == 0) {
+                $title = 'Đã xóa thành công';
+                DB::table('JOB_ORDER_D')->where('JOB_NO', $request['JOB_NO'])->where('ORDER_TYPE',$request['ORDER_TYPE'])->where('SER_NO',$request['SER_NO'])->delete();
+                return $title;
+            } elseif ($check_chk_mk != null) {
+                $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';
+                return $title;
+            } elseif (count($check_job_order_d) != 0) {
+                $title = 'Đã có dữ liệu chi tiết, không thể xóa!';
+                return $title;
+            }
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 }

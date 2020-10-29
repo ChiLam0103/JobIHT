@@ -29,6 +29,25 @@ class JobOrderController extends Controller
             );
         }
     }
+    public function listPage($page)
+    {
+        $data = JobM::listPage($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list_job']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function search($type, $value)
     {
         $data = JobM::search($type, $value);
@@ -154,9 +173,9 @@ class JobOrderController extends Controller
             ], Response::HTTP_OK);
         }
     }
-    public function removeCheck($id)
+    public function remove(Request $request)
     {
-        $data = JobM::removeCheck($id);
+        $data = JobM::remove($request);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -172,10 +191,9 @@ class JobOrderController extends Controller
             );
         }
     }
-
-    public function listPending()
+    public function removeJobD(Request $request)
     {
-        $data = JobM::listPending();
+        $data = JobD::remove($request);
         if ($data) {
             return response()->json([
                 'success' => true,
@@ -191,13 +209,33 @@ class JobOrderController extends Controller
             );
         }
     }
-    public function listApproved()
+    public function listPending($page)
     {
-        $data = JobM::listApproved();
+        $data = JobM::listPending($page);
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'total_page'=>$data['total_page'],
+                'data' => $data['list_job']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function listApproved($page)
+    {
+        $data = JobM::listApproved($page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page'=>$data['total_page'],
+                'data' => $data['list_job']
             ], Response::HTTP_OK);
         } else {
             return response()->json(

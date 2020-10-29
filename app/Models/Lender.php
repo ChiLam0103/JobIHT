@@ -8,15 +8,45 @@ use Illuminate\Support\Facades\DB;
 class Lender extends Model
 {
     // C:chi truc tiep,T: chi tam ung,U:phieu tam ung
+
+    public static function query()
+    {
+        $query = DB::table('LENDER as l')
+        ->rightJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
+        ->where('l.BRANCH_ID', 'IHTVN1')
+        ->orderBy('l.LENDER_NO', 'desc');
+        return $query;
+    }
+
     public static function list()
     {
-        $data = DB::table('LENDER as l')
-            ->rightJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
-            ->select('lt.LENDER_NAME', 'l.*')
-            ->where('l.BRANCH_ID', 'IHTVN1')
-            ->orderBy('l.LENDER_NO', 'desc')
-            ->take(9000)->get();
-        return $data;
+        try {
+            $take = 5000;
+            $query =  Lender::query();
+            $data =  $query
+                ->take($take)
+                ->select('lt.LENDER_NAME', 'l.*')
+                ->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function listPage($page)
+    {
+        try {
+            $take = 10;
+            $skip = ($page - 1) * $take;
+            $query =  Lender::query();
+            $count = $query->count();
+            $data =  $query->skip($skip)
+                ->take($take)
+                ->select('lt.LENDER_NAME', 'l.*')
+                ->get();
+            return ['total_page' => $count, 'list' => $data];
+        } catch (\Exception $ex) {
+            return $ex;
+        }
     }
     public static function listAdvance()
     {
@@ -25,7 +55,7 @@ class Lender extends Model
             ->where('l.BRANCH_ID', 'IHTVN1')
             ->where('l.LENDER_TYPE', 'U')
             ->orderBy('l.LENDER_NO', 'desc')
-            ->take(9000)->get();
+            ->take(5000)->get();
         return $data;
     }
     public static function search($type, $value)
@@ -42,7 +72,7 @@ class Lender extends Model
         }
         $data = $a->select('lt.LENDER_NAME', 'l.*')
             ->where('l.BRANCH_ID', 'IHTVN1')
-            ->take(9000)
+            ->take(5000)
             ->get();
         return $data;
     }
