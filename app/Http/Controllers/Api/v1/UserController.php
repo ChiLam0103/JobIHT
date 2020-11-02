@@ -36,7 +36,7 @@ class UserController extends Controller
                 'success' => true,
                 'data' => $data,
                 'permission' => $permission,
-                'message' => 'Chúc mừng bạn đã đăng nhập thành công'
+                'message' => 'Đăng nhập thành công'
             ], Response::HTTP_OK);
         }
     }

@@ -179,7 +179,7 @@ class JobOrderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'msg' => $data
             ], Response::HTTP_OK);
         } else {
             return response()->json(
@@ -197,7 +197,7 @@ class JobOrderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'msg' => $data
             ], Response::HTTP_OK);
         } else {
             return response()->json(
