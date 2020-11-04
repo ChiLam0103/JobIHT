@@ -16,6 +16,8 @@ class PrintFile extends Model
                 ->leftJoin('PERSONAL as p1', 'js.NV_CHUNGTU', 'p1.PNL_NO')
                 ->leftJoin('PERSONAL as p2', 'js.NV_GIAONHAN', 'p2.PNL_NO')
                 ->whereBetween('js.JOB_NO', [$fromjob, $tojob])
+                ->where('p1.BRANCH_ID', 'IHTVN1')
+                ->where('p2.BRANCH_ID', 'IHTVN1')
                 ->select('c.CUST_NAME', 'c.CUST_TAX', 'c.CUST_ADDRESS', 'p1.PNL_NAME as NV_CHUNGTU_1', 'p2.PNL_NAME as NV_GIAONHAN_2', 'js.*')
                 ->get();
             return $data;

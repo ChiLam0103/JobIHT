@@ -34,7 +34,7 @@ class Customer extends Model
             default:
                 break;
         }
-        $take = 5000;
+        $take = 9000;
         $query =  Customer::query();
         $data =  $query->take($take)->select('c.*', 'b.BRANCH_NAME')->get();
 

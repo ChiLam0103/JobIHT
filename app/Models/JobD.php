@@ -60,11 +60,12 @@ class JobD extends Model
 
         return $data;
     }
-    public static function getJobD($id){
-      return  DB::table(config('constants.JOB_D_TABLE'))
-        ->where('JOB_NO', $id)
-        ->select('JOB_NO','PORT_AMT','INDUSTRY_ZONE_AMT')
-        ->get();
+    public static function getJobD($id)
+    {
+        return  DB::table(config('constants.JOB_D_TABLE'))
+            ->where('JOB_NO', $id)
+            ->select('JOB_NO', 'PORT_AMT', 'INDUSTRY_ZONE_AMT')
+            ->get();
     }
     public static function generateSerNo($job_no, $order_type)
     {
@@ -89,17 +90,17 @@ class JobD extends Model
                     ->insert(
                         [
                             "JOB_NO" => $request->JOB_NO,
-                            "ORDER_TYPE" => $request['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
+                            "ORDER_TYPE" => ($request['ORDER_TYPE'] != 'undefined' || $request['ORDER_TYPE'] != 'null' || $request['ORDER_TYPE'] != null)  ? $request['ORDER_TYPE'] : '',
                             "SER_NO" => $ser_no,
-                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                            "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
-                            "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'] != null ? $request['PORT_AMT'] : '0',
-                            "INDUSTRY_ZONE_AMT" => trim($request['INDUSTRY_ZONE_AMT']) != null ? $request['INDUSTRY_ZONE_AMT'] : 0,
-                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : 'N',
-                            "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
-                            "INPUT_USER" => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
+                            "DESCRIPTION" => ($request['DESCRIPTION'] != 'undefined' || $request['DESCRIPTION'] != 'null' || $request['DESCRIPTION'] != null)  ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => ($request['REV_TYPE'] != 'undefined' || $request['REV_TYPE'] != 'null' || $request['REV_TYPE'] != null)  ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => ($request['INV_NO'] != 'undefined' || $request['INV_NO'] != 'null' || $request['INV_NO'] != null)  ? $request['INV_NO'] : '',
+                            "PORT_AMT" => ($request['PORT_AMT'] != 'undefined' || $request['PORT_AMT'] != 'null' || $request['PORT_AMT'] != null)  ? $request['PORT_AMT'] : '0',
+                            "INDUSTRY_ZONE_AMT" => ($request['INDUSTRY_ZONE_AMT'] != 'undefined' || $request['INDUSTRY_ZONE_AMT'] != 'null' || $request['INDUSTRY_ZONE_AMT'] != null)  ? $request['INDUSTRY_ZONE_AMT'] : 0,
+                            "NOTE" => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null)  ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] != 'undefined' || $request['THANH_TOAN_MK'] != 'null' || $request['THANH_TOAN_MK'] != null)  ? $request['THANH_TOAN_MK'] : 'N',
+                            "BRANCH_ID" => ($request['BRANCH_ID'] != 'undefined' || $request['BRANCH_ID'] != 'null' || $request['BRANCH_ID'] != null)  ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => ($request['INPUT_USER'] != 'undefined' || $request['INPUT_USER'] != 'null' || $request['INPUT_USER'] != null)  ? $request['INPUT_USER'] : '',
                             "INPUT_DT" => date("YmdHis")
                         ]
                     );
@@ -108,18 +109,18 @@ class JobD extends Model
                     ->insert(
                         [
                             "JOB_NO" => $request->JOB_NO,
-                            "ORDER_TYPE" => $request['ORDER_TYPE'] != 'undefined' ? $request['ORDER_TYPE'] : '',
+                            "ORDER_TYPE" => ($request['ORDER_TYPE'] != 'undefined' || $request['ORDER_TYPE'] != 'null' || $request['ORDER_TYPE'] != null)  ? $request['ORDER_TYPE'] : '',
                             "SER_NO" => $ser_no,
-                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                            "UNIT" => $request['UNIT'] != 'undefined' ? $request['UNIT'] : '',
-                            "QTY" => $request['QTY'] != 'undefined' ? $request['QTY'] : '',
-                            "PRICE" => $request['PRICE'] != 'undefined' ? $request['PRICE'] : '',
-                            "TAX_NOTE" => $request['TAX_NOTE'] != 'undefined' ? $request['TAX_NOTE'] : '',
-                            "TAX_AMT" => $request['TAX_AMT'] != 'undefined' ? $request['TAX_AMT'] : '',
-                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : 'N',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
-                            "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1',
-                            "INPUT_USER" => $request['INPUT_USER'] != 'undefined' ? $request['INPUT_USER'] : '',
+                            "DESCRIPTION" => ($request['DESCRIPTION'] != 'undefined' || $request['DESCRIPTION'] != 'null' || $request['DESCRIPTION'] != null)  ? $request['DESCRIPTION'] : '',
+                            "UNIT" => ($request['UNIT'] != 'undefined' || $request['UNIT'] != 'null' || $request['UNIT'] != null)  ? $request['UNIT'] : '',
+                            "QTY" => ($request['QTY'] != 'undefined' || $request['QTY'] != 'null' || $request['QTY'] != null)  ? $request['QTY'] : '',
+                            "PRICE" => ($request['PRICE'] != 'undefined' || $request['PRICE'] != 'null' || $request['PRICE'] != null)  ? $request['PRICE'] : '',
+                            "TAX_NOTE" => ($request['TAX_NOTE'] != 'undefined' || $request['TAX_NOTE'] != 'null' || $request['TAX_NOTE'] != null) ? $request['TAX_NOTE'] : '',
+                            "TAX_AMT" => ($request['TAX_AMT'] != 'undefined' || $request['TAX_AMT'] != 'null' || $request['TAX_AMT'] != null)  ? $request['TAX_AMT'] : '',
+                            "NOTE" => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null)  ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] != 'undefined' || $request['THANH_TOAN_MK'] != 'null' || $request['THANH_TOAN_MK'] != null)  ? $request['THANH_TOAN_MK'] : 'N',
+                            "BRANCH_ID" => ($request['BRANCH_ID'] != 'undefined' || $request['BRANCH_ID'] != 'null' || $request['BRANCH_ID'] != null)  ? $request['BRANCH_ID'] : 'IHTVN1',
+                            "INPUT_USER" => ($request['INPUT_USER'] != 'undefined' || $request['INPUT_USER'] != 'null' || $request['INPUT_USER'] != null)  ? $request['INPUT_USER'] : '',
                             "INPUT_DT" => date("YmdHis")
                         ]
                     );
@@ -143,15 +144,13 @@ class JobD extends Model
                     ->where('SER_NO', $request['SER_NO'])
                     ->update(
                         [
-                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                            "REV_TYPE" => $request['REV_TYPE'] != 'undefined' ? $request['REV_TYPE'] : 'N',
-                            "INV_NO" => $request['INV_NO'] != 'undefined' ? $request['INV_NO'] : '',
-                            "PORT_AMT" => $request['PORT_AMT'] != 'undefined' ? $request['PORT_AMT'] : 0,
-                            // "INDUSTRY_ZONE_AMT" =>123,
-                            "INDUSTRY_ZONE_AMT" => $request['INDUSTRY_ZONE_AMT'] != null ? $request['INDUSTRY_ZONE_AMT'] : 0,
-
-                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
+                            "DESCRIPTION" => ($request['DESCRIPTION'] != 'undefined' || $request['DESCRIPTION'] != 'null' || $request['DESCRIPTION'] != null)  ? $request['DESCRIPTION'] : '',
+                            "REV_TYPE" => ($request['REV_TYPE'] != 'undefined' || $request['REV_TYPE'] != 'null' || $request['REV_TYPE'] != null)  ? $request['REV_TYPE'] : 'N',
+                            "INV_NO" => ($request['INV_NO'] != 'undefined' || $request['INV_NO'] != 'null' || $request['INV_NO'] != null)  ? $request['INV_NO'] : '',
+                            "PORT_AMT" => ($request['PORT_AMT'] != 'undefined' || $request['PORT_AMT'] != 'null' || $request['PORT_AMT'] != null)  ? $request['PORT_AMT'] : '0',
+                            // "INDUSTRY_ZONE_AMT" => ($request['INDUSTRY_ZONE_AMT'] != 'undefined' || $request['INDUSTRY_ZONE_AMT'] != 'null' || $request['INDUSTRY_ZONE_AMT'] != null)  ? $request['INDUSTRY_ZONE_AMT'] : 0,
+                            "NOTE" => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null)  ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] != 'undefined' || $request['THANH_TOAN_MK'] != 'null' || $request['THANH_TOAN_MK'] != null)  ? $request['THANH_TOAN_MK'] : 'N',
                             'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                             'MODIFY_DT' =>  date("YmdHis"),
                         ]
@@ -163,14 +162,14 @@ class JobD extends Model
                     ->where('SER_NO', $request['SER_NO'])
                     ->update(
                         [
-                            "DESCRIPTION" => $request['DESCRIPTION'] != 'undefined' ? $request['DESCRIPTION'] : '',
-                            "UNIT" => $request['UNIT'] != 'undefined' ? $request['UNIT'] : '',
-                            "QTY" => $request['QTY'],
-                            "PRICE" => $request['PRICE'],
-                            "TAX_NOTE" => $request['TAX_NOTE'],
-                            "TAX_AMT" => $request['TAX_AMT'],
-                            "NOTE" => $request['NOTE'] != 'undefined' ? $request['NOTE'] : '',
-                            "THANH_TOAN_MK" => $request['THANH_TOAN_MK'] != 'undefined' ? $request['THANH_TOAN_MK'] : '',
+                            "DESCRIPTION" => ($request['DESCRIPTION'] != 'undefined' || $request['DESCRIPTION'] != 'null' || $request['DESCRIPTION'] != null)  ? $request['DESCRIPTION'] : '',
+                            "UNIT" => ($request['UNIT'] != 'undefined' || $request['UNIT'] != 'null' || $request['UNIT'] != null)  ? $request['UNIT'] : '',
+                            "QTY" => ($request['QTY'] != 'undefined' || $request['QTY'] != 'null' || $request['QTY'] != null)  ? $request['QTY'] : '',
+                            "PRICE" => ($request['PRICE'] != 'undefined' || $request['PRICE'] != 'null' || $request['PRICE'] != null)  ? $request['PRICE'] : '',
+                            "TAX_NOTE" => ($request['TAX_NOTE'] != 'undefined' || $request['TAX_NOTE'] != 'null' || $request['TAX_NOTE'] != null) ? $request['TAX_NOTE'] : '',
+                            "TAX_AMT" => ($request['TAX_AMT'] != 'undefined' || $request['TAX_AMT'] != 'null' || $request['TAX_AMT'] != null)  ? $request['TAX_AMT'] : '',
+                            "NOTE" => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null)  ? $request['NOTE'] : '',
+                            "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] != 'undefined' || $request['THANH_TOAN_MK'] != 'null' || $request['THANH_TOAN_MK'] != null)  ? $request['THANH_TOAN_MK'] : 'N',
                             'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                             'MODIFY_DT' =>  date("YmdHis"),
                         ]
@@ -179,8 +178,7 @@ class JobD extends Model
             $data = JobD::getJob($request->JOB_NO, $request->TYPE);
             return $data;
         } catch (\Exception $e) {
-            dd($e);
-            return '201';
+            return $e;
         }
     }
     public static function remove($request)
@@ -194,7 +192,7 @@ class JobD extends Model
             $check_job_order_d =  $query->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')->select('jd.JOB_NO')->get();
             if ($check_chk_mk == null && count($check_job_order_d) == 0) {
                 $title = 'Đã xóa thành công';
-                DB::table('JOB_ORDER_D')->where('JOB_NO', $request['JOB_NO'])->where('ORDER_TYPE',$request['ORDER_TYPE'])->where('SER_NO',$request['SER_NO'])->delete();
+                DB::table('JOB_ORDER_D')->where('JOB_NO', $request['JOB_NO'])->where('ORDER_TYPE', $request['ORDER_TYPE'])->where('SER_NO', $request['SER_NO'])->delete();
                 return $title;
             } elseif ($check_chk_mk != null) {
                 $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';

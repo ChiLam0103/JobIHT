@@ -151,7 +151,8 @@ class JobStartController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'msg' => $data
+                'msg' => $data,
+                'message' =>  'Bạn đã xóa thành công'
             ], Response::HTTP_OK);
         } else {
             return response()->json(

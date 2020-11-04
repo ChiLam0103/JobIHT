@@ -244,31 +244,14 @@ class DebitNoteController extends Controller
             ], Response::HTTP_OK);
         }
     }
-    public function removeCheck($id)
-    {
-        $data = DebitNoteM::remove($id);
-        if ($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
     public function remove(Request $request)
     {
         $data = DebitNoteM::remove($request);
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
+                'message' =>  'Bạn đã xóa thành công'
             ], Response::HTTP_OK);
         } else {
             return response()->json(

@@ -9,108 +9,35 @@ use Illuminate\Support\Facades\DB;
 
 class PrintPayment extends Model
 {
-    //1. in phieu theo doi
-    //1.1.phieu chi
-    public static function advancePayment($fromadvance, $toadvance)
+    //1.phieu thu chi
+    public static function advance($advance)
     {
         try {
             $data = DB::table('LENDER as l')
                 ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
-                ->whereBetween('l.LENDER_NO', [$fromadvance, $toadvance])
-                ->select('c.CUST_NAME', 'l.*')->get();
-            // $str = "";
-            // foreach ($data as $item) {
-            //     $str = PrintPayment::convert_number_to_words((int)$item->TOTAL_AMT);
-            //     $str = mb_convert_encoding($str, 'UTF-8', 'auto');
-            //     $item->AMT_NAME = $str;
-            // }
+                ->leftJoin('LENDER_TYPE as lt', 'lt.LENDER_TYPE', 'l.LENDER_TYPE')
+                ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
+                ->where('l.LENDER_NO', $advance)
+                ->where('p.BRANCH_ID', 'IHTVN1')
+                ->select('c.CUST_NAME', 'p.PNL_NAME as PNAME', 'lt.LENDER_NAME', 'l.*')->first();
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
-    //1.4.phieu tam ung chua mo job order
-    public static function withoutJob($fromdate, $todate)
+    public static function advance_D($advance)
     {
         try {
-            $data = DB::table('LENDER as l')
-                ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
-                ->leftJoin('JOB_ORDER_M as jom', 'l.JOB_NO', 'jom.JOB_NO')
-                ->leftJoin('JOB_ORDER_D as jod', 'jod.JOB_NO', 'jom.JOB_NO')
-                ->whereNotNull('l.JOB_NO')
-                ->where(function ($query) {
-                    $query->where('jod.JOB_NO', null)
-                        ->orWhere('jom.JOB_NO', null);
-                })
-                ->whereBetween('l.LENDER_DATE', [$fromdate, $todate])
-                ->select('c.CUST_NAME', 'l.LENDER_NO', 'l.JOB_NO', 'jod.JOB_NO as jod', 'jom.JOB_NO as jom')
-                ->take(100)
-                ->get();
-            dd($data);
+            $data = DB::table('LENDER_D as ld')
+                ->rightJoin('LENDER as l', 'l.LENDER_NO', 'ld.LENDER_NO')
+                ->where('ld.LENDER_NO', $advance)
+                ->select('ld.*')->get();
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
-    //1.7 thống kê phiếu tạm ứng
-    public static function statisticalAdvance($fromdate, $todate, $type)
-    {
-        try {
-            $lender_type = '';
-            if ($type == '7') {
-                $lender_type = 'T';
-            } elseif ($type == '10') {
-                $lender_type = 'C';
-            } else {
-                $lender_type = 'U';
-            }
-            $a = DB::table('LENDER as l')
-                ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.LENDER_NO')
-                ->where('l.LENDER_TYPE', $lender_type)
-                ->where('l.BRANCH_ID', 'IHTVN1')
-                ->whereBetween('l.LENDER_DATE', [$fromdate, $todate]);
-            $data = $a->select('l.*', 'p.PNL_NAME as PNL_NAME2')
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            dd($e);
-            return $e;
-        }
-    }
-    //1.8. phiếu bù
-    public static function statisticalAdvance2($fromdate, $todate, $type)
-    {
-        try {
-            $lender_type = '';
-            if ($type == '7' || $type == '8') {
-                $lender_type = 'T';
-            } elseif ($type == '10') {
-                $lender_type = 'C';
-            } else {
-                $lender_type = 'U';
-            }
-            $a = DB::table('LENDER as l')
-                ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.LENDER_NO')
-                ->where('l.LENDER_TYPE', $lender_type)
-                ->where('l.BRANCH_ID', 'IHTVN1')
-                ->whereBetween('l.LENDER_DATE', [$fromdate, $todate])
-                ->rightJoin('JOB_ORDER_M as jom', 'jom.JOB_NO', 'l.JOB_NO')
-                // ->rightJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->whereNotNull('jom.CUSTOMS_NO');
-            // if ($type == '8') {
-            // }
 
-            $data = $a->select('l.LENDER_NO', 'jom.*')
-                ->distinct()
-                ->take(10)
-                ->get();
-            dd($data);
-            return $data;
-        } catch (\Exception $e) {
-            dd($e);
-            return $e;
-        }
-    }
     //2 phiếu yêu cầu thanh toán
     public static function debitNote($type, $formjobno, $tojobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
     {
@@ -132,6 +59,21 @@ class PrintPayment extends Model
             return $data;
         } catch (\Exception $e) {
             dd($e);
+            return $e;
+        }
+    }
+    //8. thống kê phiếu thu
+    public static function receipt($receipt_no)
+    {
+        try {
+            $query = DB::table('RECEIPT as r')
+            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'r.CUST_NO')
+            ->where('r.BRANCH_ID', 'IHTVN1')
+            ->where('r.RECEIPT_NO', $receipt_no)
+            ->select('c.CUST_NAME', 'c.CUST_ADDRESS','r.RECEIPT_NO','r.RECEIPT_DATE','r.RECEIPT_REASON','r.TOTAL_AMT','r.DOR_NO','r.TRANSFER_FEES')
+            ->first();
+            return $query;
+        } catch (\Exception $e) {
             return $e;
         }
     }

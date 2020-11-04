@@ -40,7 +40,7 @@ class LenderD extends Model
                         'LENDER_AMT' => $request['LENDER_AMT'],
                         'INPUT_USER' => $request['INPUT_USER'],
                         "INPUT_DT" => date("YmdHis"),
-                        'NOTE' => $request['NOTE'],
+                        'NOTE' => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null) ? $request['NOTE'] : '',
                         "BRANCH_ID" => $request['BRANCH_ID'] != 'undefined' ? $request['BRANCH_ID'] : 'IHTVN1'
                     ]
                 );
@@ -60,7 +60,7 @@ class LenderD extends Model
                 ->update(
                     [
                         'LENDER_AMT' => $request['LENDER_AMT'],
-                        'NOTE' => $request['NOTE'],
+                        'NOTE' => ($request['NOTE'] != 'undefined' || $request['NOTE'] != 'null' || $request['NOTE'] != null) ? $request['NOTE'] : '',
                         'MODIFY_USER' =>  $request['MODIFY_USER'] != 'undefined' ? $request['MODIFY_USER'] : '',
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]

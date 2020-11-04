@@ -89,7 +89,8 @@ class TypeCostController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
+                'message' =>  'Bạn đã xóa thành công'
             ], Response::HTTP_OK);
         } else {
             return response()->json(
