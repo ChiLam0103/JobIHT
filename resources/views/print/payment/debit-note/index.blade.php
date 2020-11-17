@@ -40,44 +40,93 @@
         }
     }
 
-    .title {
-        text-align: center;
-        position: relative;
-        font-size: 24px;
+    .font-weight-bold {
         font-weight: bold;
     }
 
-    .title-2 {
-        text-align: center;
-        position: relative;
-        font-size: 18px;
+    .title {
         font-weight: bold;
+        text-align: center;
+    }
+
+    .title p {
+        /* font-size: 13px; */
         margin-top: -1em;
     }
 
-    nav ul {
-        list-style-type: none;
-        padding: 0;
+    .title #comp_name {
+        margin-top: 0.1em;
+        font-size: 20px;
     }
 
-    .title-sub {
-        font-size: 15px;
+    .title h1 {
+        margin-top: 0em;
+    }
+
+    .text-center {
+        text-align: center
+    }
+
+    .text-left {
+        text-align: left
+    }
+
+    .text-right {
+        text-align: right
+    }
+
+    #recevie p {
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 1px solid;
+        margin: 0;
+    }
+
+    #recevie td:first-child,
+    #info-debit-2 td:first-child {
         font-weight: bold;
     }
 
-    .padding-left-15 {
-        padding-left: 15px;
+    #info-debit-2 td:first-child {
+        width: 25%;
+    }
+
+    #info-debit td {
+        padding-top: .5em;
+    }
+
+    #info-debit td:first-child {
+        width: 40%;
+    }
+
+    #info-debit td:nth-child(2) {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #debit_d,
+    #debit_d th,
+    #debit_d td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    tr td {
+        padding-top: 0.2em;
+        font-size: 13px
+    }
+
+    .border {
+        border: 1px solid;
     }
 
     .col-10 {
         width: 100%;
         display: flex;
-
     }
 
-    .border {
-        border-bottom: 1px solid;
-        padding-top: 1em;
+    .col-9 {
+        width: 90%;
     }
 
     .col-8 {
@@ -112,113 +161,185 @@
         width: 20%;
     }
 
-    table,
-    th,
-    td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        text-align: center;
-    }
-
-    #sign td {
-        height: 10em;
-    }
-
-    tr td {
-        font-size: 14px
+    .col-1 {
+        width: 10%;
     }
 
 </style>
 
-@foreach ($data as $item)
+<body onload="window.print();">
+    <div id="page" class="page">
+        <div class="title">
+            <p id="comp_name">{{ $company->COMP_NAME }}</p>
+            <p>Add: {{ $company->COMP_ADDRESS1 }}</p>
+            <p>Tel: {{ $company->COMP_TEL1 }}/ {{ $company->COMP_TEL2 }};
+                Fax:{{ $company->COMP_FAX1 }}/{{ $company->COMP_FAX2 }}</p>
+            <h1>DEBIT NOTE</h1>
+        </div>
+        <div class="col-10 ">
+            <div class="col-6 border" id="recevie">
+                <p>RECEIVE</p>
+                <table style="width:100%">
+                    <tr>
+                        <td>To:</td>
+                        <td>{{ $debit->CUST_NAME }}</td>
+                    </tr>
+                    <tr>
+                        <td>Attn:</td>
+                        <td>{{ $debit->CUST_BOSS }}</td>
+                    </tr>
+                    <tr>
+                        <td>Add:</td>
+                        <td>{{ $debit->CUST_ADDRESS }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tel:</td>
+                        <td>{{ $debit->CUST_TEL1 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Fax:</td>
+                        <td>{{ $debit->CUST_FAX }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-4 border" id="info-debit">
+                <table style="width:100%">
+                    <tr>
+                        <td>Date:</td>
+                        <td>{{ date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Debit Note No:</td>
+                        <td>{{ $debit->JOB_NO }}</td>
+                    </tr>
+                    <tr>
+                        <td>Please Contact With:</td>
+                        <td>{{ $person }}</td>
+                    </tr>
+                    <tr>
+                        <td>Accountting:</td>
+                        <td>{{ $phone }}</td>
+                    </tr>
 
-    <body onload="window.print();">
-        <div id="page" class="page">
-            <p class="title">{{ $title_vn }}</p>
-            <p class="title-2">{{ $title_cn }}</p>
-            <div class="col-10 border">
-                <div class="col-5">
-                    <span>借支單號:&nbsp;<span class="title-sub">{{ $item->LENDER_NO }}</span> </span>
-                </div>
-                <div class="col-2"></div>
-                <div class="col-3">
-                    <span>列印日期:&nbsp;{{ date('d.m.Y H:i') }}</span>
-                </div>
+                </table>
             </div>
-            <div class="col-10 border">
-                <div class="col-5">
-                    <span>借支人(Người xin tạm ứng):&nbsp;<span class="title-sub"> {{ $item->PNL_NAME }}</span></span>
-                </div>
-                <div class="col-2"></div>
-                <div class="col-3">
-                    <span>借支日期:&nbsp;{{ date('Y/m/d', strtotime($item->LENDER_DATE)) }}</span>
-                </div>
+        </div>
+        <span class="font-weight-bold">We would like to make the Debit Note as follows:</span>
+        <div class="col-10  border" id="info-debit-2">
+            <div class="col-5 ">
+                <table style="width:100%">
+                    <tr>
+                        <td>From:</td>
+                        <td>{{ $debit->TRANS_FROM }}</td>
+                    </tr>
+                    <tr>
+                        <td>Customs No:</td>
+                        <td>{{ $debit->CUSTOMS_NO }}</td>
+                    </tr>
+                    <tr>
+                        <td>NW:</td>
+                        <td>{{ $debit->NW }}</td>
+                    </tr>
+                    <tr>
+                        <td>Job Order:</td>
+                        <td>{{ $debit->JOB_NO }}</td>
+                    </tr>
+                    <tr>
+                        <td>QTY:</td>
+                        <td>{{ $debit->CONTAINER_QTY }}</td>
+                    </tr>
+                    <tr>
+                        <td>Po No:</td>
+                        <td>{{ $debit->PO_NO }}</td>
+                    </tr>
+                    <tr>
+                        <td>Container No:</td>
+                        <td>{{ $debit->CONTAINER_NO }}</td>
+                    </tr>
+                </table>
             </div>
-            <div class="border">
-                <div class="col-10 ">
-                    <div class="col-3">
-                        @if ($type == 1)
-                            <span>Job Order No:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
-                        @endif
-                    </div>
-                    <div class="col-7">
-                        <span>Khách Hàng:&nbsp;{{ $item->CUST_NO }} - {{ $item->CUST_NAME }}</span>
-                    </div>
-                </div>
-                <div class="col-10">
-                    <div class="col-3">
-                        @if ($type == 1)
-                            <span>Số Job Đăng Ký:&nbsp;<span class="title-sub">{{ $item->JOB_NO }}</span></span>
-                        @endif
-                    </div>
-                    <div class="col-2">
-                        <span>Order From:&nbsp;{{ $item->ORDER_FROM }}</span>
-                    </div>
-                    <div class="col-25">
-                        <span>Order To:&nbsp;{{ $item->ORDER_FROM }}</span>
-                    </div>
-                    <div class="col-25">
-                        <span>CONTAINER_QTY:&nbsp;{{ $item->CONTAINER_QTY }}</span>
-                    </div>
-                </div>
+            <div class="col-5 ">
+                <table style="width:100%">
+                    <tr>
+                        <td>To:</td>
+                        <td>{{ $debit->TRANS_TO }}</td>
+                    </tr>
+                    <tr>
+                        <td>Custom date:</td>
+                        <td>{{ date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
+                    </tr>
+                    <tr>
+                        <td>GW:</td>
+                        <td>{{ $debit->GW }}</td>
+                    </tr>
+                    <tr>
+                        <td>Note:</td>
+                        <td>{{ $debit->NOTE }}</td>
+                    </tr>
+                    <tr>
+                        <td>Invoces No:</td>
+                        <td>{{ $debit->INVOICE_NO }}</td>
+                    </tr>
+                    <tr>
+                        <td>Bill No:</td>
+                        <td>{{ $debit->BILL_NO }}</td>
+                    </tr>
+                </table>
             </div>
-            <div class="col-10 border">
-                <span>金額(Số tiền):&nbsp;<span class="title-sub">
-                        {{ number_format($item->TOTAL_AMT + $item->AMOUNT_2 + $item->AMOUNT_3 + $item->AMOUNT_4 + $item->AMOUNT_5) }}
-                        {{ $item->DOR_NO }}</span></span>
-            </div>
-            <div class="col-10 border">
-                <span>事由 (Lý do):&nbsp;<span class="title-sub"> {{ $item->LEND_REASON }}</span></span>
-            </div>
-            <table style="width:100%">
+        </div>
+        <table style="width:100%" id="debit_d">
+            <tr>
+                <th>STT</th>
+                <th>Descriptions</th>
+                <th>Invoice No</th>
+                <th>Unit</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>VAT Tax</th>
+                <th>Total Amt</th>
+            </tr>
+
+            @foreach ($debit_d as $item)
                 <tr>
-                    <th rowspan="3" style="width:3%">財務審核 </th>
-                    <th style="width:15.6%">財務核准</th>
-                    <th style="width:15.6%">出納</th>
-                    <th style="width:15.6%">取款人</th>
-                    <th rowspan="3" style="width:3%">申請核准</th>
-                    <th style="width:15.6%">核准</th>
-                    <th style="width:15.6%">單位主管</th>
-                    <th>申請人</th>
+                    <td class="text-center">{{ $item->SER_NO }}</td>
+                    <td>{{ $item->DESCRIPTION }}</td>
+                    <td>{{ $item->INV_NO }}</td>
+                    <td class="text-center">{{ $item->UNIT }}</td>
+                    <td class="text-center">{{ number_format($item->QUANTITY) }}</td>
+                    <td class="text-right">{{ number_format($item->PRICE) }}</td>
+                    <td class="text-right">{{ number_format($item->TAX_AMT) }}</td>
+                    <td class="text-right">{{ number_format($item->QUANTITY * ($item->PRICE + $item->TAX_AMT)) }}</td>
                 </tr>
-                <tr>
-                    <td>Tài vụ</td>
-                    <td>Thủ Quỹ</td>
-                    <td>Người Nhận Tiền</td>
-                    <td>Duyệt</td>
-                    <td>Chủ Quản Đơn Vị</td>
-                    <td>Người Xin Tạm Ứng</td>
-                </tr>
-                <tr id="sign">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
+
+            @endforeach
+            <tr class="text-right font-weight-bold">
+                <td colspan="6">TOTAL AMT</td>
+                <td>{{ number_format($debit_d->sum('TAX_AMT')) }}</td>
+                <td>{{ number_format($total_amt) }} {{ $dor_no }}</td>
+            </tr>
+        </table>
+        <span>We are looking forwards to reveiving your payment in the soonest time.</span><br>
+        <span>If you have further infomation, please do not hesitate to contact with us.</span><br>
+        <span>Also you can settle the payment to:</span><br>
+        <div class="font-weight-bold">
+            <span>Banker name: {{ $bank->BANK_NAME }}</span><br>
+            <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
+            <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
+            @if (!$bank->SWIFT_CODE)
+                <span>Swift code: {{ $bank->SWIFT_CODE }}</span>
+                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span>
+                <span>Adress: {{ $bank->ADDRESS }}</span>
+            @endif
+
         </div>
 
-    </body>
-@endforeach
+        <table style="width:100%">
+            <tr>
+                <th>SALE</th>
+                <th>ACCOUNTANT</th>
+                <th>APPROVAL</th>
+            </tr>
+        </table>
+    </div>
+
+</body>

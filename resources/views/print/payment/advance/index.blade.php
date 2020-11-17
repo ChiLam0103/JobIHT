@@ -3,7 +3,7 @@
         margin: 0;
         padding: 0;
         background-color: #FAFAFA;
-        font: 8pt "Tohoma";
+        font: 10pt "Tohoma";
     }
 
     * {
@@ -20,6 +20,7 @@
         margin-right: auto;
         background: white;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        border: 1px solid;
     }
 
     @page {
@@ -50,9 +51,10 @@
     .title-2 {
         text-align: center;
         position: relative;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: bold;
         margin-top: -1em;
+        margin-bottom: -0.2em;
     }
 
     nav ul {
@@ -61,12 +63,16 @@
     }
 
     .title-sub {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: bold;
     }
 
     .padding-left-15 {
         padding-left: 15px;
+    }
+
+    #debit_d {
+        margin-top: 1em;
     }
 
     .col-10 {
@@ -77,43 +83,52 @@
 
     .border {
         border-bottom: 1px solid #ccc;
-        padding-top: 1em;
+        padding-top: 0.5em;
     }
 
     .col-8 {
         width: 80%;
+        display: flex;
     }
 
     .col-7 {
         width: 70%;
+        display: flex;
     }
 
     .col-6 {
         width: 60%;
+        display: flex;
     }
 
     .col-5 {
         width: 50%;
+        display: flex;
     }
 
     .col-4 {
         width: 40%;
+        display: flex;
     }
 
     .col-3 {
         width: 30%;
+        display: flex;
     }
 
     .col-25 {
         width: 25%;
+        display: flex;
     }
 
     .col-2 {
         width: 20%;
+        display: flex;
     }
 
-    table {
-        margin-top: 1em;
+    .col-1 {
+        width: 10%;
+        display: flex;
     }
 
     table,
@@ -124,111 +139,125 @@
         text-align: center;
     }
 
-    #sign td {
-        height: 8em;
+    #form-sign td {
+        height: 10em;
     }
 
-    tr td {
-        font-size: 14px
+    tr td,
+    tr th {
+        font-size: 12px
     }
 
+    #form-sign {
+        width: 100%;
+    }
+#sum-money{
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 50%;
+}
 </style>
 
 <body onload="window.print();">
-    <div id="page" class="page">
-        <p class="title">{{ $title_vn }}</p>
-        <p class="title-2">{{ $title_cn }}</p>
-        <div class="col-10 border">
-            <div class="col-25">
-                <span>Job No:&nbsp;<span class="title-sub">{{ $advance->JOB_NO }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Type:&nbsp;<span class="title-sub">{{ $advance->LENDER_NAME }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Advance No:&nbsp;<span class="title-sub">{{ $advance->LENDER_NO }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Advance Date:&nbsp;<span
-                        class="title-sub">{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</span> </span>
-            </div>
-        </div>
-        <div class="col-10 border">
-            <div class="col-25">
-                <span>Advance Staff:&nbsp;<span class="title-sub">{{ $advance->PNAME }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Kinds Of Money:&nbsp;<span class="title-sub">{{ $advance->DOR_NO }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Customer No:&nbsp;<span class="title-sub">{{ $advance->CUST_NO }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Customer Name:&nbsp;<span class="title-sub">{{ $advance->CUST_NAME }}</span> </span>
-            </div>
-        </div>
-        <div class="col-10 border">
-            <div class="col-25">
-                <span>Order From:&nbsp;<span class="title-sub">{{ $advance->ORDER_FROM }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Order To:&nbsp;<span class="title-sub">{{ $advance->ORDER_TO }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Container Qty:&nbsp;<span class="title-sub">{{ $advance->CONTAINER_QTY }}</span> </span>
-            </div>
-            <div class="col-25">
-                <span>Reasons:&nbsp;<span class="title-sub">{{ $advance->LEND_REASON }}</span> </span>
-            </div>
-        </div>
-        @foreach ($advance_d as $item_d)
+    <div id="page" class="page ">
+        <div class="border">
+            <p class="title">{{ $title_vn }}</p>
+            <p class="title-2">{{ $title_en }}</p>
             <div class="col-10 border">
-                <div class="col-2">
-                    <span>STT:&nbsp;<span class="title-sub">{{ $item_d->SER_NO }}</span> </span>
+                <div class="col-25">
+                    <div class="col-3"> <span>Số Job:<br> Job No:</span></div>
+                    <div class="title-sub col-7">{{ $advance->JOB_NO }}</div>
                 </div>
-                <div class="col-2">
-                    <span>Money:&nbsp;<span class="title-sub">{{ number_format($item_d->LENDER_AMT) }}</span> </span>
+                <div class="col-25">
+                    <div class="col-2"> <span>Loại:<br> Type:</span></div>
+                    <div class="title-sub col-8">{{ $advance->LENDER_NAME }}</div>
                 </div>
-                <div class="col-2">
-                    <span>Person:&nbsp;<span class="title-sub">{{ $item_d->INPUT_USER }}</span> </span>
+                <div class="col-25">
+                    <div class="col-5"> <span>Số phiếu:<br> Advance No:</span></div>
+                    <div class="title-sub col-5">{{ $advance->LENDER_NO }}</div>
                 </div>
-                <div class="col-2">
-                    <span>Note:&nbsp;<span class="title-sub">{{ $item_d->NOTE }}</span> </span>
-                </div>
-                <div class="col-2">
-                    <span>Date:&nbsp;<span class="title-sub">{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</span> </span>
+                <div class="col-25">
+                    <div class="col-5"> <span>Ngày tạo:<br> Advance Date:</span></div>
+                    <div class="title-sub col-5">{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</div>
                 </div>
             </div>
-        @endforeach
-        <span>Sum money:&nbsp;<span class="title-sub">{{number_format($advance_d->sum('LENDER_AMT'))}}</span></span>
-        <table style="width:100%">
-            <tr>
-                <th rowspan="3" style="width:3%">財務審核 </th>
-                <th style="width:15.6%">財務核准</th>
-                <th style="width:15.6%">出納</th>
-                <th style="width:15.6%">取款人</th>
-                <th rowspan="3" style="width:3%">申請核准</th>
-                <th style="width:15.6%">核准</th>
-                <th style="width:15.6%">單位主管</th>
-                <th>申請人</th>
-            </tr>
-            <tr>
-                <td>Tài vụ</td>
-                <td>Thủ Quỹ</td>
-                <td>Người Nhận Tiền</td>
-                <td>Duyệt</td>
-                <td>Chủ Quản Đơn Vị</td>
-                <td>Người Xin Tạm Ứng</td>
-            </tr>
-            <tr id="sign">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
+            <div class="col-10 border">
+                <div class="col-3">
+                    <div class="col-4"> <span>Nhân viên:<br> Advance Staff:</span></div>
+                    <div class="title-sub col-6">{{ $advance->PNAME }}</div>
+                </div>
+                <div class="col-2">
+                    <div class="col-5"> <span>Mã Khách:<br> Cust No:</span></div>
+                    <div class="title-sub col-5">{{ $advance->CUST_NO }}</div>
+                </div>
+                <div class="col-5">
+                    <div class="col-2"> <span>Tên Khách:<br> Cust Name:</span></div>
+                    <div class="title-sub col-8">{{ $advance->CUST_NAME }}</div>
+                </div>
+            </div>
+            <div class="col-10 border">
+                <div class="col-25">
+                    <div class="col-3"> <span>Loại tiền:<br> Currency:</span></div>
+                    <div class="title-sub col-7">{{ $advance->DOR_NO }}</div>
+                </div>
+                <div class="col-25">
+                    <div class="col-4"> <span>Từ:<br> Order From:</span></div>
+                    <div class="title-sub col-6">{{ $advance->ORDER_FROM }}</div>
+                </div>
+                <div class="col-25">
+                    <div class="col-3"> <span>Đến:<br> Order To:</span></div>
+                    <div class="title-sub col-7">{{ $advance->ORDER_TO }}</div>
+                </div>
+                <div class="col-25">
+                    <div class="col-5"> <span>Số lượng:<br> Container Qty:</span></div>
+                    <div class="title-sub col-5">{{ $advance->CONTAINER_QTY }}</div>
+                </div>
+            </div>
+            <div class="col-10 border">
+                <div class="col-1"> <span>Lý do:<br> Reasons:</span></div>
+                <div class="title-sub col-9">{{ $advance->LEND_REASON }}</div>
+            </div>
+            <table style="width:100%" id="debit_d">
+                <tr>
+                    <th>STT</th>
+                    <th>Số tiền/Money</th>
+                    <th>Nhân viên/Person</th>
+                    <th>Ngày/Date</th>
+                    <th>Ghi chú/Note</th>
+                </tr>
+                @foreach ($advance_d as $item_d)
+                    <tr>
+                        <td>{{ $item_d->SER_NO }}</td>
+                        <td>{{ number_format($item_d->LENDER_AMT) }}</td>
+                        <td>{{ $item_d->INPUT_USER }}</td>
+                        <td>{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</td>
+                        <td>{{ $item_d->NOTE }}</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td id="sum-money" colspan="5">SUM MONEY:&nbsp;{{ number_format($advance_d->sum('LENDER_AMT')) }}</td>
+                </tr>
+            </table>
+            <table id="form-sign">
+                <tr>
+                    <th style="width:16.6%">Tài vụ/<br> Finance</th>
+                    <th style="width:16.6%">Thủ Quỹ/ <br>Treasurer</th>
+                    <th style="width:16.6%">Người Nhận Tiền/<br> Money receiver</th>
+                    <th style="width:16.6%">Duyệt/<br> Approved by</th>
+                    <th style="width:16.6%">Chủ Quản Đơn Vị/<br> Unit Manager</th>
+                    <th style="width:16.6%">Người Xin Tạm Ứng/<br> Applicant for Advancement</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+
     </div>
 
 </body>

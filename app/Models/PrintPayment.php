@@ -39,39 +39,66 @@ class PrintPayment extends Model
     }
 
     //2 phiếu yêu cầu thanh toán
-    public static function debitNote($type, $formjobno, $tojobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
+    public static function debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
     {
         try {
-            if ($type == 'job_no') {
-                if ($formjobno && $tojobno  && $person && $phone) {
-                    $data = DB::table('DEBIT_NOTE_M as dnm')->get();
+            $data = '';
+            if (($type == 'job' || $type = 'customer') && ($phone == null || $phone == 'undefined' || $phone == 'null')) {
+                $data = 'error-phone';
+                return $data;
+            }
+            if ($type == 'job') {
+                if ($person == null || $person == 'undefined' || $person == 'null') {
+                    $data = 'error-person-empty';
+                    return $data;
+                }
+                if ($jobno == null || $jobno == 'undefined' || $jobno == 'null') {
+                    $data = 'error-job-empty';
+                    return $data;
+                }
+                if ($jobno && $person && $phone) {
+                    $data = DB::table('DEBIT_NOTE_M as dnm')
+                        ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                        ->where('dnm.JOB_NO', $jobno)
+                        ->where('dnm.BRANCH_ID', 'IHTVN1')
+                        ->first();
+                    return $data;
                 } else {
                     return 201;
                 }
             } elseif ($type == 'customer') {
                 if ($custno && $person && $phone) {
                     //array job[]
+                    return $data;
                 }
             } elseif ($type == 'debit_date') {
                 if ($fromdate && $todate && $debittype) {
+                    return $data;
                 }
             }
-            return $data;
         } catch (\Exception $e) {
             dd($e);
             return $e;
         }
+    }
+    public static function debitNote_D($jobno)
+    {
+        $data = DB::table('DEBIT_NOTE_D ')
+            ->where('JOB_NO', $jobno)
+            ->where('BRANCH_ID', 'IHTVN1')
+            ->get();
+        return $data;
     }
     //8. thống kê phiếu thu
     public static function receipt($receipt_no)
     {
         try {
             $query = DB::table('RECEIPT as r')
-            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'r.CUST_NO')
-            ->where('r.BRANCH_ID', 'IHTVN1')
-            ->where('r.RECEIPT_NO', $receipt_no)
-            ->select('c.CUST_NAME', 'c.CUST_ADDRESS','r.RECEIPT_NO','r.RECEIPT_DATE','r.RECEIPT_REASON','r.TOTAL_AMT','r.DOR_NO','r.TRANSFER_FEES')
-            ->first();
+                ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'r.CUST_NO')
+                ->where('r.BRANCH_ID', 'IHTVN1')
+                ->where('r.RECEIPT_NO', $receipt_no)
+                ->select('c.CUST_NAME', 'c.CUST_ADDRESS', 'r.RECEIPT_NO', 'r.RECEIPT_DATE', 'r.RECEIPT_REASON', 'r.TOTAL_AMT', 'r.DOR_NO', 'r.TRANSFER_FEES')
+                ->first();
             return $query;
         } catch (\Exception $e) {
             return $e;

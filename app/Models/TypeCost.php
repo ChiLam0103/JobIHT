@@ -9,7 +9,7 @@ class TypeCost extends Model
 {
     public static function query()
     {
-        $query =  DB::table(config('constants.TYPE_COST_TABLE'));
+        $query =  DB::table(config('constants.TYPE_COST_TABLE'))->orderByDesc('DESCRIPTION_CODE');
         return $query;
     }
     public static function list()

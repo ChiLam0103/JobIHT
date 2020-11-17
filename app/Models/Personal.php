@@ -40,18 +40,15 @@ class Personal extends Model
     public static function des($id)
     {
         $query =  Personal::query();
-        $data =  $query->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
-        return $data;
+        $query->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
+        return $query;
     }
 
     public static function generateNo()
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $count = DB::table(config('constants.PERSONAL_TABLE'))
-            ->where('BRANCH_ID', 'IHTVN1')
-            ->select('PNL_NO')
-            ->orderByDesc('PNL_NO')
-            ->first();
+        $query = Personal::query();
+        $count =  $query->first();
         $no = (int)$count->PNL_NO;
         $no++;
         return $no;
@@ -64,14 +61,14 @@ class Personal extends Model
             DB::table(config('constants.PERSONAL_TABLE'))->insert(
                 [
                     'PNL_NO' => $PNL_NO,
-                    'PNL_NAME' => $request['PNL_NAME'],
-                    'PNL_NAME_C' => $request['PNL_NAME_C'],
-                    'PNL_ADDRESS' => $request['PNL_ADDRESS'],
-                    'PNL_ID' => $request['PNL_ID'],
-                    'PNL_TEL' => $request['PNL_TEL'],
-                    'INPUT_USER' => $request['INPUT_USER'],
+                    'PNL_NAME' => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? '' :  $request['PNL_NAME'],
+                    'PNL_NAME_C' => ($request['PNL_NAME_C'] == 'undefined' || $request['PNL_NAME_C'] == 'null' || $request['PNL_NAME_C'] == null) ? '' :  $request['PNL_NAME_C'],
+                    'PNL_ADDRESS' => ($request['PNL_ADDRESS'] == 'undefined' || $request['PNL_ADDRESS'] == 'null' || $request['PNL_ADDRESS'] == null) ? '' : $request['PNL_ADDRESS'],
+                    'PNL_ID' => ($request['PNL_ID'] == 'undefined' || $request['PNL_ID'] == 'null' || $request['PNL_ID'] == null) ? '' : $request['PNL_ID'],
+                    'PNL_TEL' => ($request['PNL_TEL'] == 'undefined' || $request['PNL_TEL'] == 'null' || $request['PNL_TEL'] == null) ? '' :  $request['PNL_TEL'],
+                    'INPUT_USER' => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' :  $request['INPUT_USER'],
                     'INPUT_DT' => date("YmdHis"),
-                    'BRANCH_ID' => $request['BRANCH_ID'],
+                    'BRANCH_ID' => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ? 'IHTVN1' :  $request['BRANCH_ID'],
                 ]
             );
             $data = Personal::des($PNL_NO);
@@ -87,13 +84,13 @@ class Personal extends Model
             DB::table(config('constants.PERSONAL_TABLE'))
                 ->where('PNL_NO', $request['PNL_NO'])->update(
                     [
-                        'PNL_NAME' => $request['PNL_NAME'],
-                        'PNL_NAME_C' => $request['PNL_NAME_C'],
-                        'PNL_ADDRESS' => $request['PNL_ADDRESS'],
-                        'PNL_ID' => $request['PNL_ID'],
-                        'PNL_TEL' => $request['PNL_TEL'],
-                        'MODIFY_USER' =>  $request['MODIFY_USER'],
-                        'STOP_MK' => $request['STOP_MK'],
+                        'PNL_NAME' => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? '' :  $request['PNL_NAME'],
+                        'PNL_NAME_C' => ($request['PNL_NAME_C'] == 'undefined' || $request['PNL_NAME_C'] == 'null' || $request['PNL_NAME_C'] == null) ? '' :  $request['PNL_NAME_C'],
+                        'PNL_ADDRESS' => ($request['PNL_ADDRESS'] == 'undefined' || $request['PNL_ADDRESS'] == 'null' || $request['PNL_ADDRESS'] == null) ? '' : $request['PNL_ADDRESS'],
+                        'PNL_ID' => ($request['PNL_ID'] == 'undefined' || $request['PNL_ID'] == 'null' || $request['PNL_ID'] == null) ? '' : $request['PNL_ID'],
+                        'PNL_TEL' => ($request['PNL_TEL'] == 'undefined' || $request['PNL_TEL'] == 'null' || $request['PNL_TEL'] == null) ? '' :  $request['PNL_TEL'],
+                        'STOP_MK' => ($request['STOP_MK'] == 'undefined' || $request['STOP_MK'] == 'null' || $request['STOP_MK'] == null) ? '' :  $request['STOP_MK'],
+                        'MODIFY_USER' => ($request['MODIFY_USER'] == 'undefined' || $request['MODIFY_USER'] == 'null' || $request['MODIFY_USER'] == null) ? '' :  $request['MODIFY_USER'],
                         'MODIFY_DT' => date("YmdHis"),
                     ]
                 );
@@ -106,9 +103,7 @@ class Personal extends Model
     public static function remove($request)
     {
         try {
-            DB::table(config('constants.PERSONAL_TABLE'))
-                ->where('PNL_NO', $request['PNL_NO'])
-                ->delete();
+            $data = Personal::query()->where('PNL_NO', $request['PNL_NO'])->delete();;
             return '200';
         } catch (\Exception $e) {
             return $e;

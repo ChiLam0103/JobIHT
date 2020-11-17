@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,7 +11,7 @@ Route::namespace('Api\v1')->group(function () {
     //web
     Route::group(['prefix' => 'v1'], function () {
         //user
-        Route::group(['prefix' => 'user'], function () {
+        Route::group(['middleware' =>  'cors','prefix' => 'user'], function () {
             Route::post('login', 'UserController@login');
         });
         //menu
@@ -27,6 +26,12 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('add', 'CompanyController@add');
                 Route::post('edit', 'CompanyController@edit');
                 Route::post('remove', 'CompanyController@remove');
+            });
+            Route::group(['prefix' => 'bank'], function () {
+                Route::get('/', 'BankController@list');
+                Route::post('add', 'BankController@add');
+                Route::post('edit', 'BankController@edit');
+                Route::post('remove', 'BankController@remove');
             });
             Route::group(['prefix' => 'customer'], function () {
                 Route::get('/type={type}', 'CustomerController@list');
@@ -48,6 +53,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'type-cost'], function () {
                 Route::get('/', 'TypeCostController@list');
                 Route::get('page={page}', 'TypeCostController@listPage');
+                Route::get('des/{id}', 'TypeCostController@des');
                 Route::post('add', 'TypeCostController@add');
                 Route::post('edit', 'TypeCostController@edit');
                 Route::post('remove', 'TypeCostController@remove');
@@ -124,6 +130,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('add-d', 'LenderController@addD');
                 Route::post('edit-d', 'LenderController@editD');
                 Route::post('remove', 'LenderController@remove');
+                Route::post('remove-d', 'LenderController@removeD');
             });
             //3.yeu cau thanh toan
             Route::group(['prefix' => 'debit-note'], function () {
@@ -209,7 +216,7 @@ Route::namespace('Api\v1')->group(function () {
                 });
                 //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
-                    Route::get('type={type}&fromjobno={fromjobno}&tojobno={tojobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}', 'PrintPaymentController@debitNote');
+                    Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'PrintPaymentController@debitNote');
                 });
                 //8. thống kê phiếu thu
                 Route::group(['prefix' => 'receipts'], function () {

@@ -195,4 +195,23 @@ class LenderController extends Controller
             );
         }
     }
+    public function removeD(Request $request)
+    {
+        $data = LenderD::remove($request);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'message' =>  'Bạn đã xóa thành công'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
 }

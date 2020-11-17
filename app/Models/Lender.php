@@ -112,17 +112,17 @@ class Lender extends Model
                         'LENDER_NO' => $lender_no,
                         "LENDER_DATE" => date("Ymd"),
                         "LENDER_TYPE" => $request['LENDER_TYPE'],
-                        "PNL_NO" => ($request['PNL_NO'] != 'undefined' || $request['PNL_NO'] != 'null' || $request['PNL_NO'] != null)   ? $request['PNL_NO'] : '',
-                        "PNL_NAME" => ($request['PNL_NAME'] != 'undefined' || $request['PNL_NAME'] != 'null' || $request['PNL_NAME'] != null) ? $request['PNL_NAME'] : '',
-                        "DOR_NO" => ($request['DOR_NO'] != 'undefined' || $request['DOR_NO'] != 'null' || $request['DOR_NO'] != null) ? $request['DOR_NO'] : 'VND',
-                        "LEND_REASON" => ($request['LEND_REASON'] != 'undefined' || $request['LEND_REASON'] != 'null' || $request['LEND_REASON'] != null) ? $request['LEND_REASON'] : '',
-                        "JOB_NO" => ($request['JOB_NO'] != 'undefined' || $request['JOB_NO'] != 'null' || $request['JOB_NO'] != null) ? $request['JOB_NO'] : '',
-                        "CUST_NO" => ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != 'null' || $request['CUST_NO'] != null) ? $request['CUST_NO'] : '',
-                        "ORDER_FROM" => ($request['ORDER_FROM'] != 'undefined' || $request['ORDER_FROM'] != 'null' || $request['ORDER_FROM'] != null) ? $request['ORDER_FROM'] : '',
-                        "ORDER_TO" => ($request['ORDER_TO'] != 'undefined' || $request['ORDER_TO'] != 'null' || $request['ORDER_TO'] != null) ? $request['ORDER_TO'] : '',
-                        "CONTAINER_QTY" => ($request['CONTAINER_QTY'] != 'undefined' || $request['CONTAINER_QTY'] != 'null' || $request['CONTAINER_QTY'] != null) ? $request['CONTAINER_QTY'] : '',
-                        "BRANCH_ID" => ($request['BRANCH_ID'] != 'undefined' || $request['BRANCH_ID'] != 'null' || $request['BRANCH_ID'] != null) ? $request['BRANCH_ID'] : 'IHTVN1',
-                        "INPUT_USER" => ($request['INPUT_USER'] != 'undefined' || $request['INPUT_USER'] != 'null' || $request['INPUT_USER'] != null) ? $request['INPUT_USER'] : '',
+                        "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null)   ? '' : $request['PNL_NO'],
+                        "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? '' : $request['PNL_NAME'],
+                        "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
+                        "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
+                        "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
+                        "CUST_NO" => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                        "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
+                        "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
+                        "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                        "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ?  'IHTVN1' : $request['BRANCH_ID'],
+                        "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' : $request['INPUT_USER'],
                         "INPUT_DT" => date("YmdHis")
                     ]
                 );
@@ -142,15 +142,15 @@ class Lender extends Model
                     [
                         "LENDER_DATE" => date("Ymd"),
                         "LENDER_TYPE" => $request['LENDER_TYPE'],
-                        "PNL_NO" => ($request['PNL_NO'] != 'undefined' || $request['PNL_NO'] != 'null' || $request['PNL_NO'] != null)   ? $request['PNL_NO'] : '',
-                        "PNL_NAME" => ($request['PNL_NAME'] != 'undefined' || $request['PNL_NAME'] != 'null' || $request['PNL_NAME'] != null) ? $request['PNL_NAME'] : '',
-                        "DOR_NO" => ($request['DOR_NO'] != 'undefined' || $request['DOR_NO'] != 'null' || $request['DOR_NO'] != null) ? $request['DOR_NO'] : 'VND',
-                        "LEND_REASON" => ($request['LEND_REASON'] != 'undefined' || $request['LEND_REASON'] != 'null' || $request['LEND_REASON'] != null) ? $request['LEND_REASON'] : '',
-                        "JOB_NO" => ($request['JOB_NO'] != 'undefined' || $request['JOB_NO'] != 'null' || $request['JOB_NO'] != null) ? $request['JOB_NO'] : '',
-                        "CUST_NO" => ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != 'null' || $request['CUST_NO'] != null) ? $request['CUST_NO'] : '',
-                        "ORDER_FROM" => ($request['ORDER_FROM'] != 'undefined' || $request['ORDER_FROM'] != 'null' || $request['ORDER_FROM'] != null) ? $request['ORDER_FROM'] : '',
-                        "ORDER_TO" => ($request['ORDER_TO'] != 'undefined' || $request['ORDER_TO'] != 'null' || $request['ORDER_TO'] != null) ? $request['ORDER_TO'] : '',
-                        "CONTAINER_QTY" => ($request['CONTAINER_QTY'] != 'undefined' || $request['CONTAINER_QTY'] != 'null' || $request['CONTAINER_QTY'] != null) ? $request['CONTAINER_QTY'] : '',
+                        "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null)   ? '' : $request['PNL_NO'],
+                        "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? '' : $request['PNL_NAME'],
+                        "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
+                        "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
+                        "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
+                        "CUST_NO" => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                        "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
+                        "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
+                        "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
@@ -167,6 +167,7 @@ class Lender extends Model
             DB::table(config('constants.LENDER_TABLE'))
                 ->where('LENDER_NO', $request['LENDER_NO'])
                 ->delete();
+            LenderD::removeAll($request['LENDER_NO']);
             return '200';
         } catch (\Exception $e) {
             return $e;
