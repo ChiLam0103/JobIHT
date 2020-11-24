@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 
 use App\Models\DebitNoteM;
 use App\Models\DebitNoteD;
+use App\Models\TypeCost;
 
 class DebitNoteController extends Controller
 {
@@ -35,7 +36,7 @@ class DebitNoteController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -88,14 +89,14 @@ class DebitNoteController extends Controller
     public function listPending()
     {
         $data = DebitNoteM::listPending();
-        $total=0;
-        foreach($data as $item){
-            $total+=$item->sum_AMT;
+        $total = 0;
+        foreach ($data as $item) {
+            $total += $item->sum_AMT;
         }
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total'=>$total,
+                'total' => $total,
                 'data' => $data
             ], Response::HTTP_OK);
         } else {
@@ -111,14 +112,14 @@ class DebitNoteController extends Controller
     public function listPaid()
     {
         $data = DebitNoteM::listPaid();
-        $total=0;
-        foreach($data as $item){
-            $total+=$item->sum_AMT;
+        $total = 0;
+        foreach ($data as $item) {
+            $total += $item->sum_AMT;
         }
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total'=>$total,
+                'total' => $total,
                 'data' => $data
             ], Response::HTTP_OK);
         } else {
@@ -138,7 +139,7 @@ class DebitNoteController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -158,7 +159,7 @@ class DebitNoteController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -173,13 +174,24 @@ class DebitNoteController extends Controller
     }
     public function des($id)
     {
-        $data = DebitNoteM::des($id);
-        $data2 = DebitNoteD::des($id);
-        if ($data) {
+        $debit_note_m = DebitNoteM::des($id);
+        $debit_note_d = DebitNoteD::des($id);
+        $type_cost = TypeCost::list();
+        foreach ($debit_note_d as $item) {
+            foreach ($type_cost as $item2) {
+                if ($item->DESCRIPTION == $item2->DESCRIPTION_CODE) {
+                    $item->DESCRIPTION_NAME_VN = $item2->DESCRIPTION_NAME_VN;
+                    break;
+                } else {
+                    $item->DESCRIPTION_NAME_VN = $item->DESCRIPTION;
+                }
+            }
+        }
+        if ($debit_note_m) {
             return response()->json([
                 'success' => true,
-                'debit_note_m' => $data,
-                'debit_note_d' => $data2,
+                'debit_note_m' => $debit_note_m,
+                'debit_note_d' => $debit_note_d,
             ], Response::HTTP_OK);
         } else {
             return response()->json(

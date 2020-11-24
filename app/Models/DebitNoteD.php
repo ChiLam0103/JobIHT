@@ -10,9 +10,7 @@ class DebitNoteD extends Model
     public static function des($id)
     {
         $data = DB::table('DEBIT_NOTE_D as dnd')
-            // ->leftJoin('DM_NOIDUNG as dmnd', 'dnd.DESCRIPTION_CODE', 'dmnd.DESCRIPTION')
             ->where('dnd.JOB_NO', $id)
-            ->select('dmnd.DESCRIPTION_NAME_VN', 'dnd.*')
             ->select('dnd.*')
             ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->get();
