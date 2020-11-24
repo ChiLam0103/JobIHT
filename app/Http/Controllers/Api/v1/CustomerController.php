@@ -16,7 +16,7 @@ class CustomerController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'type_name'=>$data['type_name'],
+                'type_name' => $data['type_name'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -29,14 +29,34 @@ class CustomerController extends Controller
             );
         }
     }
-    public function listPage($type,$page)
+    public function listPage($type, $page)
     {
-        $data = Customer::listPage($type,$page);
+        $data = Customer::listPage($type, $page);
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
-                'type_name'=>$data['type_name'],
+                'total_page' => $data['total_page'],
+                'type_name' => $data['type_name'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function search($group, $type, $value, $page)
+    {
+        $data = Customer::search($group, $type, $value, $page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page' => $data['total_page'],
+                'group_name' => $data['group_name'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {

@@ -64,23 +64,31 @@ class DebitNoteM extends Model
             ->get();
         return ['total_page' => $count, 'list' => $data];
     }
-    public static function search($type, $value)
+    public static function search($type, $value, $page)
     {
-        $take = 9000;
-        $query = DebitNoteM::query();
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  DebitNoteM::query();
 
-        if ($type == '1') { //job no
-            $query->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '2') { //customer no
-            $query->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '3') { //container no
-            $query->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '4') { //customns no
-            $query->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+        switch ($type) {
+            case 'job_no':
+                $query->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'cust_no':
+                $query->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'container_no':
+                $query->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'customs_no':
+                $query->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
         }
-        $data = $query->take($take)
-            ->get();
-        return $data;
+        $count = $query->count();
+        $data =  $query->skip($skip)->take($take)->get();
+        return ['total_page' => $count, 'list' => $data];
     }
     public static function listNotCreated()
     {
@@ -155,7 +163,7 @@ class DebitNoteM extends Model
                         "CONTAINER_NO" => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
                         "CUSTOMS_NO" => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
-                        "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? '' : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
+                        "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         "BILL_NO" => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
                         "NW" => ($request['NW'] == 'undefined' || $request['NW'] == 'null' || $request['NW'] == null) ? '' : $request['NW'],
                         "GW" => ($request['GW'] == 'undefined' || $request['GW'] == 'null' || $request['GW'] == null) ? '' : $request['GW'],
@@ -199,7 +207,7 @@ class DebitNoteM extends Model
                         "CONTAINER_NO" => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
                         "CUSTOMS_NO" => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
-                        "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? '' : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
+                        "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         "BILL_NO" => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
                         "NW" => ($request['NW'] == 'undefined' || $request['NW'] == 'null' || $request['NW'] == null) ? '' : $request['NW'],
                         "GW" => ($request['GW'] == 'undefined' || $request['GW'] == 'null' || $request['GW'] == null) ? '' : $request['GW'],

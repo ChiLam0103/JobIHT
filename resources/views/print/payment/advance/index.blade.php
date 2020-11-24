@@ -46,6 +46,7 @@
         position: relative;
         font-size: 18px;
         font-weight: bold;
+        text-transform: uppercase;
     }
 
     .title-2 {
@@ -55,6 +56,7 @@
         font-weight: bold;
         margin-top: -1em;
         margin-bottom: -0.2em;
+        text-transform: uppercase;
     }
 
     nav ul {
@@ -151,17 +153,19 @@
     #form-sign {
         width: 100%;
     }
-#sum-money{
-    font-size: 14px;
-    font-weight: bold;
-    margin-left: 50%;
-}
+
+    #sum-money {
+        font-size: 14px;
+        font-weight: bold;
+        margin-left: 50%;
+    }
+
 </style>
 
 <body onload="window.print();">
     <div id="page" class="page ">
         <div class="border">
-            <p class="title">{{ $title_vn }}</p>
+            <p class="title">Phiếu {{ $title_vn }}</p>
             <p class="title-2">{{ $title_en }}</p>
             <div class="col-10 border">
                 <div class="col-25">
@@ -234,8 +238,19 @@
                         <td>{{ $item_d->NOTE }}</td>
                     </tr>
                 @endforeach
+                @if ($SUM_PORT_AMT > 0)
+                    <tr class="title-sub">
+                        <td>0{{ count($advance_d) + 1 }}</td>
+                        <td>{{ number_format($SUM_PORT_AMT) }}</td>
+                        <td>{{ $INPUT_USER_jobD }}</td>
+                        <td>{{ date('Y/m/d', strtotime($INPUT_DT_jobD)) }}</td>
+                        <td>TỔNG TIỀN JOB ORDER</td>
+                    </tr>
+                @endif
                 <tr>
-                    <td id="sum-money" colspan="5">SUM MONEY:&nbsp;{{ number_format($advance_d->sum('LENDER_AMT')) }}</td>
+                    <td id="sum-money" colspan="5">
+                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT-$SUM_PORT_AMT) }}
+                    </td>
                 </tr>
             </table>
             <table id="form-sign">
@@ -245,7 +260,7 @@
                     <th style="width:16.6%">Người Nhận Tiền/<br> Money receiver</th>
                     <th style="width:16.6%">Duyệt/<br> Approved by</th>
                     <th style="width:16.6%">Chủ Quản Đơn Vị/<br> Unit Manager</th>
-                    <th style="width:16.6%">Người Xin Tạm Ứng/<br> Applicant for Advancement</th>
+                    <th style="width:16.6%">Người Xin {{ $title_vn }}/ Person {{ $title_en }}</th>
                 </tr>
                 <tr>
                     <td></td>

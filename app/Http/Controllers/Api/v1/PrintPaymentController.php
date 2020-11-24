@@ -9,28 +9,55 @@ use App\Models\PrintPayment;
 
 use App\Models\Company;
 use App\Models\Bank;
-use App\Models\Receipts;
+use App\Models\JobD;
+use Illuminate\Support\Facades\DB;
 
 class PrintPaymentController extends Controller
 {
     //1.phieu chi tam ung new
     public function advance($advance_no)
     {
+        //khai bao bien
         $type = '1';
         $title_vn = '';
         $title_en = '現金借支取款單';
+        $SUM_PORT_AMT = 0;
+        $SUM_LENDER_AMT = 0;
+        $title_sum_money = "";
+        $INPUT_USER_jobD = "";
+        $INPUT_DT_jobD = "";
+
         $advance = PrintPayment::advance($advance_no);
-        if ($advance->LENDER_TYPE == 'T') {
-            $title_vn = 'PHIẾU CHI TẠM ỨNG';
-            $title_en='ADVANCE ';
-        } elseif ($advance->LENDER_TYPE == 'C') {
-            $title_vn = 'PHIẾU CHI TRỰC TIẾP';
-            $title_en='ADVANCE PAYMENT ';
-        } elseif ($advance->LENDER_TYPE == 'U') {
-            $title_vn = 'PHIẾU TẠM ỨNG';
-            $title_en='ADVANCE ';
-        }
         $advance_d = PrintPayment::advance_D($advance_no);
+        $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->where('REV_TYPE', '!=', null);
+        foreach ($advance_d as $i) {
+            $SUM_LENDER_AMT += $i->LENDER_AMT;
+        }
+
+        foreach ($job_d as $i) {
+            $SUM_PORT_AMT += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
+            $INPUT_USER_jobD = $i->INPUT_USER;
+            $INPUT_DT_jobD = $i->INPUT_DT;
+        }
+        if ($SUM_PORT_AMT == 0) {
+            $title_sum_money = "TỔNG TIỀN / TOTAL MONEY";
+        }
+        if ($advance->LENDER_TYPE == 'T') {
+            $title_vn = 'Chi Tạm Ứng';
+            $title_en = 'Advance ';
+            if ($SUM_LENDER_AMT > $SUM_PORT_AMT) {
+                $title_sum_money = "TỔNG TIỀN TRẢ / TOTAL PAYMENT";
+            } elseif ($SUM_LENDER_AMT < $SUM_PORT_AMT) {
+                $title_sum_money = "TỔNG TIỀN BÙ / TOTAL COMPENSATION";
+            }
+        } elseif ($advance->LENDER_TYPE == 'C') {
+            $title_vn = 'Chi Trực Tiếp';
+            $title_en = 'Advance Payment ';
+        } elseif ($advance->LENDER_TYPE == 'U') {
+            $title_vn = 'Tạm Ứng';
+            $title_en = 'Advance ';
+        }
+
         if ($advance) {
             return view('print\payment\advance\index', [
                 'advance' => $advance,
@@ -38,6 +65,11 @@ class PrintPaymentController extends Controller
                 'type' => $type,
                 'title_vn' => $title_vn,
                 'title_en' => $title_en,
+                'SUM_PORT_AMT' => $SUM_PORT_AMT,
+                'SUM_LENDER_AMT' => $SUM_LENDER_AMT,
+                'title_sum_money' => $title_sum_money,
+                'INPUT_USER_jobD' => $INPUT_USER_jobD,
+                'INPUT_DT_jobD' => $INPUT_DT_jobD,
             ]);
         } else {
             return response()->json(
@@ -105,7 +137,7 @@ class PrintPaymentController extends Controller
                 'todate' => $todate,
                 'total_amt' => $total_amt,
                 'dor_no' => $dor_no,
-                'bank'=>$bank
+                'bank' => $bank
             ]);
         }
     }

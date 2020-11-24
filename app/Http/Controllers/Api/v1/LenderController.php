@@ -35,7 +35,7 @@ class LenderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -66,13 +66,33 @@ class LenderController extends Controller
             );
         }
     }
-    public function search($type, $value)
+    public function listJobNotCreated()
     {
-        $data = Lender::search($type, $value);
+        $data = Lender::listJobNotCreated();
         if ($data) {
             return response()->json([
                 'success' => true,
                 'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    public function search($type, $value, $page)
+    {
+        $data = Lender::search($type, $value, $page);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'total_page' => $data['total_page'],
+                'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
             return response()->json(
@@ -92,7 +112,7 @@ class LenderController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $data,
-                'lenderD'=>$lenderD
+                'lenderD' => $lenderD
             ], Response::HTTP_OK);
         } else {
             return response()->json(

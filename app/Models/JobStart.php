@@ -46,25 +46,43 @@ class JobStart extends Model
             return $ex;
         }
     }
-    public static function search($type, $value)
+    public static function search($type, $value, $page)
     {
-        $a = JobStart::query();
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  JobStart::query();
+        switch ($type) {
+            case 'job_no':
+                $query->where('js.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'cust_no':
+                $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'cust_name':
+                $query->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+                break;
+            case  'document_staff': //nhan vien chung tu
+                $query->where('js.NV_CHUNGTU', 'LIKE', '%' . $value . '%');
+                break;
+            case  'container_no':
+                $query->where('js.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'note':
+                $query->where('js.NOTE', 'LIKE', '%' . $value . '%');
+                break;
+            case  'bill_no':
+                $query->where('js.BILL_NO', 'LIKE', '%' . $value . '%');
+                break;
 
-        if ($type == '1') { //jobno
-            $a->where('js.JOB_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '2') { //bill no
-            $a->where('js.BILL_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '3') { //note
-            $a->where('js.NOTE', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '4') { //nhan vien chung tu
-            $a->where('js.NV_CHUNGTU', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '5') { //ten khach hang
-            $a->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+            default:
+                break;
         }
-        $data = $a->select('c.CUST_NAME', 'js.*')
-            ->take(9000)
+        $count = $query->count();
+        $data =  $query->skip($skip)
+            ->take($take)
+            ->select('c.CUST_NAME', 'js.JOB_NO')
             ->get();
-        return $data;
+        return ['total_page' => $count, 'list' => $data];
     }
     public static function listNotCreatedOrder()
     {
@@ -113,13 +131,13 @@ class JobStart extends Model
                             'ORDER_FROM' => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
                             'ORDER_TO' => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
                             'CONTAINER_QTY' => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
-                            'ETA_ETD' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? '' : date("Ymd", strtotime($request['ETA_ETD'])),
+                            'ETA_ETD' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date("Ymd", strtotime($request['ETA_ETD'])),
                             'NW' => ($request['NW'] == 'undefined' || $request['NW'] == 'null' || $request['NW'] == null) ? '' : $request['NW'],
                             'GW' => ($request['GW'] == 'undefined' || $request['GW'] == 'null' || $request['GW'] == null) ? '' : $request['GW'],
                             'JOB_CAM_NO' => ($request['JOB_CAM_NO'] == 'undefined' || $request['JOB_CAM_NO'] == 'null' || $request['JOB_CAM_NO'] == null) ? '' : $request['JOB_CAM_NO'],
                             'CONTAINER_NO' => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                             'CUSTOMS_NO' => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
-                            'CUSTOMS_DATE' => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? '' : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
+                            'CUSTOMS_DATE' => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                             'BILL_NO' => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
                             'INVOICE_NO' => ($request['INVOICE_NO'] == 'undefined' || $request['INVOICE_NO'] == 'null' || $request['INVOICE_NO'] == null) ? '' : $request['INVOICE_NO'],
                             'NOTE' => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? '' : $request['NOTE'],
@@ -153,13 +171,13 @@ class JobStart extends Model
                         'ORDER_FROM' => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
                         'ORDER_TO' => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
                         'CONTAINER_QTY' => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
-                        'ETA_ETD' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? '' : date("Ymd", strtotime($request['ETA_ETD'])),
+                        'ETA_ETD' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date("Ymd", strtotime($request['ETA_ETD'])),
                         'NW' => ($request['NW'] == 'undefined' || $request['NW'] == 'null' || $request['NW'] == null) ? '' : $request['NW'],
                         'GW' => ($request['GW'] == 'undefined' || $request['GW'] == 'null' || $request['GW'] == null) ? '' : $request['GW'],
                         'JOB_CAM_NO' => ($request['JOB_CAM_NO'] == 'undefined' || $request['JOB_CAM_NO'] == 'null' || $request['JOB_CAM_NO'] == null) ? '' : $request['JOB_CAM_NO'],
                         'CONTAINER_NO' => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                         'CUSTOMS_NO' => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
-                        'CUSTOMS_DATE' => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? '' : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
+                        'CUSTOMS_DATE' => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         'BILL_NO' => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
                         'INVOICE_NO' => ($request['INVOICE_NO'] == 'undefined' || $request['INVOICE_NO'] == 'null' || $request['INVOICE_NO'] == null) ? '' : $request['INVOICE_NO'],
                         'NOTE' => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? '' : $request['NOTE'],

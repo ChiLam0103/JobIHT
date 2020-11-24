@@ -19,7 +19,8 @@ class PrintPayment extends Model
                 ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
                 ->where('l.LENDER_NO', $advance)
                 ->where('p.BRANCH_ID', 'IHTVN1')
-                ->select('c.CUST_NAME', 'p.PNL_NAME as PNAME', 'lt.LENDER_NAME', 'l.*')->first();
+                ->select('c.CUST_NAME', 'p.PNL_NAME as PNAME', 'lt.LENDER_NAME', 'l.*')
+                ->first();
             return $data;
         } catch (\Exception $e) {
             return $e;

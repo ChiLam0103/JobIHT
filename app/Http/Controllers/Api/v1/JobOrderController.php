@@ -35,7 +35,7 @@ class JobOrderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list_job']
             ], Response::HTTP_OK);
         } else {
@@ -48,13 +48,14 @@ class JobOrderController extends Controller
             );
         }
     }
-    public function search($type, $value)
+    public function search($type, $value, $page)
     {
-        $data = JobM::search($type, $value);
+        $data = JobM::search($type, $value, $page);
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'total_page' => $data['total_page'],
+                'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
             return response()->json(
@@ -74,7 +75,7 @@ class JobOrderController extends Controller
         $job_d = JobD::getJob($id, $type);
         if ($type == "JOB_ORDER") {
             foreach ($job_d as $job) {
-                $SUM_PORT_AMT += $job->PORT_AMT;
+                $SUM_PORT_AMT += $job->PORT_AMT + $job->INDUSTRY_ZONE_AMT;
             }
         }
         foreach ($job_d as $job) {
@@ -216,7 +217,7 @@ class JobOrderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list_job']
             ], Response::HTTP_OK);
         } else {
@@ -235,7 +236,7 @@ class JobOrderController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list_job']
             ], Response::HTTP_OK);
         } else {

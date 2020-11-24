@@ -16,7 +16,7 @@ class JobStartController extends Controller
         if ($data) {
             return response()->json([
                 'success' => true,
-                'total_page'=>$data['total_page'],
+                'total_page' => $data['total_page'],
                 'data' => $data['list_job']
             ], Response::HTTP_OK);
         } else {
@@ -47,13 +47,14 @@ class JobStartController extends Controller
             );
         }
     }
-    public function search($type, $value)
+    public function search($type, $value, $page)
     {
-        $data = JobStart::search($type, $value);
+        $data = JobStart::search($type, $value, $page);
         if ($data) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'total_page' => $data['total_page'],
+                'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
             return response()->json(
@@ -164,5 +165,4 @@ class JobStartController extends Controller
             );
         }
     }
-
 }

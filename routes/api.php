@@ -37,6 +37,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('/type={type}', 'CustomerController@list');
                 Route::get('/type={type}/page={page}', 'CustomerController@listPage');
                 Route::get('des/id={id}/type={type}', 'CustomerController@des');
+                Route::get('search/group={group}&type={type}&value={value}&page={page}', 'CustomerController@search');
                 Route::post('add', 'CustomerController@add');
                 Route::post('edit', 'CustomerController@edit');
                 Route::post('remove', 'CustomerController@remove');
@@ -86,7 +87,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('page={page}', 'JobStartController@listPage');
                 Route::get('', 'JobStartController@list');
-                Route::get('search/type={type}&value={value}', 'JobStartController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'JobStartController@search');
                 Route::get('not-created', 'JobStartController@listNotCreatedOrder');
                 Route::get('des/{id}', 'JobStartController@des');
                 Route::post('add', 'JobStartController@add');
@@ -96,7 +97,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
                 Route::get('page={page}', 'JobOrderController@listPage');
-                Route::get('search/type={type}&value={value}', 'JobOrderController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'JobOrderController@search');
                 Route::get('des/job={id}&type={TYPE}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
                 Route::post('add-d', 'JobOrderController@addJobD');
@@ -122,8 +123,9 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'lender'], function () {
                 Route::get('', 'LenderController@list');
                 Route::get('page={page}', 'LenderController@listpage');
+                Route::get('job-not-created', 'LenderController@listJobNotCreated');
                 Route::get('list-advance', 'LenderController@listAdvance');
-                Route::get('search/type={type}&value={value}', 'LenderController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'LenderController@search');
                 Route::get('des/{id}', 'LenderController@des');
                 Route::post('add', 'LenderController@add');
                 Route::post('edit', 'LenderController@edit');
@@ -136,7 +138,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'debit-note'], function () {
                 Route::get('/', 'DebitNoteController@list');
                 Route::get('page={page}', 'DebitNoteController@listPage');
-                Route::get('search/type={type}&value={value}', 'DebitNoteController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@search');
 
                 Route::get('des/{id}', 'DebitNoteController@des');
                 Route::get('not-created', 'DebitNoteController@listNotCreated');

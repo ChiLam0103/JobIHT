@@ -67,6 +67,49 @@ class Customer extends Model
 
         return ['total_page' => $count, 'list' => $data, 'type_name' => $type_name];
     }
+    public static function search($group, $type, $value, $page)
+    {
+        $group_name = "";
+        $cust_type = "";
+        switch ($group) {
+            case 1 || 'customer':
+                $group_name = "Khách hàng";
+                $cust_type = 1;
+                break;
+            case 2 || 'carriers':
+                $group_name = "Hãng tàu";
+                $cust_type = 2;
+                break;
+            case 3 || 'agency':
+                $group_name = "Đại lý";
+                $cust_type = 3;
+                break;
+            case 4 || 'garage':
+                $group_name = "Nhà xe";
+                $cust_type = 4;
+                break;
+            default:
+                break;
+        }
+
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  Customer::query();
+        switch ($type) {
+            case 1 || 'no':
+                $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 2 || 'name':
+                $query->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
+        }
+        $count = $query->where('c.CUST_TYPE', $cust_type)->count();
+        $data =  $query->skip($skip)->take($take)->select('c.*', 'b.BRANCH_NAME')->where('c.CUST_TYPE', $cust_type)->get();
+
+        return ['total_page' => $count, 'list' => $data, 'group_name' => $group_name];
+    }
     public static function des($id, $type)
     {
         try {

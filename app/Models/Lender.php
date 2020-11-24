@@ -12,7 +12,7 @@ class Lender extends Model
     public static function query()
     {
         $query = DB::table('LENDER as l')
-            ->rightJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
+            ->leftJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
             ->where('l.BRANCH_ID', 'IHTVN1')
             ->orderBy('l.LENDER_NO', 'desc');
         return $query;
@@ -58,35 +58,60 @@ class Lender extends Model
             ->take(5000)->get();
         return $data;
     }
-    public static function search($type, $value)
+    public static function listJobNotCreated()
     {
-        //type=6 (advance no), 7.advance person, 8.job no
-        $a = DB::table('LENDER as l')->leftJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE');
-
-        if ($type == '6') { //advance no
-            $a->where('l.LENDER_NO', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '7') { //advance person
-            $a->where('l.PNL_NAME', 'LIKE', '%' . $value . '%');
-        } elseif ($type == '8') { //job no
-            $a->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
-        }
-        $data = $a->select('lt.LENDER_NAME', 'l.*')
-            ->where('l.BRANCH_ID', 'IHTVN1')
-            ->take(5000)
+        try {
+            $take = 100;
+            $data =  DB::table('JOB_START as js')
+            ->leftJoin('LENDER as l','js.JOB_NO','l.JOB_NO')
+            ->whereNull('l.JOB_NO')
+            ->where('js.BRANCH_ID', 'IHTVN1') ->select('lt.LENDER_NAME', 'l.*')
+            ->take($take)
+            ->orderByDesc('js.JOB_NO')
+            ->select('js.JOB_NO')
             ->get();
-        return $data;
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function search($type, $value, $page)
+    {
+
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  Lender::query();
+        $query->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
+        ->where('p.BRANCH_ID','IHTVN1');
+        switch ($type) {
+            case 'job_no':
+                $query->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'lender_no':
+                $query->where('l.LENDER_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'pnl_no':
+                $query->where('p.PNL_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'pnl_name':
+                $query->where('p.PNL_NAME', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
+        }
+        $count = $query->count();
+        $data =  $query->skip($skip)->take($take)->select('lt.LENDER_NAME', 'p.PNL_NAME as PNL_NAME2', 'l.*')->get();
+        return ['total_page' => $count, 'list' => $data];
     }
     public static function des($id)
     {
-        $data = DB::table('LENDER as l')
-            ->join('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
-            ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
+        $query =  Lender::query();
+        $data =  $query->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
             ->leftJoin('JOB_ORDER_D as jod', 'jod.JOB_NO', 'l.JOB_NO')
             ->select('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
             ->selectRaw('sum(jod.PORT_AMT) as  sum_PORT_AMT, sum(jod.INDUSTRY_ZONE_AMT) as sum_INDUSTRY_ZONE_AMT')
             ->groupBy('lt.LENDER_NAME', 'c.CUST_NAME', 'l.LENDER_NO', 'l.LENDER_DATE', 'l.LENDER_TYPE', 'l.PNL_NO', 'l.PNL_NAME', 'l.DOR_NO', 'l.LEND_REASON', 'l.JOB_NO', 'l.CUST_NO', 'l.ORDER_FROM', 'l.ORDER_TO', 'l.CONTAINER_QTY', 'l.INPUT_USER', 'l.INPUT_DT', 'l.MODIFY_USER', 'l.MODIFY_DT', 'l.BRANCH_ID', 'l.DUYET_KT', 'l.NGAYDUYET')
             ->where('l.LENDER_NO', $id)
-            ->where('l.BRANCH_ID', 'IHTVN1')
             ->first();
         return $data;
     }
@@ -112,8 +137,8 @@ class Lender extends Model
                         'LENDER_NO' => $lender_no,
                         "LENDER_DATE" => date("Ymd"),
                         "LENDER_TYPE" => $request['LENDER_TYPE'],
-                        "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null)   ? '' : $request['PNL_NO'],
-                        "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? '' : $request['PNL_NAME'],
+                        "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? null : $request['PNL_NO'],
+                        "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? null : $request['PNL_NAME'],
                         "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
                         "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
                         "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
