@@ -120,25 +120,56 @@ class PrintPaymentController extends Controller
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+        } elseif ($debit == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-debittype') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn debit type!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         } else {
-            $debit_d = PrintPayment::debitNote_D($jobno);
-            foreach ($debit_d as $item) {
-                $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
-                $dor_no = $item->DOR_NO;
+            switch ($type) {
+                case 'job':
+                    $debit_d = PrintPayment::debitNote_D($jobno);
+                    foreach ($debit_d as $item) {
+                        $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
+                        $dor_no = $item->DOR_NO;
+                    }
+                    return view('print\payment\debit-note\index', [
+                        'debit' => $debit,
+                        'debit_d' => $debit_d,
+                        'company' => $company,
+                        'person' => $person,
+                        'phone' => $phone,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'total_amt' => $total_amt,
+                        'dor_no' => $dor_no,
+                        'bank' => $bank
+                    ]);
+                    break;
+                case 'customer':
+                    return view('print\payment\debit-note\customer', [
+                        'debit' => $debit,
+                    ]);
+                    break;
+                case  'debit_date':
+                    return view('print\payment\debit-note\debit-date', [
+                        'debit' => $debit,
+                    ]);
+                    break;
+                default:
+                    break;
             }
-            // dd($company,$debit,$debit_d);
-            return view('print\payment\debit-note\index', [
-                'debit' => $debit,
-                'debit_d' => $debit_d,
-                'company' => $company,
-                'person' => $person,
-                'phone' => $phone,
-                'fromdate' => $fromdate,
-                'todate' => $todate,
-                'total_amt' => $total_amt,
-                'dor_no' => $dor_no,
-                'bank' => $bank
-            ]);
         }
     }
     //8. thống kê phiếu thu

@@ -86,8 +86,9 @@
 <body onload="window.print();">
     <div id="page" class="page">
         <div class="title">BÁO CÁO REFUND {{ $type_name }}</div>
-        <div class="title-sub"> TỪ NGÀY: {{ date('Y/m/d', strtotime($fromdate)) }} - ĐẾN NGÀY:
-            {{ date('Y/m/d', strtotime($todate)) }} </div>
+        <div class="title-sub"> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ date('d/m/Y', strtotime($todate)) }}
+        </div>
         <br>
         <table class="table">
             <tr>
@@ -95,7 +96,7 @@
                 <th>TÊN {{ $type_name == 'ĐẠI LÝ' ? 'KHÁCH HÀNG' : $type_name }}</th>
                 <th style="width: 8%">JOB NO</th>
                 <th>STT</th>
-                <th>DESCRIPTION</th>
+                <th>MÔ TẢ</th>
                 <th>ĐVT</th>
                 <th>SL</th>
                 <th>ĐƠN GIÁ</th>
@@ -114,20 +115,19 @@
                     <td>{{ (int) $item->UNIT }}</td>
                     <td>{{ number_format($item->QTY) }}</td>
                     <td>{{ number_format($item->PRICE) }}</td>
-                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE) : number_format($item->TAX_AMT * $item->TAX_NOTE) }}
+                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE * $item->QTY) : number_format($item->TAX_AMT * $item->TAX_NOTE * $item->QTY) }}
                     </td>
                     <td>{{ number_format($item->TAX_AMT) }}</td>
-                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE) : number_format($item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT) }}
+                    <td>{{ $item->TAX_NOTE == 0 ? number_format($item->PRICE * $item->QTY) : number_format($item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT * $item->QTY) }}
                     </td>
                     <td>{{ $item->THANH_TOAN_MK == 'Y' ? 'Đã thanh toán' : 'Chưa thanh toán' }}</td>
                 </tr>
             @endforeach
             <tr class="amount">
-                <td colspan="5"></td>
-                <td colspan="3">TỔNG TIỀN:</td>
-                <td>1</td>
-                <td>2</td>
-                <td colspan="2">3</td>
+                <td colspan="8" style="text-align: right">TỔNG TIỀN:</td>
+                <td style="text-align: left">{{ number_format($sum_money_before) }}</td>
+                <td style="text-align: left">{{ number_format($sum_tax_money) }}</td>
+                <td colspan="2" style="text-align: left">{{ number_format($sum_money_after) }}</td>
             </tr>
         </table>
     </div>

@@ -134,53 +134,40 @@ class PrintFile extends Model
     public static function refund($type, $custno, $jobno, $fromdate, $todate)
     {
         try {
-            date_default_timezone_set('Asia/Ho_Chi_Minh');
-            $today = date("Ymd");
-            $from_date = (($fromdate != 'undefined') ? $fromdate : '19000101');
-            $to_date = (($todate != 'undefined') ? $todate : $today);
-            $a = DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->select('c.CUST_NO', 'c.CUST_NAME', 'jod.*');
-            //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
+             //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
             //CUST_TYPE: 1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
-            if ($type == '1') {
-                $a->leftJoin('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
+
+            $query = DB::table('JOB_ORDER_M as jom')
+                ->join('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->select('c.CUST_NO', 'c.CUST_NAME', 'jod.*');
+
+            if ($type == '1') {//hang tau
+                $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '5')
                     ->where('c.CUST_TYPE', 2);
-                if ($custno != 'undefined') {
-                    $a->where('jom.CUST_NO2', $custno);
-                }
-            } elseif ($type == '2') {
-                $a->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+                ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO2', $custno);
+            } elseif ($type == '2') {//khach hang
+                $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '6')
                     ->where('c.CUST_TYPE', 1);
-                if ($custno != 'undefined') {
-                    $a->where('jom.CUST_NO', $custno);
-                }
-            } elseif ($type == '3') {
-                $a->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
+                ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO', $custno);
+            } elseif ($type == '3') {//dai ly
+                $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
                     ->leftJoin('CUSTOMER as c2', 'jom.CUST_NO', 'c2.CUST_NO')
                     ->where('jod.ORDER_TYPE', '7')
                     ->where('c.CUST_TYPE', 3)
+                    ->where('c2.BRANCH_ID', 'IHTVN1')
                     ->selectRaw('c2.CUST_NO as CUST_NO2 , c2.CUST_NAME as CUST_NAME2');
-                if ($custno != 'undefined') {
-                    $a->where('jom.CUST_NO3', $custno);
-                }
-            } else {
-                $a->where('jod.ORDER_TYPE', '5')
-                    ->where('jom.CUST_NO2', $custno)
-                    ->where('c.CUST_TYPE', 2);
+                ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO3', $custno);
             }
 
             //job_no
-            if ($jobno != 'undefined') {
-                $a->where('jom.JOB_NO', $jobno);
-            }
-            if ($todate || $fromdate) {
-                $a->whereBetween('jod.INPUT_DT', [$from_date, $to_date]);
-            }
-            $data = $a->orderBy('jom.JOB_NO')->take(9000)->get();
+            ($jobno == 'undefined' || $jobno == 'null' || $jobno == null) ? null : $query->where('jom.JOB_NO', $jobno);
+
+            $query->whereBetween('jod.INPUT_DT', [$fromdate, $todate]);
+            $data = $query->orderBy('jom.JOB_NO')->get();
 
             return $data;
         } catch (\Exception $e) {
@@ -193,8 +180,8 @@ class PrintFile extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $today = date("Ymd");
-            $from_date = (($fromdate != 'undefined') ? $fromdate : '19000101');
-            $to_date = (($todate != 'undefined') ? $todate : $today);
+            $from_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? '19000101' :  $fromdate;
+            $to_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? $today : $todate;
             $a =  DB::table('JOB_START as js')
                 ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
                 ->rightJoin('PERSONAL as p', 'js.NV_CHUNGTU', 'p.PNL_NO')

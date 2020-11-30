@@ -80,8 +80,8 @@
 <body onload="window.print();">
     <div id="page" class="page">
         <div class="title">Thống kê tạo JOB</div>
-        <div class="title-sub"> TỪ NGÀY: {{ date('Y/m/d', strtotime($fromdate)) }} - ĐẾN NGÀY:
-            {{ date('Y/m/d', strtotime($todate)) }} </div>
+        <div class="title-sub"> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ date('d/m/Y', strtotime($todate)) }} </div>
         <br>
         <table class="table">
             <tr>
@@ -101,7 +101,7 @@
             @foreach ($data as $item)
                 <tr class="text-align-left">
                     <td>{{ $item->JOB_NO }}</td>
-                    <td>{{ date('Y/m/d', strtotime($item->JOB_DATE)) }}</td>
+                    <td>{{ date('d/m/Y', strtotime($item->JOB_DATE)) }}</td>
                     <td >{{ $item->CUST_NAME }}</td>
                     <td>{{ $item->PNL_NAME }}</td>
                     <td>{{ $item->ORDER_FROM }}</td>

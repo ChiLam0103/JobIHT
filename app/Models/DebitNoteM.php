@@ -272,7 +272,7 @@ class DebitNoteM extends Model
                     ->where('JOB_NO', $request["JOB_NO"])
                     ->update([
                         "PAYMENT_CHK" => "N",
-                        "PAYMENT_DATE" => date("Ymd")
+                        "PAYMENT_DATE" => null
                     ]);
             }
             return '200';

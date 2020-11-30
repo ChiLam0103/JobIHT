@@ -15,7 +15,7 @@ class PrintFileController extends Controller
     public function jobStart($fromjob, $tojob)
     {
         $job = PrintFile::jobStart($fromjob, $tojob);
-        $company=Company::des('IHT');
+        $company = Company::des('IHT');
         if ($job) {
             return view('print\file\job-start\job', [
                 'job' => $job,
@@ -148,6 +148,13 @@ class PrintFileController extends Controller
     //3.bao bieu refund
     public function refund($type, $custno, $jobno, $fromdate, $todate)
     {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $from_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? '19000101' :  $fromdate;
+        $to_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? $today : $todate;
+        $sum_money_before = 0;
+        $sum_money_after = 0;
+        $sum_tax_money = 0;
         $type_name = "HÃNG TÀU";
         if ($type == 2) {
             $type_name = "KHÁCH HÀNG";
@@ -155,13 +162,21 @@ class PrintFileController extends Controller
             $type_name = "ĐẠI LÝ";
         }
 
-        $data = PrintFile::refund($type, $custno, $jobno, $fromdate, $todate);
+        $data = PrintFile::refund($type, $custno, $jobno, $from_date, $to_date);
+        foreach ($data as $item) {
+            $sum_money_before += $item->TAX_NOTE == 0 ? $item->PRICE * $item->QTY : $item->TAX_AMT * $item->TAX_NOTE * $item->QTY;
+            $sum_money_after += $item->TAX_NOTE == 0 ? $item->PRICE * $item->QTY : $item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT * $item->QTY;
+            $sum_tax_money += $item->TAX_AMT;
+        }
         if ($data) {
             return view('print\file\refund\index', [
                 'data' => $data,
                 'type_name' => $type_name,
-                'todate' => $todate,
-                'fromdate' => $fromdate
+                'todate' => $to_date,
+                'fromdate' => $from_date,
+                'sum_money_before' => $sum_money_before,
+                'sum_money_after' => $sum_money_after,
+                'sum_tax_money' => $sum_tax_money,
             ]);
         } else {
             return response()->json(

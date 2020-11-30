@@ -44,38 +44,72 @@ class PrintPayment extends Model
     {
         try {
             $data = '';
-            if (($type == 'job' || $type = 'customer') && ($phone == null || $phone == 'undefined' || $phone == 'null')) {
-                $data = 'error-phone';
-                return $data;
-            }
-            if ($type == 'job') {
-                if ($person == null || $person == 'undefined' || $person == 'null') {
-                    $data = 'error-person-empty';
-                    return $data;
-                }
-                if ($jobno == null || $jobno == 'undefined' || $jobno == 'null') {
-                    $data = 'error-job-empty';
-                    return $data;
-                }
-                if ($jobno && $person && $phone) {
-                    $data = DB::table('DEBIT_NOTE_M as dnm')
-                        ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-                        ->where('dnm.JOB_NO', $jobno)
-                        ->where('dnm.BRANCH_ID', 'IHTVN1')
-                        ->first();
-                    return $data;
-                } else {
-                    return 201;
-                }
-            } elseif ($type == 'customer') {
-                if ($custno && $person && $phone) {
-                    //array job[]
-                    return $data;
-                }
-            } elseif ($type == 'debit_date') {
-                if ($fromdate && $todate && $debittype) {
-                    return $data;
-                }
+            switch ($type) {
+                case 'job':
+                    if ($phone == null || $phone == 'undefined' || $phone == 'null') {
+                        $data = 'error-phone';
+                        return $data;
+                    }
+                    if ($person == null || $person == 'undefined' || $person == 'null') {
+                        $data = 'error-person-empty';
+                        return $data;
+                    }
+                    if ($jobno == null || $jobno == 'undefined' || $jobno == 'null') {
+                        $data = 'error-job-empty';
+                        return $data;
+                    }
+                    if ($jobno && $person && $phone) {
+                        $data = DB::table('DEBIT_NOTE_M as dnm')
+                            ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                            ->where('dnm.JOB_NO', $jobno)
+                            ->where('dnm.BRANCH_ID', 'IHTVN1')
+                            ->where('c.BRANCH_ID', 'IHTVN1')
+                            ->first();
+                        return $data;
+                    } else {
+                        return 201;
+                    }
+                    break;
+                case 'customer':
+                    if ($phone == null || $phone == 'undefined' || $phone == 'null') {
+                        $data = 'error-phone';
+                        return $data;
+                    }
+                    if ($custno && $person && $phone) {
+                        //array job[]
+                        return $data;
+                    }
+                    break;
+                case  'debit_date':
+                    if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null')) {
+                        $data = 'error-date';
+                        return $data;
+                    } elseif ($fromdate > $todate) {
+                        $data = 'error-date';
+                        return $data;
+                    } elseif ($debittype == null || $debittype == 'undefined' || $debittype == 'null') {
+                        $data = 'error-debittype';
+                        return $data;
+                    } else {
+                        //  $debittype= our_company_pay, pay_in_advance, all
+                        $query = DB::table('DEBIT_NOTE_M as dnm')
+                            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
+                            ->whereBetween('dnm.DEBIT_DATE', [$fromdate, $todate])
+                            ->where('dnm.BRANCH_ID', 'IHTVN1')
+                            ->whereNotNull('dnm.JOB_NO');
+
+                        if ($debittype == "our_company_pay") {
+                            $query->where('dnd.DEB_TYPE', 'Our Company Pay');
+                        } elseif ($debittype == "pay_in_advance") {
+                            $query->where('dnd.DEB_TYPE', 'Pay In Advance');
+                        }
+                        $data = $query->select('dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnd.*')->take(100)->get();
+                        dd($data);
+                        return $data;
+                    }
+                    break;
+                default:
+                    break;
             }
         } catch (\Exception $e) {
             dd($e);
