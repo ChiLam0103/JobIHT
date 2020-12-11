@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Statistic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
-
-use App\Models\PrintPayment;
+use App\Models\Statistic\StatisticPayment;
 
 use App\Models\Company;
 use App\Models\Bank;
+use App\Models\Customer;
 use App\Models\JobD;
-use Illuminate\Support\Facades\DB;
+use App\Models\Users;
 
-class PrintPaymentController extends Controller
+class StatisticPaymentController extends Controller
 {
     //1.phieu chi tam ung new
     public function advance($advance_no)
@@ -27,9 +27,10 @@ class PrintPaymentController extends Controller
         $INPUT_USER_jobD = "";
         $INPUT_DT_jobD = "";
 
-        $advance = PrintPayment::advance($advance_no);
-        $advance_d = PrintPayment::advance_D($advance_no);
-        $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->where('REV_TYPE', '!=', null);
+        $advance = StatisticPayment::advance($advance_no);
+        $advance_d = StatisticPayment::advance_D($advance_no);
+        $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
+        // $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->where('jd.THANH_TOAN_MK', 'Y');
         foreach ($advance_d as $i) {
             $SUM_LENDER_AMT += $i->LENDER_AMT;
         }
@@ -81,6 +82,62 @@ class PrintPaymentController extends Controller
             );
         }
     }
+    //1.1thống kê phiếu bù và phiếu trả
+    public function replenishmentWithdrawalPayment($advanceno)
+    {
+        $SUM_LENDER_AMT = 0; //tien ung
+        $SUM_JOB_ORDER = 0; //tien job order
+        $SUM_WITHDRAWAL = 0; //tien tra
+        $SUM_REPLENISHMENT = 0; //tien bu
+        $SUM_DIRECT = 0; //tien chi truc tiep
+        $lender = StatisticPayment::replenishmentWithdrawalPayment($advanceno);
+
+        foreach ($lender as $item) {
+            $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
+            $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
+
+            foreach ($advance_d as $i) {
+                $SUM_LENDER_AMT += $i->LENDER_AMT;
+            }
+            foreach ($job_d as $i) {
+                $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
+            }
+            //kiem tra phieu chi truc tiep
+            if ($item->LENDER_TYPE == 'C') {
+                $item->SUM_LENDER_AMT = 0;
+                $item->SUM_DIRECT = $SUM_JOB_ORDER;
+                $item->SUM_REPLENISHMENT = $SUM_JOB_ORDER;
+                $item->SUM_WITHDRAWAL = $SUM_WITHDRAWAL;
+            } else {
+                if ($SUM_JOB_ORDER < $SUM_LENDER_AMT) {
+                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT;
+                    $item->SUM_WITHDRAWAL = $SUM_WITHDRAWAL;
+                    $item->SUM_REPLENISHMENT =  $SUM_LENDER_AMT - $SUM_JOB_ORDER;
+                    $item->SUM_MONEY = $SUM_LENDER_AMT + ($SUM_JOB_ORDER - $SUM_LENDER_AMT);
+                    $item->SUM_DIRECT = $SUM_DIRECT;
+                } else {
+                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT;
+                    $item->SUM_WITHDRAWAL =  $SUM_JOB_ORDER - $SUM_LENDER_AMT;
+                    $item->SUM_REPLENISHMENT = $SUM_REPLENISHMENT;
+                    $item->SUM_DIRECT = $SUM_DIRECT;
+                }
+            }
+            $item->SUM_JOB_ORDER = $SUM_JOB_ORDER;
+        }
+        if ($lender) {
+            return view('print\payment\advance\replenishmentWithdrawalPayment', [
+                'lender' => $lender,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn số phiếu!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //2 phiếu yêu cầu thanh toán
     public function debitNote($type = 'jobno', $jobno,  $custno, $fromdate, $todate, $debittype, $person, $phone, $bank = 'ACB')
     {
@@ -90,12 +147,14 @@ class PrintPaymentController extends Controller
         $today = date("Ymd");
         $total_amt = 0;
         $dor_no = '';
+
         $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
         $todate = $todate != 'null' ? $todate : $today;
-        $debit = PrintPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
+        $debit = StatisticPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
         $bank = Bank::des($bank_no);
+        $customer = Customer::arrayCustomer($custno);
+        $person = Users::des($person);
         $company = Company::des('IHT');
-
         if ($debit == 'error-job-empty') {
             return response()->json(
                 [
@@ -136,10 +195,18 @@ class PrintPaymentController extends Controller
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+        } elseif ($debit == 'error-custno') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn Khách Hàng!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         } else {
+            $debit_d = StatisticPayment::debitNote_D($type, $jobno,  $fromdate, $todate, $debittype);
             switch ($type) {
                 case 'job':
-                    $debit_d = PrintPayment::debitNote_D($jobno);
                     foreach ($debit_d as $item) {
                         $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
                         $dor_no = $item->DOR_NO;
@@ -160,11 +227,20 @@ class PrintPaymentController extends Controller
                 case 'customer':
                     return view('print\payment\debit-note\customer', [
                         'debit' => $debit,
+                        'debit_d' => $debit_d,
+                        'company' => $company,
+                        'person' => $person,
+                        'phone' => $phone,
+                        'bank' => $bank,
+                        'customer' => $customer,
                     ]);
                     break;
                 case  'debit_date':
                     return view('print\payment\debit-note\debit-date', [
                         'debit' => $debit,
+                        'debit_d' => $debit_d,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
                     ]);
                     break;
                 default:
@@ -176,7 +252,7 @@ class PrintPaymentController extends Controller
     public function receipt($receiptno)
     {
         $title_vn = 'PHIẾU THU';
-        $receipt = PrintPayment::receipt($receiptno);
+        $receipt = StatisticPayment::receipt($receiptno);
         // $list=Receipts::list();
 
 

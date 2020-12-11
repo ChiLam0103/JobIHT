@@ -249,7 +249,7 @@
                 @endif
                 <tr>
                     <td id="sum-money" colspan="5">
-                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT-$SUM_PORT_AMT) }}
+                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT- $SUM_PORT_AMT) }}
                     </td>
                 </tr>
             </table>

@@ -12,7 +12,14 @@ class DebitNoteM extends Model
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->orderBy('dnm.JOB_NO', 'desc')
-            ->whereNotIn('dnm.PAYMENT_CHK', ['Y']);
+            ->where(function ($query) {
+                $query->where('dnm.DEL', 'N')
+                    ->orWhere('dnm.DEL', null);
+            })
+            ->where(function ($query) {
+                $query->where('dnm.PAYMENT_CHK', 'N')
+                    ->orWhere('dnm.PAYMENT_CHK', null);
+            });
         return $query;
     }
     public static function queryNotCreated()
@@ -21,6 +28,10 @@ class DebitNoteM extends Model
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
             ->whereNull('dnm.JOB_NO')
             ->select('jom.JOB_NO')
+            ->where(function ($query) {
+                $query->where('dnm.DEL', 'N')
+                    ->orWhere('dnm.DEL', null);
+            })
             ->where('jom.BRANCH_ID', 'IHTVN1')
             ->orderBy('jom.JOB_NO', 'desc');
         return $query;
@@ -33,6 +44,10 @@ class DebitNoteM extends Model
             ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1')
             ->where('dnd.BRANCH_ID', 'IHTVN1')
+            ->where(function ($query) {
+                $query->where('dnm.DEL', 'N')
+                    ->orWhere('dnm.DEL', null);
+            })
             ->orderBy('dnm.JOB_NO', 'desc')
             ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE')
             ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
@@ -43,6 +58,10 @@ class DebitNoteM extends Model
     {
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+            ->where(function ($query) {
+                $query->where('dnm.DEL', 'N')
+                    ->orWhere('dnm.DEL', null);
+            })
             ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
         return $query;
     }
@@ -69,7 +88,6 @@ class DebitNoteM extends Model
         $take = 10;
         $skip = ($page - 1) * $take;
         $query =  DebitNoteM::query();
-
         switch ($type) {
             case 'job_no':
                 $query->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -94,6 +112,13 @@ class DebitNoteM extends Model
     {
         $query = DebitNoteM::queryNotCreated();
         $data = $query->select('jom.JOB_NO')->get();
+        return $data;
+    }
+    //print
+    public static function listCustomer($customer)
+    {
+        $query =  DebitNoteM::query();
+        $data =  $query->leftJoin('CUSTOMER as c','c.CUST_NO','dnm.CUST_NO')->where('dnm.CUST_NO',$customer)->select('dnm.JOB_NO','c.CUST_NAME')->get();
         return $data;
     }
     public static function desJobNotCreated($id)
@@ -144,7 +169,7 @@ class DebitNoteM extends Model
     public static function des($id)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->where('dnm.JOB_NO', $id)->select('dnm.TRANS_FROM as ORDER_FROM','dnm.TRANS_TO as ORDER_TO','dnm.*')->first();
+        $data =  $query->leftJoin('CUSTOMER as c','c.CUST_NO','dnm.CUST_NO')->where('dnm.JOB_NO', $id)->select('c.CUST_NAME','dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
         return $data;
     }
     public static function add($request)
@@ -243,7 +268,10 @@ class DebitNoteM extends Model
             $check_debit_d =  $query->leftjoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', '=', 'dnd.JOB_NO')->select('dnd.JOB_NO')->get();
             if ($check_payment_mk == null && count($check_debit_d) == 0) {
                 $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
-                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO'])->delete();
+                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO']) ->update([
+                    'DEL' =>  'Y',
+                    'DEL_DT' =>  date("YmdHis"),
+                ]);
                 return $title;
             } elseif ($check_payment_mk != null) {
                 $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';
@@ -283,40 +311,43 @@ class DebitNoteM extends Model
     public static function checkData($request)
     {
         try {
+
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $today = date("Ymd");
             $from_date = ($request->FROM_DATE == 'undefined' || $request->FROM_DATE == 'null' || $request->FROM_DATE == null) ? '19000101' : $request->FROM_DATE;
             $to_date = ($request->TO_DATE == 'undefined' || $request->TO_DATE == 'null' || $request->TO_DATE == null)  ?  $today : $request->TO_DATE;
             $query =  DebitNoteM::queryCheckData();
 
-            if ($request->TYPE == "1") { //chua thanh toan
-                // $payment =  $query->where('dnm.PAYMENT_CHK', 'N');
-                //         // ->orWhere('dnm.PAYMENT_CHK', 'N');
-                $payment =  $query->where(function ($query) {
-                    $query->where('dnm.PAYMENT_CHK', null)
-                        ->orWhere('dnm.PAYMENT_CHK', 'N');
-                });
-            } elseif ($request->TYPE == "2") { //da thanh toan
-                $payment =  $query->where('dnm.PAYMENT_CHK', 'Y');
-            } elseif ($request->TYPE == "3") { //tat ca
-                $payment =  $query->where(function ($q) {
-                    $q->where('dnm.PAYMENT_CHK', null)
-                        ->orWhere('dnm.PAYMENT_CHK', 'N')
-                        ->orWhere('dnm.PAYMENT_CHK', 'Y');
-                });
-            } elseif ($request->TYPE == "4") { //loi nhuan
-                $payment = DB::table('DEBIT_NOTE_M as dnm')
+            switch ($request->TYPE) {
+                case 1://chua thanh toan
+                    $payment =  $query->where(function ($query) {
+                        $query->where('dnm.PAYMENT_CHK', null)
+                            ->orWhere('dnm.PAYMENT_CHK', 'N');
+                    });
+                    break;
+                case 2://da thanh toan
+                    $payment =  $query->where('dnm.PAYMENT_CHK', 'Y');
+                    break;
+                case 3: //tat ca
+                    $payment =  $query->where(function ($q) {
+                        $q->where('dnm.PAYMENT_CHK', null)
+                            ->orWhere('dnm.PAYMENT_CHK', 'N')
+                            ->orWhere('dnm.PAYMENT_CHK', 'Y');
+                    });
+                    break;
+                case 4://loi nhuan
+                    $payment = DB::table('DEBIT_NOTE_M as dnm')
                     ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
                     ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
                     ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', DB::raw('SUM(dnd.PRICE) as PRICE'))
                     ->groupBy('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME');
+                    break;
+                default:
+                    break;
             }
-            if ($request->JOB_NO != 'undefined') {
-                $payment->where('dnm.JOB_NO', $request->JOB_NO);
-            }
-            if ($request->CUST_NO != 'undefined') {
-                $payment->where('dnm.CUST_NO', $request->CUST_NO);
-            }
+
+            ($request->JOB_NO == 'undefined' || $request->JOB_NO == 'null' || $request->JOB_NO == null) ?: $payment->where('dnm.JOB_NO', $request->JOB_NO);
+            ($request->CUST_NO == 'undefined' || $request->CUST_NO == 'null' || $request->CUST_NO == null) ?: $payment->where('dnm.CUST_NO', $request->CUST_NO);
             // dd($from_date, $to_date);
 
             $data = $payment->take(1000)

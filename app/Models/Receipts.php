@@ -119,4 +119,26 @@ class Receipts extends Model
             return $e;
         }
     }
+    public static function search($type, $value, $page)
+    {
+        $take = 10;
+        $skip = ($page - 1) * $take;
+        $query =  Receipts::query();
+        switch ($type) {
+            case 'receipt_no':
+                $query->where('r.RECEIPT_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'cust_no':
+                $query->where('r.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'job_no':
+                $query->where('r.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
+        }
+        $count = $query->count();
+        $data =  $query->skip($skip)->take($take)->get();
+        return ['total_page' => $count, 'list' => $data];
+    }
 }

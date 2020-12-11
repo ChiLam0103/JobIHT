@@ -11,7 +11,7 @@
         -moz-box-sizing: border-box;
     }
 
-    .page {
+    /* .page {
         width: 21cm;
         overflow: hidden;
         min-height: 297mm;
@@ -20,10 +20,18 @@
         margin-right: auto;
         background: white;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    } */
+    .page {
+        overflow: hidden;
+        padding: 0.5cm;
+        margin-left: auto;
+        margin-right: auto;
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     @page {
-        size: A4;
+        size: A4 landscape;
         margin: 0;
     }
 
@@ -45,19 +53,20 @@
     }
 
     .title {
-        font-weight: bold;
         text-align: center;
+        position: relative;
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
     }
 
-    .title p {
-        /* font-size: 13px; */
+    .title-sub {
         margin-top: -1em;
+        text-align: center;
+        position: relative;
+        font-size: 13px;
     }
 
-    .title #comp_name {
-        margin-top: 0.1em;
-        font-size: 20px;
-    }
 
     .title h1 {
         margin-top: 0em;
@@ -75,40 +84,17 @@
         text-align: right
     }
 
-    #recevie p {
-        text-align: center;
-        font-weight: bold;
-        border-bottom: 1px solid;
-        margin: 0;
-    }
-
-    #recevie td:first-child,
-    #info-debit-2 td:first-child {
-        font-weight: bold;
-    }
-
-    #info-debit-2 td:first-child {
-        width: 25%;
-    }
-
-    #info-debit td {
-        padding-top: .5em;
-    }
-
-    #info-debit td:first-child {
-        width: 40%;
-    }
-
-    #info-debit td:nth-child(2) {
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    #debit_d,
-    #debit_d th,
-    #debit_d td {
+    table,
+    table th,
+    table td {
         border: 1px solid black;
         border-collapse: collapse;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    table {
+        width: 100%;
     }
 
     tr td {
@@ -169,7 +155,56 @@
 
 <body onload="window.print();">
     <div id="page" class="page">
+        <p class="title">Phiếu yêu cầu thanh toán (payment report)</p>
+        <div class="title-sub"> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ date('d/m/Y', strtotime($todate)) }}
+        </div>
+        <table>
+            <tr>
+                <th>Số Job</th>
+                <th>Mã Khách Hàng</th>
+                <th>Ngày Lập</th>
+                <th>Debit Type</th>
+                <th>Ser No</th>
+                <th>Invoice No</th>
+                <th>Description</th>
+                <th>Unit</th>
+                <th>Ngoại tệ</th>
+                <th>Tỉ Giá Ngoại Tệ</th>
+                <th>Đơn Giá</th>
+                <th>Số Lượng</th>
+                <th>Thuế</th>
+                <th>VAT</th>
+                <th>Tổng Giá Sau Thuế</th>
+            </tr>
+            @foreach ($debit as $item)
+                <tr>
+                    <td>{{ $item->JOB_NO }}</td>
+                    <td>{{ $item->CUST_NO }}</td>
+                    <td>{{ $item->DEBIT_DATE_M }}</td>
+                    <td colspan="12"></td>
+                </tr>
+                @foreach ($debit_d as $item_d)
+                    @if ($item->JOB_NO == $item_d->JOB_NO)
+                        <tr>
+                            <td colspan="3"></td>
+                            <td>{{ $item_d->DEB_TYPE }} </td>
+                            <td>{{ $item_d->SER_NO }} </td>
+                            <td>{{ $item_d->INV_NO }} </td>
+                            <td>{{ $item_d->DESCRIPTION }} </td>
+                            <td>{{ $item_d->UNIT }} </td>
+                            <td>{{ number_format($item_d->DOR_AMT) }} </td>
+                            <td>{{ number_format( $item_d->DOR_RATE) }} </td>
+                            <td>{{ number_format($item_d->PRICE) }} </td>
+                            <td>{{ number_format($item_d->QUANTITY) }} </td>
+                            <td>{{ $item_d->TAX_NOTE}} </td>
+                            <td>{{ number_format($item_d->TAX_AMT) }} </td>
+                            <td>{{ number_format($item_d->TOTAL_AMT) }} </td>
+                        </tr>
+                    @endif
+                @endforeach
+            @endforeach
 
+        </table>
     </div>
-
 </body>

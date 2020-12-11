@@ -12,6 +12,10 @@ class JobStart extends Model
         $query = DB::table('JOB_START as js')
             ->orderBy('js.JOB_NO', 'desc')
             ->leftjoin('CUSTOMER as c', 'js.CUST_NO', '=', 'c.CUST_NO')
+            ->where(function ($query) {
+                $query->where('js.DEL', 'N')
+                    ->orWhere('js.DEL', null);
+            })
             ->where('js.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1');
         return $query;
@@ -35,7 +39,7 @@ class JobStart extends Model
     public static function list()
     {
         try {
-            $take = 5000;
+            $take = 9000;
             $query = JobStart::query();
             $data =  $query
                 ->take($take)
@@ -120,7 +124,7 @@ class JobStart extends Model
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $job_no = JobStart::generateJobNo();
             if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '') {
-                DB::table(config('constants.JOB_START_TABLE'))
+                $job =   DB::table(config('constants.JOB_START_TABLE'))
                     ->insert(
                         [
                             'JOB_NO' => $job_no,
@@ -144,10 +148,11 @@ class JobStart extends Model
                             'POL' => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                             'POD' => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
                             'BRANCH_ID' => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ? 'IHTVN1' : $request['BRANCH_ID'],
-                            'INPUT_USER' =>  $request['INPUT_USER'],
+                            'INPUT_USER' =>  ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? 'LAM' : $request['INPUT_USER'],
                             'INPUT_DT' =>  date("YmdHis"),
                         ]
                     );
+                // dd($job);
                 $data = JobStart::des($job_no);
                 return $data;
             } else {
@@ -183,7 +188,7 @@ class JobStart extends Model
                         'NOTE' => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? '' : $request['NOTE'],
                         'POL' => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                         'POD' => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
-                        'MODIFY_USER' =>  $request['MODIFY_USER'] == 'undefined' ? '' : $request['MODIFY_USER'],
+                        'MODIFY_USER' => ($request['MODIFY_USER'] == 'undefined' || $request['MODIFY_USER'] == 'null' || $request['MODIFY_USER'] == null) ? '' : $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]
                 );
@@ -199,7 +204,10 @@ class JobStart extends Model
             $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
             DB::table(config('constants.JOB_START_TABLE'))
                 ->where('JOB_NO', $request['JOB_NO'])
-                ->delete();
+                ->update([
+                    'DEL' =>  'Y',
+                    'DEL_DT' =>  date("YmdHis"),
+                ]);
             return $title;
         } catch (\Exception $e) {
             return $e;

@@ -18,7 +18,7 @@ class BoatFeeD extends Model
     }
     public static function edit($request)
     {
-        dd($request);
+        // dd($request);
         // $data = DB::table(config('constants.BOAT_FEE_D_TABLE'))
         // ->where('BRANCH_ID','IHTVN1')
         // ->where('BOAT_FEE_MONTH',$value)

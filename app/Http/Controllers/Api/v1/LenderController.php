@@ -199,6 +199,7 @@ class LenderController extends Controller
     public function remove(Request $request)
     {
         $data = Lender::remove($request);
+        LenderD::removeAll($request);
         if ($data) {
             return response()->json([
                 'success' => true,

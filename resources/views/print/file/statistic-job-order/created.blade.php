@@ -43,6 +43,7 @@
         position: relative;
         font-size: 24px;
         font-weight: bold;
+
     }
 
     .title-sub {

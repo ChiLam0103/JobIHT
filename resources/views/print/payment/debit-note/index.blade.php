@@ -214,7 +214,7 @@
                     </tr>
                     <tr>
                         <td>Please Contact With:</td>
-                        <td>{{ $person }}</td>
+                        <td>{{ $person->USER_NAME }}</td>
                     </tr>
                     <tr>
                         <td>Accountting:</td>

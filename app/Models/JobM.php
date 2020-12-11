@@ -13,6 +13,10 @@ class JobM extends Model
             ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
             ->leftjoin('CUSTOMER as c', 'jm.CUST_NO', '=', 'c.CUST_NO')
             ->orderBy('jm.JOB_NO', 'desc')
+            ->where(function ($query) {
+                $query->where('jm.DEL', 'N')
+                    ->orWhere('jm.DEL', null);
+            })
             ->where('jm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1');
         return $query;
@@ -181,7 +185,10 @@ class JobM extends Model
             $check_job_order_d =  $query->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')->select('jd.JOB_NO')->get();
             if ($check_chk_mk == null && count($check_job_order_d) == 0) {
                 $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
-                DB::table('JOB_ORDER_M')->where('JOB_NO', $request['JOB_NO'])->delete();
+                DB::table('JOB_ORDER_M')->where('JOB_NO', $request['JOB_NO'])->update([
+                    'DEL' =>  'Y',
+                    'DEL_DT' =>  date("YmdHis"),
+                ]);
                 return $title;
             } elseif ($check_chk_mk != null) {
                 $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';
@@ -219,7 +226,7 @@ class JobM extends Model
             $query =  JobM::query();
             $query->take($take)
                 ->where(function ($query) {
-                    $query->where('jm.CHK_MK', '!=', 'Y')
+                    $query->where('jm.CHK_MK', 'N')
                         ->orWhere('jm.CHK_MK', null);
                 })
                 ->select('c.CUST_NAME', 'jm.*');

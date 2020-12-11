@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Statistic;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class PrintFile extends Model
+class StatisticFile extends Model
 {
     //1. in phieu theo doi
     public static function jobStart($fromjob, $tojob)
@@ -134,26 +134,32 @@ class PrintFile extends Model
     public static function refund($type, $custno, $jobno, $fromdate, $todate)
     {
         try {
-             //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
+            //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
             //CUST_TYPE: 1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
 
             $query = DB::table('JOB_ORDER_M as jom')
                 ->join('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+                ->join('JOB_START as js', 'jom.JOB_NO', 'js.JOB_NO')
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('js.JOB_DATE', [$fromdate, $todate])
+                ->where(function ($query) {
+                    $query->where('jod.THANH_TOAN_MK', 'N')
+                        ->orWhere('jod.THANH_TOAN_MK', null);
+                })
                 ->select('c.CUST_NO', 'c.CUST_NAME', 'jod.*');
 
-            if ($type == '1') {//hang tau
+            if ($type == '1') { //hang tau
                 $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '5')
                     ->where('c.CUST_TYPE', 2);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO2', $custno);
-            } elseif ($type == '2') {//khach hang
+            } elseif ($type == '2') { //khach hang
                 $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '6')
                     ->where('c.CUST_TYPE', 1);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO', $custno);
-            } elseif ($type == '3') {//dai ly
+            } elseif ($type == '3') { //dai ly
                 $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
                     ->leftJoin('CUSTOMER as c2', 'jom.CUST_NO', 'c2.CUST_NO')
                     ->where('jod.ORDER_TYPE', '7')
@@ -166,7 +172,6 @@ class PrintFile extends Model
             //job_no
             ($jobno == 'undefined' || $jobno == 'null' || $jobno == null) ? null : $query->where('jom.JOB_NO', $jobno);
 
-            $query->whereBetween('jod.INPUT_DT', [$fromdate, $todate]);
             $data = $query->orderBy('jom.JOB_NO')->get();
 
             return $data;

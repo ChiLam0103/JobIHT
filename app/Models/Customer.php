@@ -221,4 +221,12 @@ class Customer extends Model
             return $e;
         }
     }
+    //print
+    public static function arrayCustomer($custno)
+    {
+        $array_customer = explode(",", $custno);
+        $query =  Customer::query();
+        $data = $query->whereIn('c.CUST_NO', $array_customer)->get();
+        return $data;
+    }
 }

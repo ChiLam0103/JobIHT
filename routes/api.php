@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,7 @@ Route::namespace('Api\v1')->group(function () {
     //web
     Route::group(['prefix' => 'v1'], function () {
         //user
-        Route::group(['middleware' =>  'cors','prefix' => 'user'], function () {
+        Route::group(['middleware' =>  'cors', 'prefix' => 'user'], function () {
             Route::post('login', 'UserController@login');
         });
         //menu
@@ -137,6 +138,7 @@ Route::namespace('Api\v1')->group(function () {
             //3.yeu cau thanh toan
             Route::group(['prefix' => 'debit-note'], function () {
                 Route::get('/', 'DebitNoteController@list');
+                Route::get('/custno={custno}', 'DebitNoteController@listCustomer');
                 Route::get('page={page}', 'DebitNoteController@listPage');
                 Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@search');
 
@@ -180,54 +182,67 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('add', 'ReceiptsController@add');
                 Route::post('edit', 'ReceiptsController@edit');
                 Route::post('remove', 'ReceiptsController@remove');
+                Route::get('search/type={type}&value={value}&page={page}', 'ReceiptsController@search');
             });
         });
         //print
-        Route::group(['prefix' => 'print'], function () {
+        Route::group(['prefix' => 'print', 'namespace' => 'Statistic'], function () {
             //II. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
                 // 1.in phieu theo doi
                 Route::group(['prefix' => 'job-start'], function () {
-                    Route::get('fromjob={fromjob}&tojob={tojob}', 'PrintFileController@jobStart');
+                    Route::get('fromjob={fromjob}&tojob={tojob}', 'StatisticFileController@jobStart');
                 });
                 //2.in job order
                 Route::group(['prefix' => 'job-order'], function () {
-                    Route::get('jobno={jobno}', 'PrintFileController@jobOrder');
-                    Route::get('boat/jobno={jobno}', 'PrintFileController@jobOrderBoat');
-                    Route::get('custno={id}&jobno={jobno}', 'PrintFileController@jobOrderCustomer');
-                    Route::get('custno={id}', 'PrintFileController@getJobOrderCustomer');
-                    Route::get('fromdate={fromdate}&todate={todate}', 'PrintFileController@jobOrder_Date');
+                    Route::get('jobno={jobno}', 'StatisticFileController@jobOrder');
+                    Route::get('boat/jobno={jobno}', 'StatisticFileController@jobOrderBoat');
+                    Route::get('custno={id}&jobno={jobno}', 'StatisticFileController@jobOrderCustomer');
+                    Route::get('custno={id}', 'StatisticFileController@getJobOrderCustomer');
+                    Route::get('fromdate={fromdate}&todate={todate}', 'StatisticFileController@jobOrder_Date');
                 });
                 //3.bao bieu refund
                 Route::group(['prefix' => 'refund'], function () {
                     //1.hang tau, 2.khach hang, 3.dai ly
-                    Route::get('type={type}&custno={custno}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'PrintFileController@refund');
+                    Route::get('type={type}&custno={custno}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'StatisticFileController@refund');
                 });
                 //4.thong ke job order
                 Route::group(['prefix' => 'statistic'], function () {
                     //thống kê tạo job
-                    Route::get('created-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'PrintFileController@statisticCreatedJob');
-                    Route::get('user-import-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'PrintFileController@statisticUserImportJob');
+                    Route::get('created-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'StatisticFileController@statisticCreatedJob');
+                    Route::get('user-import-job/cust={cust}&user={user}&fromdate={fromdate}&todate={todate}', 'StatisticFileController@statisticUserImportJob');
                 });
             });
             //IV. payment manager(quan ly thu chi)
             Route::group(['prefix' => 'payment'], function () {
                 //1.phieu chi tam ung
                 Route::group(['prefix' => 'advance'], function () {
-                    Route::get('advance_no={advance}', 'PrintPaymentController@advance'); //1.1 phieu chi
+                    //1.1 phieu chi
+                    Route::get('advance_no={advanceno}', 'StatisticPaymentController@advance');
+                    //1.2thống kê phiếu bù và phiếu trả
+                    Route::get('replenishment-withdrawal-payment/advanceno={advanceno}', 'StatisticPaymentController@replenishmentWithdrawalPayment');
                 });
                 //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
-                    Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'PrintPaymentController@debitNote');
+                    Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@debitNote');
                 });
+                  //3. báo cáo thu chi mỗi tháng
+                  Route::group(['prefix' => 'reports-monthly-revenue-expenditure'], function () {
+
+                  });
                 //8. thống kê phiếu thu
                 Route::group(['prefix' => 'receipts'], function () {
-                    Route::get('receiptno={receiptno}', 'PrintPaymentController@receipt');
+                    Route::get('receiptno={receiptno}', 'StatisticPaymentController@receipt');
                 });
             });
             //export excel
             Route::group(['prefix' => 'export'], function () {
                 Route::post('/', 'JobStartController@exportDebt');
+            });
+        });
+        //Statistic
+        Route::group(['prefix' => 'statistic', 'namespace' => 'Statistic'], function () {
+            Route::group(['prefix' => 'payment'], function () {
             });
         });
     });

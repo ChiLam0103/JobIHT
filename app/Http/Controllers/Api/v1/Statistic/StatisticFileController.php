@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Statistic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 
-use App\Models\PrintFile;
+use App\Models\Statistic\StatisticFile;
 use App\Models\PayType;
 use App\Models\Company;
 
-class PrintFileController extends Controller
+class StatisticFileController extends Controller
 {
     //1 in phieu theo doi
     public function jobStart($fromjob, $tojob)
     {
-        $job = PrintFile::jobStart($fromjob, $tojob);
+        $job = StatisticFile::jobStart($fromjob, $tojob);
         $company = Company::des('IHT');
         if ($job) {
             return view('print\file\job-start\job', [
@@ -34,8 +34,8 @@ class PrintFileController extends Controller
     //2 in job order
     public function jobOrder($jobno)
     {
-        $order_m = PrintFile::jobOrder($jobno);
-        $order_d = PrintFile::jobOrder_D($jobno);
+        $order_m = StatisticFile::jobOrder($jobno);
+        $order_d = StatisticFile::jobOrder_D($jobno);
         $pay_type = PayType::listPayType_JobNo($jobno);
         $total_port = 0;
         if ($order_m) {
@@ -57,8 +57,8 @@ class PrintFileController extends Controller
     }
     public function jobOrderBoat($jobno)
     {
-        $order_m = PrintFile::jobOrder($jobno);
-        $order_d = PrintFile::jobOrder_D($jobno);
+        $order_m = StatisticFile::jobOrder($jobno);
+        $order_d = StatisticFile::jobOrder_D($jobno);
         $pay_type = PayType::listPayType_JobNo($jobno);
         $total_port = 0;
         $total_tienTruocThue = 0;
@@ -88,7 +88,7 @@ class PrintFileController extends Controller
     public function getJobOrderCustomer($custno)
     {
 
-        $job_m = PrintFile::getJobOrderCustomer($custno);
+        $job_m = StatisticFile::getJobOrderCustomer($custno);
         if ($job_m) {
             return response()->json([
                 'success' => true,
@@ -107,8 +107,8 @@ class PrintFileController extends Controller
     public function jobOrderCustomer($custno, $jobno)
     {
 
-        $job_m = PrintFile::jobOrderCustomer($custno, $jobno);
-        $job_d = PrintFile::jobOrderCustomer_D($custno, $jobno);
+        $job_m = StatisticFile::jobOrderCustomer($custno, $jobno);
+        $job_d = StatisticFile::jobOrderCustomer_D($custno, $jobno);
         // dd($job_m,$job_d);
         if ($job_m) {
             return view('print\file\job-order\customer', [
@@ -127,8 +127,8 @@ class PrintFileController extends Controller
     }
     public function jobOrder_Date($fromdate, $todate)
     {
-        $job_m = PrintFile::jobOrder_Date($fromdate, $todate);
-        $job_d = PrintFile::getJobOrder_D($fromdate, $todate);
+        $job_m = StatisticFile::jobOrder_Date($fromdate, $todate);
+        $job_d = StatisticFile::getJobOrder_D($fromdate, $todate);
         // dd($job_d);
         if ($job_m) {
             return view('print\file\job-order\date', [
@@ -162,7 +162,7 @@ class PrintFileController extends Controller
             $type_name = "ĐẠI LÝ";
         }
 
-        $data = PrintFile::refund($type, $custno, $jobno, $from_date, $to_date);
+        $data = StatisticFile::refund($type, $custno, $jobno, $from_date, $to_date);
         foreach ($data as $item) {
             $sum_money_before += $item->TAX_NOTE == 0 ? $item->PRICE * $item->QTY : $item->TAX_AMT * $item->TAX_NOTE * $item->QTY;
             $sum_money_after += $item->TAX_NOTE == 0 ? $item->PRICE * $item->QTY : $item->TAX_AMT * $item->TAX_NOTE + $item->TAX_AMT * $item->QTY;
@@ -192,7 +192,7 @@ class PrintFileController extends Controller
     public function statisticCreatedJob($cust, $user, $fromdate, $todate)
     {
 
-        $data = PrintFile::statisticCreatedJob($cust, $user, $fromdate, $todate);
+        $data = StatisticFile::statisticCreatedJob($cust, $user, $fromdate, $todate);
         if ($data) {
             return view('print\file\statistic-job-order\created', [
                 'data' => $data,
@@ -212,8 +212,8 @@ class PrintFileController extends Controller
     public function statisticUserImportJob($cust, $user,  $fromdate, $todate)
     {
 
-        $data = PrintFile::statisticUserImportJob($cust, $user, $fromdate, $todate);
-        $job_d = PrintFile::statisticUserImportJob_D($cust, $user, $fromdate, $todate);
+        $data = StatisticFile::statisticUserImportJob($cust, $user, $fromdate, $todate);
+        $job_d = StatisticFile::statisticUserImportJob_D($cust, $user, $fromdate, $todate);
         if ($data) {
             return view('print\file\statistic-job-order\user-import', [
                 'data' => $data,

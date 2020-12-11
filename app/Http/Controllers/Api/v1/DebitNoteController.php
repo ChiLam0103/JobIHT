@@ -172,6 +172,25 @@ class DebitNoteController extends Controller
             );
         }
     }
+    //print
+    public function listCustomer($customer)
+    {
+        $data = DebitNoteM::listCustomer($customer);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function des($id)
     {
         $debit_note_m = DebitNoteM::des($id);
@@ -350,6 +369,23 @@ class DebitNoteController extends Controller
     }
     public function checkData(Request $request)
     {
+        $type_name = "";
+        switch ($request->TYPE) {
+            case 1:
+                $type_name = "Chưa thanh toán";
+                break;
+            case 2:
+                $type_name = "Đã thanh toán";
+                break;
+            case 3:
+                $type_name = "Tất cả";
+                break;
+            case 4:
+                $type_name = "Lợi nhuận";
+                break;
+            default:
+                break;
+        }
         $data = DebitNoteM::checkData($request);
         if ($data == '201') {
             return response()->json(
@@ -362,6 +398,7 @@ class DebitNoteController extends Controller
         } else {
             return response()->json([
                 'success' => true,
+                'type_name' => $type_name,
                 'data' => $data
             ], Response::HTTP_OK);
         }

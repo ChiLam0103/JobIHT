@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Statistic;
 
 header('Content-Type: text/html; charset=utf-8');
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class PrintPayment extends Model
+class StatisticPayment extends Model
 {
     //1.phieu thu chi
     public static function advance($advance)
@@ -38,7 +38,28 @@ class PrintPayment extends Model
             return $e;
         }
     }
+    //1.1thống kê phiếu bù và phiếu trả
+    public static function replenishmentWithdrawalPayment($advanceno)
+    {
+        try {
+            $array_advanceno = explode(",", $advanceno);
 
+            $data =  DB::table('LENDER as l')
+                ->whereIn('L.LENDER_NO', $array_advanceno)
+                ->select('l.*')->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function query()
+    {
+        $data = DB::table('DEBIT_NOTE_M as dnm')
+            ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->where('c.BRANCH_ID', 'IHTVN1');
+        return $data;
+    }
     //2 phiếu yêu cầu thanh toán
     public static function debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone)
     {
@@ -58,25 +79,36 @@ class PrintPayment extends Model
                         $data = 'error-job-empty';
                         return $data;
                     }
+
                     if ($jobno && $person && $phone) {
-                        $data = DB::table('DEBIT_NOTE_M as dnm')
-                            ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-                            ->where('dnm.JOB_NO', $jobno)
-                            ->where('dnm.BRANCH_ID', 'IHTVN1')
-                            ->where('c.BRANCH_ID', 'IHTVN1')
-                            ->first();
+                        $query = StatisticPayment::query();
+                        $data = $query->where('dnm.JOB_NO', $jobno)->first();
                         return $data;
                     } else {
                         return 201;
                     }
                     break;
                 case 'customer':
+                    if ($custno == null || $custno == 'undefined' || $custno == 'null') {
+                        $data = 'error-custno';
+                        return $data;
+                    }
                     if ($phone == null || $phone == 'undefined' || $phone == 'null') {
                         $data = 'error-phone';
                         return $data;
                     }
+                    if ($person == null || $person == 'undefined' || $person == 'null') {
+                        $data = 'error-person-empty';
+                        return $data;
+                    }
+                    if ($jobno == null || $jobno == 'undefined' || $jobno == 'null') {
+                        $data = 'error-job-empty';
+                        return $data;
+                    }
                     if ($custno && $person && $phone) {
-                        //array job[]
+                        $array_jobno = explode(",", $jobno);
+                        $query = StatisticPayment::query();
+                        $data = $query->whereIn('dnm.JOB_NO', $array_jobno)->select('dnm.*')->get();
                         return $data;
                     }
                     break;
@@ -103,8 +135,7 @@ class PrintPayment extends Model
                         } elseif ($debittype == "pay_in_advance") {
                             $query->where('dnd.DEB_TYPE', 'Pay In Advance');
                         }
-                        $data = $query->select('dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnd.*')->take(100)->get();
-                        dd($data);
+                        $data = $query->select('dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE as DEBIT_DATE_M')->distinct()->get();
                         return $data;
                     }
                     break;
@@ -116,12 +147,34 @@ class PrintPayment extends Model
             return $e;
         }
     }
-    public static function debitNote_D($jobno)
+    public static function debitNote_D($type, $jobno, $fromdate, $todate, $debittype)
     {
-        $data = DB::table('DEBIT_NOTE_D ')
-            ->where('JOB_NO', $jobno)
-            ->where('BRANCH_ID', 'IHTVN1')
-            ->get();
+        $query = DB::table('DEBIT_NOTE_D as dnd')
+            ->leftJoin('DEBIT_NOTE_M as dnm', 'dnm.JOB_NO', 'dnd.JOB_NO')
+            ->where('dnd.BRANCH_ID', 'IHTVN1');
+        switch ($type) {
+            case 'job':
+                $query->where('dnd.JOB_NO', $jobno);
+                $data = $query->get();
+                break;
+            case 'customer':
+                $array_jobno = explode(",", $jobno);
+                $query->whereIn('dnd.JOB_NO', $array_jobno);
+                $data = $query->get();
+                break;
+            case  'debit_date':
+                $query->whereBetween('dnm.DEBIT_DATE', [$fromdate, $todate]);
+                if ($debittype == "our_company_pay") {
+                    $query->where('dnd.DEB_TYPE', 'Our Company Pay');
+                } elseif ($debittype == "pay_in_advance") {
+                    $query->where('dnd.DEB_TYPE', 'Pay In Advance');
+                }
+                $query->select('dnd.JOB_NO', 'dnd.DEB_TYPE', 'dnd.SER_NO', 'dnd.INV_NO', 'dnd.DESCRIPTION', 'dnd.UNIT', 'dnd.DOR_AMT', 'dnd.DOR_RATE', 'dnd.PRICE', 'dnd.QUANTITY', 'dnd.TAX_NOTE', 'dnd.TAX_AMT', 'dnd.TOTAL_AMT');
+                $data = $query->get();
+                break;
+            default:
+                break;
+        }
         return $data;
     }
     //8. thống kê phiếu thu
