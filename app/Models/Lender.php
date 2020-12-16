@@ -21,7 +21,6 @@ class Lender extends Model
             ->orderBy('l.LENDER_NO', 'desc');
         return $query;
     }
-
     public static function list()
     {
         try {
@@ -45,7 +44,9 @@ class Lender extends Model
             $count = $query->count();
             $data =  $query->skip($skip)
                 ->take($take)
+                // ->leftJoin('LENDER_D as ld','l.LENDER_NO','ld.LENDER_NO')
                 ->select('lt.LENDER_NAME', 'l.*')
+                // ->selectRaw('sum(ld.LENDER_AMT) as sum_LENDER_NAME')
                 ->get();
             return ['total_page' => $count, 'list' => $data];
         } catch (\Exception $ex) {
@@ -150,6 +151,7 @@ class Lender extends Model
                         "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
                         "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
                         "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ?  'IHTVN1' : $request['BRANCH_ID'],
                         "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' : $request['INPUT_USER'],
                         "INPUT_DT" => date("YmdHis")
@@ -180,6 +182,7 @@ class Lender extends Model
                         "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
                         "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
                     ]

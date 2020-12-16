@@ -60,6 +60,9 @@ class StatisticFile extends Model
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                 ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate])
                 ->select('c.CUST_NAME', 'l.LENDER_NO', 'jom.*')
                 ->get();
@@ -262,6 +265,22 @@ class StatisticFile extends Model
             return $data;
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+    //5. thong ke nang ha
+    public static function lifting($fromdate, $todate)
+    {
+        try {
+            $query =  DB::table('JOB_START as js')
+                ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
+                ->whereBetween('js.JOB_DATE', [$fromdate, $todate]);
+            $data = $query->select('c.CUST_NAME', 'c.CUST_TAX', 'js.*')
+                ->where('js.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->orderBy('js.JOB_NO')->get();
+            return $data;
+        } catch (\Exception $e) {
+            return 201;
         }
     }
 }

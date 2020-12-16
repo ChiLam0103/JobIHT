@@ -160,9 +160,14 @@
         margin-left: 50%;
     }
 
+    #lnkPrint {
+        margin-top: 1em;
+        background: aquamarine;
+    }
+
 </style>
 
-<body onload="window.print();">
+<body>
     <div id="page" class="page ">
         <div class="border">
             <p class="title">Phiếu {{ $title_vn }}</p>
@@ -242,14 +247,18 @@
                     <tr class="title-sub">
                         <td>0{{ count($advance_d) + 1 }}</td>
                         <td>{{ number_format($SUM_PORT_AMT) }}</td>
+                        @if($advance->LENDER_TYPE == 'C')
+                        <td>{{ $advance->PNAME}}</td>
+                        @else
                         <td>{{ $INPUT_USER_jobD }}</td>
+                        @endif
                         <td>{{ date('Y/m/d', strtotime($INPUT_DT_jobD)) }}</td>
                         <td>TỔNG TIỀN JOB ORDER</td>
                     </tr>
                 @endif
                 <tr>
                     <td id="sum-money" colspan="5">
-                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT- $SUM_PORT_AMT) }}
+                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT - $SUM_PORT_AMT) }}
                     </td>
                 </tr>
             </table>
@@ -272,7 +281,16 @@
                 </tr>
             </table>
         </div>
-
+        <input type="button" id="lnkPrint" value="Click the button to print the current page!">
     </div>
-
 </body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#lnkPrint').click(function() {
+            $('#lnkPrint').hide();
+            window.print();
+        });
+    });
+
+</script>

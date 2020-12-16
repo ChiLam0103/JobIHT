@@ -71,12 +71,18 @@ class JobD extends Model
     public static function generateSerNo($job_no, $order_type)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $count = DB::table(config('constants.JOB_D_TABLE'))
-            ->where('JOB_NO', $job_no)
-            ->where('BRANCH_ID', 'IHTVN1')
-            ->where('ORDER_TYPE', $order_type)
-            ->count();
-        $count = (int) $count + 1;
+        $query=DB::table(config('constants.JOB_D_TABLE'))
+        ->where('JOB_NO', $job_no)
+        ->where('BRANCH_ID', 'IHTVN1')
+        ->where('ORDER_TYPE', $order_type);
+        $count = $query->count();
+        $job = $query->orderByDesc('JOB_NO')->take(1)->select('SER_NO')->first();
+        // dd($count,$job);
+        if($count == 0){
+            $count = (int) $count + 1;
+        }else{
+            $count = (int) $job->SER_NO + 1;
+        }
         $data = sprintf("%'.02d", $count);
         return $data;
     }
@@ -85,7 +91,6 @@ class JobD extends Model
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
             $ser_no = JobD::generateSerNo($request->JOB_NO, $request['ORDER_TYPE']);
-
             if ($request->TYPE == 'JOB_ORDER') {
                 DB::table(config('constants.JOB_D_TABLE'))
                     ->insert(

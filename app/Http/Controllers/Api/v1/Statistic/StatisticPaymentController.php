@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api\v1\Statistic;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use App\Models\Statistic\StatisticPayment;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Company;
 use App\Models\Bank;
 use App\Models\Customer;
 use App\Models\JobD;
-use App\Models\Users;
+use App\Models\Personal;
 
 class StatisticPaymentController extends Controller
 {
@@ -54,7 +55,9 @@ class StatisticPaymentController extends Controller
         } elseif ($advance->LENDER_TYPE == 'C') {
             $title_vn = 'Chi Trực Tiếp';
             $title_en = 'Advance Payment ';
+            $title_sum_money = "TỔNG TIỀN / TOTAL MONEY";
         } elseif ($advance->LENDER_TYPE == 'U') {
+            $title_sum_money = "TỔNG TIỀN / TOTAL MONEY";
             $title_vn = 'Tạm Ứng';
             $title_en = 'Advance ';
         }
@@ -153,7 +156,8 @@ class StatisticPaymentController extends Controller
         $debit = StatisticPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
         $bank = Bank::des($bank_no);
         $customer = Customer::arrayCustomer($custno);
-        $person = Users::des($person);
+        // dd($customer);
+        $person = Personal::des($person);
         $company = Company::des('IHT');
         if ($debit == 'error-job-empty') {
             return response()->json(
@@ -248,6 +252,173 @@ class StatisticPaymentController extends Controller
             }
         }
     }
+    //2.1 xuất excel phiếu yêu cầu thanh toán
+    public function exportDebitNote($type = 'jobno', $jobno,  $custno, $fromdate, $todate, $debittype, $person, $phone, $bank = 'ACB')
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+
+        $bank_no = ($bank == 'undefined' || $bank == 'null' || $bank == null) ? 'ACB' : $bank;
+        $today = date("Ymd");
+        $total_amt = 0;
+        $dor_no = '';
+
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $debit = StatisticPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
+        $bank = Bank::des($bank_no);
+        $customer = Customer::arrayCustomer($custno);
+        $person = Personal::des($person);
+        $company = Company::des('IHT');
+        if ($debit == 'error-job-empty') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Nhập vào số job để xem dữ liệu!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-person-empty') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Nhập vào thông tin người liên lạc!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-phone') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Nhập vào số điện thoại người liên lạc!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-debittype') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn debit type!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($debit == 'error-custno') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn Khách Hàng!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $debit_d = StatisticPayment::debitNote_D($type, $jobno,  $fromdate, $todate, $debittype);
+            switch ($type) {
+                case 'job':
+                    foreach ($debit_d as $item) {
+                        $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
+                        $dor_no = $item->DOR_NO;
+                    }
+                    ob_end_clean();
+                    ob_start(); //At the very top of your program (first line)
+                    return Excel::create($fromdate . '-'  . $todate . ') ' . '(' . date('dmY') . ')', function ($excel) use ($debit, $debit_d, $company, $person, $phone, $fromdate, $todate, $total_amt, $dor_no, $bank) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $debit_d, $company, $person, $phone, $fromdate, $todate, $total_amt, $dor_no, $bank) {
+                            $sheet->loadView('print\payment\debit-note\export-job', [
+                                'debit' => $debit,
+                                'debit_d' => $debit_d,
+                                'company' => $company,
+                                'person' => $person,
+                                'phone' => $phone,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate,
+                                'total_amt' => $total_amt,
+                                'dor_no' => $dor_no,
+                                'bank' => $bank
+                            ]);
+                            $sheet->setOrientation('landscape');
+                        });
+                    })->download('xlsx');
+                    ob_flush();
+                    break;
+                case 'customer':
+                    ob_end_clean();
+                    ob_start(); //At the very top of your program (first line)
+                    return Excel::create('Thống kê debit note-customer', function ($excel) use ($debit, $debit_d) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $debit_d) {
+                            $sheet->loadView('print\payment\debit-note\export-customer', [
+                                'debit' => $debit,
+                                'debit_d' => $debit_d,
+                            ]);
+                            $sheet->setOrientation('landscape');
+                        });
+                    })->download('xlsx');
+                    ob_flush();
+                    break;
+                case  'debit_date':
+                    return view('print\payment\debit-note\debit-date', [
+                        'debit' => $debit,
+                        'debit_d' => $debit_d,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                    ]);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    //5. thống kê số job trong tháng
+    public function jobMonthly($type = 'job_start', $custno, $fromdate, $todate)
+    {
+        $title_vn = 'THỐNG KẾ JOB';
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = StatisticPayment::jobMonthly($type, $custno, $fromdate, $todate);
+
+        if ($data == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($data == 'error-custno') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn Khách Hàng!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        // dd($data);
+        if ($data) {
+            return view('print\payment\job-monthly\index', [
+                'data' => $data,
+                'fromdate' => $fromdate,
+                'todate' => $todate,
+                'type' => $type,
+                'title_vn' => $title_vn,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Phải chọn phiếu theo thứ tự từ nhỏ đến lớn!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //8. thống kê phiếu thu
     public function receipt($receiptno)
     {
@@ -273,5 +444,11 @@ class StatisticPaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+    }
+
+    //test
+    public function test()
+    {
+        return view('print\test', []);
     }
 }

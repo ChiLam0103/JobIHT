@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="">
 <style>
     body {
         margin: 0;
@@ -168,6 +170,7 @@
 </style>
 
 <body onload="window.print();">
+
     <div id="page" class="page">
         <div class="title">
             <p id="comp_name">{{ $company->COMP_NAME }}</p>
@@ -214,7 +217,7 @@
                     </tr>
                     <tr>
                         <td>Please Contact With:</td>
-                        <td>{{ $person->USER_NAME }}</td>
+                        <td>{{ $person->PNL_NAME }}</td>
                     </tr>
                     <tr>
                         <td>Accountting:</td>
@@ -277,7 +280,7 @@
                         <td>{{ $debit->NOTE }}</td>
                     </tr>
                     <tr>
-                        <td>Invoces No:</td>
+                        <td>Invoices No:</td>
                         <td>{{ $debit->INVOICE_NO }}</td>
                     </tr>
                     <tr>
@@ -308,7 +311,7 @@
                     <td class="text-center">{{ number_format($item->QUANTITY) }}</td>
                     <td class="text-right">{{ number_format($item->PRICE) }}</td>
                     <td class="text-right">{{ number_format($item->TAX_AMT) }}</td>
-                    <td class="text-right">{{ number_format($item->QUANTITY * ($item->PRICE + $item->TAX_AMT)) }}</td>
+                    <td class="text-right">{{ number_format($item->TOTAL_AMT) }}</td>
                 </tr>
 
             @endforeach
@@ -325,12 +328,12 @@
             <span>Banker name: {{ $bank->BANK_NAME }}</span><br>
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
-            @if (!$bank->SWIFT_CODE)
-                <span>Swift code: {{ $bank->SWIFT_CODE }}</span>
-                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span>
-                <span>Adress: {{ $bank->ADDRESS }}</span>
+            {{-- {{ dd($bank) }} --}}
+            @if (trim($bank->SWIFT_CODE) != "")
+                <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
+                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
+                <span>Adress: {{ $bank->ADDRESS }}</span><br>
             @endif
-
         </div>
 
         <table style="width:100%">
@@ -343,3 +346,5 @@
     </div>
 
 </body>
+
+</html>

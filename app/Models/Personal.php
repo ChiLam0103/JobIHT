@@ -40,8 +40,8 @@ class Personal extends Model
     public static function des($id)
     {
         $query =  Personal::query();
-        $query->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
-        return $query;
+        $data =  $query->where('p.PNL_NO', $id)->select('p.*', 'b.BRANCH_NAME')->first();
+        return $data;
     }
 
     public static function generateNo()

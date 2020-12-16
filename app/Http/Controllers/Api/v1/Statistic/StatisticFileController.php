@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use App\Models\Statistic\StatisticFile;
 use App\Models\PayType;
 use App\Models\Company;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StatisticFileController extends Controller
 {
@@ -220,6 +221,35 @@ class StatisticFileController extends Controller
                 'job_d' => $job_d,
                 'todate' => $todate,
                 'fromdate' => $fromdate
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    //5 thống kê nâng hạ
+    public function lifting($fromdate, $todate)
+    {
+        $data = StatisticFile::lifting($fromdate, $todate);
+        if ($data) {
+            ob_end_clean();
+            ob_start(); //At the very top of your program (first line)
+            return Excel::create($fromdate . '-'  . $todate . '-' . 'THỐNG KÊ NÂNG HẠ', function ($excel) use ($data) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data) {
+                    $sheet->loadView('print\file\lifting\index', [
+                        'data' => $data
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->download('xlsx');
+            ob_flush();
+            return view('print\file\lifting\index', [
+                'data' => $data,
             ]);
         } else {
             return response()->json(

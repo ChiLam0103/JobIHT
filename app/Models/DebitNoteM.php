@@ -101,6 +101,9 @@ class DebitNoteM extends Model
             case  'customs_no':
                 $query->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
                 break;
+            case  'po_no':
+                $query->where('dm.PO_NO', 'LIKE', '%' . $value . '%');
+                break;
             default:
                 break;
         }
@@ -118,7 +121,14 @@ class DebitNoteM extends Model
     public static function listCustomer($customer)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c','c.CUST_NO','dnm.CUST_NO')->where('dnm.CUST_NO',$customer)->select('dnm.JOB_NO','c.CUST_NAME')->get();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $customer)->select('dnm.JOB_NO', 'c.CUST_NAME')->get();
+        return $data;
+    }
+    //print
+    public static function listJobHasD()
+    {
+        $query =  DebitNoteM::query();
+        $data =  $query->rightJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')->select('dnm.JOB_NO')->take(9000)->distinct()->get();
         return $data;
     }
     public static function desJobNotCreated($id)
@@ -169,7 +179,7 @@ class DebitNoteM extends Model
     public static function des($id)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c','c.CUST_NO','dnm.CUST_NO')->where('dnm.JOB_NO', $id)->select('c.CUST_NAME','dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.JOB_NO', $id)->select('c.CUST_NAME', 'dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
         return $data;
     }
     public static function add($request)
@@ -187,6 +197,7 @@ class DebitNoteM extends Model
                         "TRANS_TO" => ($request['TRANS_TO'] == 'undefined' || $request['TRANS_TO'] == 'null' || $request['TRANS_TO'] == null) ? '' : $request['TRANS_TO'],
                         "CONTAINER_NO" => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
                         "CUSTOMS_NO" => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
                         "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         "BILL_NO" => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
@@ -231,6 +242,7 @@ class DebitNoteM extends Model
                         "TRANS_TO" => ($request['TRANS_TO'] == 'undefined' || $request['TRANS_TO'] == 'null' || $request['TRANS_TO'] == null) ? '' : $request['TRANS_TO'],
                         "CONTAINER_NO" => ($request['CONTAINER_NO'] == 'undefined' || $request['CONTAINER_NO'] == 'null' || $request['CONTAINER_NO'] == null) ? '' : $request['CONTAINER_NO'],
                         "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
                         "CUSTOMS_NO" => ($request['CUSTOMS_NO'] == 'undefined' || $request['CUSTOMS_NO'] == 'null' || $request['CUSTOMS_NO'] == null) ? '' : $request['CUSTOMS_NO'],
                         "CUSTOMS_DATE" => ($request['CUSTOMS_DATE'] == 'undefined' || $request['CUSTOMS_DATE'] == 'null' || $request['CUSTOMS_DATE'] == null) ? null : date('Ymd', strtotime($request['CUSTOMS_DATE'])),
                         "BILL_NO" => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
@@ -268,7 +280,7 @@ class DebitNoteM extends Model
             $check_debit_d =  $query->leftjoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', '=', 'dnd.JOB_NO')->select('dnd.JOB_NO')->get();
             if ($check_payment_mk == null && count($check_debit_d) == 0) {
                 $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
-                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO']) ->update([
+                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO'])->update([
                     'DEL' =>  'Y',
                     'DEL_DT' =>  date("YmdHis"),
                 ]);
@@ -319,13 +331,13 @@ class DebitNoteM extends Model
             $query =  DebitNoteM::queryCheckData();
 
             switch ($request->TYPE) {
-                case 1://chua thanh toan
+                case 1: //chua thanh toan
                     $payment =  $query->where(function ($query) {
                         $query->where('dnm.PAYMENT_CHK', null)
                             ->orWhere('dnm.PAYMENT_CHK', 'N');
                     });
                     break;
-                case 2://da thanh toan
+                case 2: //da thanh toan
                     $payment =  $query->where('dnm.PAYMENT_CHK', 'Y');
                     break;
                 case 3: //tat ca
@@ -335,12 +347,12 @@ class DebitNoteM extends Model
                             ->orWhere('dnm.PAYMENT_CHK', 'Y');
                     });
                     break;
-                case 4://loi nhuan
+                case 4: //loi nhuan
                     $payment = DB::table('DEBIT_NOTE_M as dnm')
-                    ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-                    ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
-                    ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', DB::raw('SUM(dnd.PRICE) as PRICE'))
-                    ->groupBy('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME');
+                        ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+                        ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
+                        ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', DB::raw('SUM(dnd.PRICE) as PRICE'))
+                        ->groupBy('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME');
                     break;
                 default:
                     break;

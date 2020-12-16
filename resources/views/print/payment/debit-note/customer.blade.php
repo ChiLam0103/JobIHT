@@ -217,7 +217,7 @@
                         </tr> --}}
                         <tr>
                             <td>Please Contact With:</td>
-                            <td>{{ $person->USER_NAME }}</td>
+                            <td>{{ $person->PNL_NAME }}</td>
                         </tr>
                         <tr>
                             <td>Accountting:</td>
@@ -282,7 +282,7 @@
                                     <td>{{ $item->NOTE }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Invoces No:</td>
+                                    <td>Invoices No:</td>
                                     <td>{{ $item->INVOICE_NO }}</td>
                                 </tr>
                                 <tr>
@@ -314,13 +314,18 @@
                                     <td class="text-center">{{ number_format($item_d->QUANTITY) }}</td>
                                     <td class="text-right">{{ number_format($item_d->PRICE) }}</td>
                                     <td class="text-right">{{ number_format($item_d->TAX_AMT) }}</td>
-                                    <td class="text-right">
+                                    {{-- <td class="text-right">
                                         {{ number_format($item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT)) }}
                                         <span
                                             style="display: none;">{{ $total_amt += $item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT) }}
                                             {{ $total_vat += $item_d->TAX_AMT }}
                                         </span>
-                                    </td>
+                                    </td> --}}
+                                    <td class="text-right">{{ number_format($item_d->TOTAL_AMT) }}</td>
+                                    <span
+                                        style="display: none;">{{ $total_amt += $item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT) }}
+                                        {{ $total_vat += $item_d->TAX_AMT }}
+                                    </span>
                                 </tr>
                             @endif
                         @endforeach

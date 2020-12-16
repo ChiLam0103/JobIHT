@@ -191,6 +191,25 @@ class DebitNoteController extends Controller
             );
         }
     }
+    //print
+    public function listJobHasD()
+    {
+        $data = DebitNoteM::listJobHasD();
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function des($id)
     {
         $debit_note_m = DebitNoteM::des($id);

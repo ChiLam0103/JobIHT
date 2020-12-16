@@ -47,7 +47,7 @@ class DebitNoteD extends Model
                         "PRICE" => ($request['PRICE'] == 'undefined' || $request['PRICE'] == 'null' || $request['PRICE'] == null) ? 0 : $request['PRICE'],
                         "TAX_NOTE" => ($request['TAX_NOTE'] == 'undefined' || $request['TAX_NOTE'] == 'null' || $request['TAX_NOTE'] == null) ? null : $request['TAX_NOTE'],
                         "TAX_AMT" => ($request['TAX_AMT'] == 'undefined' || $request['TAX_AMT'] == 'null' || $request['TAX_AMT'] == null) ? 0 : $request['TAX_AMT'],
-                        "TOTAL_AMT" => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == 0) ? null : $request['TOTAL_AMT'],
+                        "TOTAL_AMT" => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == 0) ? 0 : $request['TOTAL_AMT'],
                         // "NOTE" => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? null : $request['NOTE'],
                         "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? null : $request['DOR_NO'],
                         "DOR_AMT" => ($request['DOR_AMT'] == 'undefined' || $request['DOR_AMT'] == 'null' || $request['DOR_AMT'] == null) ? 0 : $request['DOR_AMT'],

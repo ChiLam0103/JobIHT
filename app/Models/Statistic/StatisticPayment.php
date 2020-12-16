@@ -113,10 +113,7 @@ class StatisticPayment extends Model
                     }
                     break;
                 case  'debit_date':
-                    if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null')) {
-                        $data = 'error-date';
-                        return $data;
-                    } elseif ($fromdate > $todate) {
+                    if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
                         $data = 'error-date';
                         return $data;
                     } elseif ($debittype == null || $debittype == 'undefined' || $debittype == 'null') {
@@ -176,6 +173,33 @@ class StatisticPayment extends Model
                 break;
         }
         return $data;
+    }
+    //5. thống kê số job trong tháng
+    public static function jobMonthly($type, $custno, $fromdate, $todate)
+    {
+        try {
+            $data = '';
+            $table_name = '';
+
+            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+                $data = 'error-date';
+                return $data;
+            } elseif ($custno == null || $custno == 'undefined' || $custno == 'null') {
+                $data = 'error-custno';
+                return $data;
+            }
+            $table_name = $type == 'job_start' ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
+            $data = DB::table($table_name .' as job')
+            ->leftJoin('CUSTOMER as c','job.CUST_NO', 'c.CUST_NO')
+            ->where('job.BRANCH_ID', 'IHTVN1')
+            ->where('c.BRANCH_ID', 'IHTVN1')
+            ->where('job.CUST_NO', $custno)
+            ->whereBetween('job.INPUT_DT', [$fromdate, $todate])
+            ->select('c.CUST_NAME','job.*')->take(9000)->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
     //8. thống kê phiếu thu
     public static function receipt($receipt_no)
