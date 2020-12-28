@@ -124,14 +124,15 @@
                     <td>{{ $item_d->SER_NO }}</td>
                     <td>{{ $item_d->DESCRIPTION }}</td>
                     {{-- <td>{{ $item_d->REV_TYPE }}</td> --}}
-                    <td>{{ number_format($item_d->PORT_AMT) }}</td>
-                    {{-- <td>{{ number_format($item_d->INDUSTRY_ZONE_AMT) }}</td> --}}
+                    <td>{{ number_format($item_d->PORT_AMT, 0, ',', '.') }}</td>
+                    {{-- <td>{{ number_format($item_d->INDUSTRY_ZONE_AMT) }}</td>
+                    --}}
                     <td>{{ $item_d->NOTE }}</td>
                     <td>{{ $item_d->UNIT }}</td>
-                    <td>{{ number_format($item_d->QTY) }}</td>
-                    <td>{{ number_format($item_d->PRICE) }}</td>
-                    <td>{{ number_format($item_d->TAX_AMT) }}</td>
-                    <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY) }}
+                    <td>{{ number_format($item_d->QTY, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item_d->PRICE, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
+                    <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY, 0, ',', '.') }}
                     </td>
                 </tr>
 

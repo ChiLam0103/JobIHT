@@ -63,7 +63,10 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
-
+        'customer_uploads' => [
+            'driver' => 'local',
+            'root' => '/uploads/customers/',
+        ],
     ],
 
 ];

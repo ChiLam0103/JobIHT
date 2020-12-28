@@ -198,10 +198,7 @@ class Lender extends Model
         try {
             DB::table(config('constants.LENDER_TABLE'))
                 ->where('LENDER_NO', $request['LENDER_NO'])
-                ->update([
-                    'DEL' =>  'Y',
-                    'DEL_DT' =>  date("YmdHis"),
-                ]);
+                ->delete();
             return '200';
         } catch (\Exception $e) {
             return $e;

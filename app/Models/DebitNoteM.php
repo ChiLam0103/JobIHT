@@ -121,7 +121,15 @@ class DebitNoteM extends Model
     public static function listCustomer($customer)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $customer)->select('dnm.JOB_NO', 'c.CUST_NAME')->get();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $customer)->select('dnm.JOB_NO', 'c.CUST_NAME')->take(700)->get();
+        // dd($data);
+        return $data;
+    }
+    public static function postListCustomerJob($request)
+    {
+        $query =  DebitNoteM::query();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->select('dnm.JOB_NO', 'c.CUST_NAME')->take(7000)->get();
+        // dd($data);
         return $data;
     }
     //print
@@ -206,6 +214,7 @@ class DebitNoteM extends Model
                         "POL" => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                         "POD" => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
                         "ETD_ETA" => ($request['ETD_ETA'] == 'undefined' || $request['ETD_ETA'] == 'null' || $request['ETD_ETA'] == null) ? '' : $request['ETD_ETA'],
+                        'ETD_ETA' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date('Ymd', strtotime($request['ETA_ETD'])),
                         "PO_NO" => ($request['PO_NO'] == 'undefined' || $request['PO_NO'] == 'null' || $request['PO_NO'] == null) ? '' : $request['PO_NO'],
                         "ORDER_NO" => ($request['ORDER_NO'] == 'undefined' || $request['ORDER_NO'] == 'null' || $request['ORDER_NO'] == null) ? '' : $request['ORDER_NO'],
                         "INVOICE_NO" => ($request['INVOICE_NO'] == 'undefined' || $request['INVOICE_NO'] == 'null' || $request['INVOICE_NO'] == null) ? '' : $request['INVOICE_NO'],
@@ -251,6 +260,7 @@ class DebitNoteM extends Model
                         "POL" => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                         "POD" => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
                         "ETD_ETA" => ($request['ETD_ETA'] == 'undefined' || $request['ETD_ETA'] == 'null' || $request['ETD_ETA'] == null) ? '' : $request['ETD_ETA'],
+                        'ETD_ETA' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date('Ymd', strtotime($request['ETA_ETD'])),
                         "PO_NO" => ($request['PO_NO'] == 'undefined' || $request['PO_NO'] == 'null' || $request['PO_NO'] == null) ? '' : $request['PO_NO'],
                         "ORDER_NO" => ($request['ORDER_NO'] == 'undefined' || $request['ORDER_NO'] == 'null' || $request['ORDER_NO'] == null) ? '' : $request['ORDER_NO'],
                         "INVOICE_NO" => ($request['INVOICE_NO'] == 'undefined' || $request['INVOICE_NO'] == 'null' || $request['INVOICE_NO'] == null) ? '' : $request['INVOICE_NO'],
@@ -280,10 +290,7 @@ class DebitNoteM extends Model
             $check_debit_d =  $query->leftjoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', '=', 'dnd.JOB_NO')->select('dnd.JOB_NO')->get();
             if ($check_payment_mk == null && count($check_debit_d) == 0) {
                 $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
-                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO'])->update([
-                    'DEL' =>  'Y',
-                    'DEL_DT' =>  date("YmdHis"),
-                ]);
+                DB::table('DEBIT_NOTE_M')->where('JOB_NO', $request['JOB_NO'])->delete();
                 return $title;
             } elseif ($check_payment_mk != null) {
                 $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';

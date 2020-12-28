@@ -36,4 +36,9 @@ class HomeController extends Controller
         $listResult=JobStart::list();
         return $excelService->exportDebt($listResult);
     }
+    public function replenishmentWithdrawalPayment()
+    {
+        return view('print\payment\advance\replenishmentWithdrawalPayment');
+    }
+
 }

@@ -19,11 +19,16 @@ class DebitNoteD extends Model
     public static function generateSerNo($job_no)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $count = DB::table(config('constants.DEBIT_NOTE_D_TABLE'))
+        $query = DB::table(config('constants.DEBIT_NOTE_D_TABLE'))
             ->where('JOB_NO', $job_no)
-            ->where('BRANCH_ID', 'IHTVN1')
-            ->count();
-        $count = (int) $count + 1;
+            ->where('BRANCH_ID', 'IHTVN1');
+        $count = $query->count();
+        $job = $query->orderByDesc('JOB_NO')->take(1)->select('SER_NO')->first();
+        if($count == 0){
+            $count = (int) $count + 1;
+        }else{
+            $count = (int) $job->SER_NO + 1;
+        }
         $data = sprintf("%'.02d", $count);
         return $data;
     }

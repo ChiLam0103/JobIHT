@@ -237,7 +237,7 @@
                 @foreach ($advance_d as $item_d)
                     <tr>
                         <td>{{ $item_d->SER_NO }}</td>
-                        <td>{{ number_format($item_d->LENDER_AMT) }}</td>
+                        <td>{{ number_format($item_d->LENDER_AMT, 0, ',', '.') }}</td>
                         <td>{{ $item_d->INPUT_USER }}</td>
                         <td>{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</td>
                         <td>{{ $item_d->NOTE }}</td>
@@ -246,11 +246,11 @@
                 @if ($SUM_PORT_AMT > 0)
                     <tr class="title-sub">
                         <td>0{{ count($advance_d) + 1 }}</td>
-                        <td>{{ number_format($SUM_PORT_AMT) }}</td>
-                        @if($advance->LENDER_TYPE == 'C')
-                        <td>{{ $advance->PNAME}}</td>
+                        <td>{{ number_format($SUM_PORT_AMT, 0, ',', '.') }}</td>
+                        @if ($advance->LENDER_TYPE == 'C')
+                            <td>{{ $advance->PNAME }}</td>
                         @else
-                        <td>{{ $INPUT_USER_jobD }}</td>
+                            <td>{{ $INPUT_USER_jobD }}</td>
                         @endif
                         <td>{{ date('Y/m/d', strtotime($INPUT_DT_jobD)) }}</td>
                         <td>TỔNG TIỀN JOB ORDER</td>
@@ -258,7 +258,7 @@
                 @endif
                 <tr>
                     <td id="sum-money" colspan="5">
-                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT - $SUM_PORT_AMT) }}
+                        {{ $title_sum_money }}:&nbsp;{{ number_format($SUM_LENDER_AMT - $SUM_PORT_AMT, 0, ',', '.') }}
                     </td>
                 </tr>
             </table>

@@ -107,6 +107,8 @@ class JobM extends Model
                             'ORDER_DATE' => date("Ymd"),
                             'CHK_MK' =>  "N",
                             'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                            'CUST_NO2' => ($request['CUST_NO2'] == 'undefined' || $request['CUST_NO2'] == 'null' || $request['CUST_NO2'] == null) ? '' : $request['CUST_NO2'],
+                            'CUST_NO3' => ($request['CUST_NO3'] == 'undefined' || $request['CUST_NO3'] == 'null' || $request['CUST_NO3'] == null) ? '' : $request['CUST_NO3'],
                             'CONSIGNEE' => ($request['CONSIGNEE'] == 'undefined' || $request['CONSIGNEE'] == 'null' || $request['CONSIGNEE'] == null) ? '' : $request['CONSIGNEE'],
                             'SHIPPER' => ($request['SHIPPER'] == 'undefined' || $request['SHIPPER'] == 'null' || $request['SHIPPER'] == null) ? '' : $request['SHIPPER'],
                             'BILL_NO' => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
@@ -123,6 +125,7 @@ class JobM extends Model
                             'POL' => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                             'POD' => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
                             'ETD_ETA' => ($request['ETD_ETA'] == 'undefined' || $request['ETD_ETA'] == 'null' || $request['ETD_ETA'] == null) ? null : date('Ymd', strtotime($request['ETD_ETA'])),
+                            'ETD_ETA' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date('Ymd', strtotime($request['ETA_ETD'])),
                             'PO_NO' => ($request['PO_NO'] == 'undefined' || $request['PO_NO'] == 'null' || $request['PO_NO'] == null) ? '' : $request['PO_NO'],
                             'NOTE' => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? '' : $request['NOTE'],
                             'JOB_CAM' => ($request['JOB_CAM'] == 'undefined' || $request['JOB_CAM'] == 'null' || $request['JOB_CAM'] == null) ? '' : $request['JOB_CAM'],
@@ -150,6 +153,8 @@ class JobM extends Model
                 ->update(
                     [
                         'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                        'CUST_NO2' => ($request['CUST_NO2'] == 'undefined' || $request['CUST_NO2'] == 'null' || $request['CUST_NO2'] == null) ? '' : $request['CUST_NO2'],
+                        'CUST_NO3' => ($request['CUST_NO3'] == 'undefined' || $request['CUST_NO3'] == 'null' || $request['CUST_NO3'] == null) ? '' : $request['CUST_NO3'],
                         'CONSIGNEE' => ($request['CONSIGNEE'] == 'undefined' || $request['CONSIGNEE'] == 'null' || $request['CONSIGNEE'] == null) ? '' : $request['CONSIGNEE'],
                         'SHIPPER' => ($request['SHIPPER'] == 'undefined' || $request['SHIPPER'] == 'null' || $request['SHIPPER'] == null) ? '' : $request['SHIPPER'],
                         'BILL_NO' => ($request['BILL_NO'] == 'undefined' || $request['BILL_NO'] == 'null' || $request['BILL_NO'] == null) ? '' : $request['BILL_NO'],
@@ -166,6 +171,7 @@ class JobM extends Model
                         'POL' => ($request['POL'] == 'undefined' || $request['POL'] == 'null' || $request['POL'] == null) ? '' : $request['POL'],
                         'POD' => ($request['POD'] == 'undefined' || $request['POD'] == 'null' || $request['POD'] == null) ? '' : $request['POD'],
                         'ETD_ETA' => ($request['ETD_ETA'] == 'undefined' || $request['ETD_ETA'] == 'null' || $request['ETD_ETA'] == null) ? null : date('Ymd', strtotime($request['ETD_ETA'])),
+                        'ETD_ETA' => ($request['ETA_ETD'] == 'undefined' || $request['ETA_ETD'] == 'null' || $request['ETA_ETD'] == null) ? null : date('Ymd', strtotime($request['ETA_ETD'])),
                         'PO_NO' => ($request['PO_NO'] == 'undefined' || $request['PO_NO'] == 'null' || $request['PO_NO'] == null) ? '' : $request['PO_NO'],
                         'NOTE' => ($request['NOTE'] == 'undefined' || $request['NOTE'] == 'null' || $request['NOTE'] == null) ? '' : $request['NOTE'],
                         'JOB_CAM' => ($request['JOB_CAM'] == 'undefined' || $request['JOB_CAM'] == 'null' || $request['JOB_CAM'] == null) ? '' : $request['JOB_CAM'],
@@ -190,10 +196,7 @@ class JobM extends Model
             $check_job_order_d =  $query->leftjoin('JOB_ORDER_D as jd', 'jm.JOB_NO', '=', 'jd.JOB_NO')->select('jd.JOB_NO')->get();
             if ($check_chk_mk == null && count($check_job_order_d) == 0) {
                 $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
-                DB::table('JOB_ORDER_M')->where('JOB_NO', $request['JOB_NO'])->update([
-                    'DEL' =>  'Y',
-                    'DEL_DT' =>  date("YmdHis"),
-                ]);
+                DB::table('JOB_ORDER_M')->where('JOB_NO', $request['JOB_NO'])->delete();
                 return $title;
             } elseif ($check_chk_mk != null) {
                 $title = 'Đơn này đã được duyệt, bạn không thể xóa dữ liệu!';

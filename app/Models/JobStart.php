@@ -102,7 +102,7 @@ class JobStart extends Model
     public static function des($id)
     {
         $query = JobStart::query();
-        $data = $query->select('c.CUST_NAME', 'js.*')
+        $data = $query->select('c.CUST_NAME','js.ETA_ETD as ETD_ETA','js.*')
             ->where('js.JOB_NO', $id)
             ->first();
         return $data;
@@ -206,10 +206,7 @@ class JobStart extends Model
             $title = 'Đã xóa ' . $request['JOB_NO'] . ' thành công';
             DB::table(config('constants.JOB_START_TABLE'))
                 ->where('JOB_NO', $request['JOB_NO'])
-                ->update([
-                    'DEL' =>  'Y',
-                    'DEL_DT' =>  date("YmdHis"),
-                ]);
+                ->delete();
             return $title;
         } catch (\Exception $e) {
             return $e;

@@ -167,10 +167,15 @@
         width: 10%;
     }
 
+    #lnkPrint {
+        margin-top: 1em;
+        background: aquamarine;
+    }
+
 </style>
 
 <body onload="window.print();">
-
+    <input type="button" id="lnkPrint" value="Click the button to print the current page!">
     <div id="page" class="page">
         <div class="title">
             <p id="comp_name">{{ $company->COMP_NAME }}</p>
@@ -301,24 +306,27 @@
                 <th>VAT Tax</th>
                 <th>Total Amt</th>
             </tr>
-
+            <span style="display: none;">{{ $total_amt = 0 }} {{ $total_vat = 0 }}</span>
             @foreach ($debit_d as $item)
                 <tr>
                     <td class="text-center">{{ $item->SER_NO }}</td>
                     <td>{{ $item->DESCRIPTION }}</td>
                     <td>{{ $item->INV_NO }}</td>
                     <td class="text-center">{{ $item->UNIT }}</td>
-                    <td class="text-center">{{ number_format($item->QUANTITY) }}</td>
-                    <td class="text-right">{{ number_format($item->PRICE) }}</td>
-                    <td class="text-right">{{ number_format($item->TAX_AMT) }}</td>
-                    <td class="text-right">{{ number_format($item->TOTAL_AMT) }}</td>
+                    <td class="text-center">{{ number_format($item->QUANTITY, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item->PRICE, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item->TAX_AMT, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item->TOTAL_AMT, 0, ',', '.') }}</td>
+                    <span style="display: none;">{{ $total_amt += $item->TOTAL_AMT }}
+                        {{ $total_vat += $item->TAX_AMT }}
+                    </span>
                 </tr>
 
             @endforeach
             <tr class="text-right font-weight-bold">
                 <td colspan="6">TOTAL AMT</td>
-                <td>{{ number_format($debit_d->sum('TAX_AMT')) }}</td>
-                <td>{{ number_format($total_amt) }} {{ $dor_no }}</td>
+                <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
+                <td>{{ number_format($total_amt, 0, ',', '.') }} {{ $dor_no }}</td>
             </tr>
         </table>
         <span>We are looking forwards to reveiving your payment in the soonest time.</span><br>
@@ -329,7 +337,7 @@
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
             {{-- {{ dd($bank) }} --}}
-            @if (trim($bank->SWIFT_CODE) != "")
+            @if (trim($bank->SWIFT_CODE) != '')
                 <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
                 <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
                 <span>Adress: {{ $bank->ADDRESS }}</span><br>
@@ -348,3 +356,13 @@
 </body>
 
 </html>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#lnkPrint').click(function() {
+            $('#lnkPrint').hide();
+            window.print();
+        });
+    });
+
+</script>

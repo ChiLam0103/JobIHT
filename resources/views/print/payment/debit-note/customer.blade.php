@@ -25,6 +25,7 @@
     @page {
         size: A4;
         margin: 0;
+
     }
 
     @media print {
@@ -37,6 +38,8 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
+            /* margin-bottom: 1cm;
+        margin-top: 1cm; */
         }
     }
 
@@ -165,13 +168,18 @@
         width: 10%;
     }
 
+    #lnkPrint {
+        margin-top: 1em;
+        background: aquamarine;
+    }
+
 </style>
 @foreach ($customer as $c)
 
     <body onload="window.print();">
+        <input type="button" id="lnkPrint" value="Click the button to print the current page!">
 
         <div id="page" class="page">
-
             <div class="title">
                 <p id="comp_name">{{ $company->COMP_NAME }}</p>
                 <p>Add: {{ $company->COMP_ADDRESS1 }}</p>
@@ -228,6 +236,7 @@
                 </div>
             </div>
             <span class="font-weight-bold">We would like to make the Debit Note as follows:</span>
+            <span style="display: none;"> {{ $total_vat_tax = 0 }} {{ $total_sum_amt = 0 }}</span>
             @foreach ($debit as $item)
                 @if ($c->CUST_NO == $item->CUST_NO)
                     <div class="col-10  border" id="info-debit-2">
@@ -311,35 +320,40 @@
                                     <td>{{ $item_d->DESCRIPTION }}</td>
                                     <td>{{ $item_d->INV_NO }}</td>
                                     <td class="text-center">{{ $item_d->UNIT }}</td>
-                                    <td class="text-center">{{ number_format($item_d->QUANTITY) }}</td>
-                                    <td class="text-right">{{ number_format($item_d->PRICE) }}</td>
-                                    <td class="text-right">{{ number_format($item_d->TAX_AMT) }}</td>
-                                    {{-- <td class="text-right">
-                                        {{ number_format($item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT)) }}
-                                        <span
-                                            style="display: none;">{{ $total_amt += $item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT) }}
-                                            {{ $total_vat += $item_d->TAX_AMT }}
-                                        </span>
-                                    </td> --}}
-                                    <td class="text-right">{{ number_format($item_d->TOTAL_AMT) }}</td>
-                                    <span
-                                        style="display: none;">{{ $total_amt += $item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT) }}
+                                    <td class="text-center">{{ number_format($item_d->QUANTITY, 0, ',', '.') }}</td>
+                                    <td class="text-right">{{ number_format($item_d->PRICE, 0, ',', '.') }}</td>
+                                    <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
+                                    <td class="text-right">{{ number_format($item_d->TOTAL_AMT, 0, ',', '.') }}</td>
+                                    <span style="display: none;">{{ $total_amt += $item_d->TOTAL_AMT }}
                                         {{ $total_vat += $item_d->TAX_AMT }}
                                     </span>
                                 </tr>
                             @endif
                         @endforeach
                         <tr class="text-right font-weight-bold">
-                            <td colspan="6">TOTAL AMT</td>
-                            <td>{{ number_format($total_vat) }}</td>
+                            <td colspan="6">JOB AMT</td>
+                            <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
                             <td>
-                                {{ number_format($total_amt) }}
+                                {{ number_format($total_amt, 0, ',', '.') }}
                             </td>
                         </tr>
                     </table>
                 @endif
+                <span style="display: none;">
+                    {{ $total_vat_tax += $total_vat }}
+                    {{ $total_sum_amt += $total_amt }}
+                </span>
             @endforeach
 
+            <table style="width:100%" id="debit_d">
+                <tr class="text-right font-weight-bold">
+                    <td width="71%">TOTAL AMT</td>
+                    <td>{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
+                    <td>
+                        {{ number_format($total_sum_amt, 0, ',', '.') }}
+                    </td>
+                </tr>
+            </table>
             <span>We are looking forwards to reveiving your payment in the soonest time.</span><br>
             <span>If you have further infomation, please do not hesitate to contact with us.</span><br>
             <span>Also you can settle the payment to:</span><br>
@@ -366,3 +380,13 @@
 
     </body>
 @endforeach
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#lnkPrint').click(function() {
+            $('#lnkPrint').hide();
+            window.print();
+        });
+    });
+
+</script>

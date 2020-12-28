@@ -185,7 +185,7 @@
                 </ul>
             </nav>
         </div>
-        @foreach($pay_type as $pay)
+        @foreach ($pay_type as $pay)
             <h4>{{ $pay->PAY_NAME }}</h4>
             <table class="table">
                 <tr>
@@ -194,16 +194,16 @@
                     <th style="width: 20%">Amount</th>
                     <th style="width: 25%">Note</th>
                 </tr>
-                @foreach($order_d as $order)
-                    @if($pay->PAY_NO==$order->ORDER_TYPE)
+                @foreach ($order_d as $order)
+                    @if ($pay->PAY_NO == $order->ORDER_TYPE)
                         <tr>
                             <td>{{ $order->SER_NO }}</td>
                             <td style="text-align: left;">{{ $order->DESCRIPTION }}</td>
-                            <td>{{ $order->PORT_AMT ? number_format($order->PORT_AMT) : '' }}</td>
+                            <td>{{ number_format($order->PORT_AMT + $order->INDUSTRY_ZONE_AMT, 0, ',', '.') }}</td>
                             <td>{{ $order->NOTE }}</td>
                         </tr>
                         <span class="display-none">
-                            {{ $total_port += (int) $order->PORT_AMT }}
+                            {{ $total_port += (int) ($order->PORT_AMT + $order->INDUSTRY_ZONE_AMT) }}
                         </span>
                     @endif
                 @endforeach
@@ -213,7 +213,7 @@
             <tr>
                 <th style="width: 5%"></th>
                 <th style="width: 50%">TOAL AMOUNT</th>
-                <th style="width: 20%">{{ number_format($total_port) }}</th>
+                <th style="width: 20%">{{ number_format($total_port, 0, ',', '.') }}</th>
                 <th style="width: 25%"></th>
             </tr>
             <tr>

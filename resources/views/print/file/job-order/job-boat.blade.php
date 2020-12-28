@@ -200,25 +200,25 @@
                 </tr>
                 @foreach ($order_d as $order)
                     @if ($pay->PAY_NO == $order->ORDER_TYPE)
-                    <span class="display-none">
-                        {{ $giaSauThue = $order->PRICE + $order->PRICE * ($order->TAX_NOTE / 100) }}
-                        {{ $tongTien = $giaSauThue * $order->QTY }}
-                    </span>
+                        <span class="display-none">
+                            {{ $giaSauThue = $order->PRICE + $order->PRICE * ($order->TAX_NOTE / 100) }}
+                            {{ $tongTien = $giaSauThue * $order->QTY }}
+                        </span>
                         <tr>
                             <td>{{ $order->SER_NO }}</td>
                             <td style="text-align: left;">{{ $order->DESCRIPTION }}</td>
-                            <td>{{ $order->PORT_AMT ? number_format($order->PORT_AMT) : '' }}</td>
-                            <td>{{ $order->QTY ? number_format($order->QTY) : '' }}</td>
-                            <td>{{ $order->PRICE ? number_format($order->PRICE) : '' }}</td>
-                            <td>{{ $order->TAX_AMT ? number_format($order->TAX_AMT) : '' }}</td>
-                            <td>{{ number_format($tongTien) }}</td>
+                            <td>{{ $order->PORT_AMT ? number_format($order->PORT_AMT, 0, ',', '.') : '' }}</td>
+                            <td>{{ $order->QTY ? number_format($order->QTY, 0, ',', '.') : '' }}</td>
+                            <td>{{ $order->PRICE ? number_format($order->PRICE, 0, ',', '.') : '' }}</td>
+                            <td>{{ $order->TAX_AMT ? number_format($order->TAX_AMT, 0, ',', '.') : '' }}</td>
+                            <td>{{ number_format($tongTien, 0, ',', '.') }}</td>
                             <td>{{ $order->NOTE }}</td>
                         </tr>
                         <span class="display-none">
                             {{ $total_port += (int) $order->PORT_AMT }}
                             {{ $total_tienTruocThue += (int) $order->PRICE }}
                             {{ $total_tienThue += (int) $order->TAX_AMT }}
-                            {{ $total_tongTien += (int) $tongTien}}
+                            {{ $total_tongTien += (int) $tongTien }}
                         </span>
                     @endif
                 @endforeach
@@ -228,11 +228,11 @@
             <tr>
                 <th style="width: 5%"></th>
                 <th style="width: 25%">TOAL AMOUNT</th>
-                <th style="width: 10%">{{ number_format($total_port) }}</th>
+                <th style="width: 10%">{{ number_format($total_port, 0, ',', '.') }}</th>
                 <th style="width: 5%"></th>
-                <th style="width: 15%">{{ number_format($total_tienTruocThue) }}</th>
-                <th style="width: 10%">{{ number_format($total_tienThue) }}</th>
-                <th style="width: 15%">{{ number_format($total_tongTien) }}</th>
+                <th style="width: 15%">{{ number_format($total_tienTruocThue, 0, ',', '.') }}</th>
+                <th style="width: 10%">{{ number_format($total_tienThue, 0, ',', '.') }}</th>
+                <th style="width: 15%">{{ number_format($total_tongTien, 0, ',', '.') }}</th>
                 <th style="width: 15%"></th>
             </tr>
             <tr>

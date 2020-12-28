@@ -17,6 +17,7 @@
 // Route::get('/', 'UsersController@index');
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/replenishmentWithdrawalPayment', 'HomeController@replenishmentWithdrawalPayment');
 
 // Route::get('exportDebt', 'HomeController@exportDebt')->name('exportDebt');
+

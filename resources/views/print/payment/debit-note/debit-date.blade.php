@@ -11,16 +11,6 @@
         -moz-box-sizing: border-box;
     }
 
-    /* .page {
-        width: 21cm;
-        overflow: hidden;
-        min-height: 297mm;
-        padding: 0.5cm;
-        margin-left: auto;
-        margin-right: auto;
-        background: white;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    } */
     .page {
         overflow: hidden;
         padding: 0.5cm;
@@ -193,13 +183,13 @@
                             <td>{{ $item_d->INV_NO }} </td>
                             <td>{{ $item_d->DESCRIPTION }} </td>
                             <td>{{ $item_d->UNIT }} </td>
-                            <td>{{ number_format($item_d->DOR_AMT) }} </td>
-                            <td>{{ number_format( $item_d->DOR_RATE) }} </td>
-                            <td>{{ number_format($item_d->PRICE) }} </td>
-                            <td>{{ number_format($item_d->QUANTITY) }} </td>
-                            <td>{{ $item_d->TAX_NOTE}} </td>
-                            <td>{{ number_format($item_d->TAX_AMT) }} </td>
-                            <td>{{ number_format($item_d->TOTAL_AMT) }} </td>
+                            <td>{{ number_format($item_d->DOR_AMT, 0, ',', '.') }} </td>
+                            <td>{{ number_format($item_d->DOR_RATE, 0, ',', '.') }} </td>
+                            <td>{{ number_format($item_d->PRICE, 0, ',', '.') }} </td>
+                            <td>{{ number_format($item_d->QUANTITY, 0, ',', '.') }} </td>
+                            <td>{{ $item_d->TAX_NOTE }} </td>
+                            <td>{{ number_format($item_d->TAX_AMT, 0, ',', '.') }} </td>
+                            <td>{{ number_format($item_d->TOTAL_AMT, 0, ',', '.') }} </td>
                         </tr>
                     @endif
                 @endforeach

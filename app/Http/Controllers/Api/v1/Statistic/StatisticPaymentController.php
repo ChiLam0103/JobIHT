@@ -12,6 +12,8 @@ use App\Models\Bank;
 use App\Models\Customer;
 use App\Models\JobD;
 use App\Models\Personal;
+use Illuminate\Http\Request;
+
 
 class StatisticPaymentController extends Controller
 {
@@ -31,7 +33,6 @@ class StatisticPaymentController extends Controller
         $advance = StatisticPayment::advance($advance_no);
         $advance_d = StatisticPayment::advance_D($advance_no);
         $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
-        // $job_d = JobD::getJob($advance->JOB_NO, "JOB_ORDER")->where('jd.THANH_TOAN_MK', 'Y');
         foreach ($advance_d as $i) {
             $SUM_LENDER_AMT += $i->LENDER_AMT;
         }
@@ -85,50 +86,13 @@ class StatisticPaymentController extends Controller
             );
         }
     }
-    //1.1thống kê phiếu bù và phiếu trả
-    public function replenishmentWithdrawalPayment($advanceno)
+    //1.1thống kê phiếu bù/trả
+    public function postReplenishmentWithdrawalPayment(Request $request)
     {
-        $SUM_LENDER_AMT = 0; //tien ung
-        $SUM_JOB_ORDER = 0; //tien job order
-        $SUM_WITHDRAWAL = 0; //tien tra
-        $SUM_REPLENISHMENT = 0; //tien bu
-        $SUM_DIRECT = 0; //tien chi truc tiep
-        $lender = StatisticPayment::replenishmentWithdrawalPayment($advanceno);
+        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
 
-        foreach ($lender as $item) {
-            $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
-            $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
-
-            foreach ($advance_d as $i) {
-                $SUM_LENDER_AMT += $i->LENDER_AMT;
-            }
-            foreach ($job_d as $i) {
-                $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
-            }
-            //kiem tra phieu chi truc tiep
-            if ($item->LENDER_TYPE == 'C') {
-                $item->SUM_LENDER_AMT = 0;
-                $item->SUM_DIRECT = $SUM_JOB_ORDER;
-                $item->SUM_REPLENISHMENT = $SUM_JOB_ORDER;
-                $item->SUM_WITHDRAWAL = $SUM_WITHDRAWAL;
-            } else {
-                if ($SUM_JOB_ORDER < $SUM_LENDER_AMT) {
-                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT;
-                    $item->SUM_WITHDRAWAL = $SUM_WITHDRAWAL;
-                    $item->SUM_REPLENISHMENT =  $SUM_LENDER_AMT - $SUM_JOB_ORDER;
-                    $item->SUM_MONEY = $SUM_LENDER_AMT + ($SUM_JOB_ORDER - $SUM_LENDER_AMT);
-                    $item->SUM_DIRECT = $SUM_DIRECT;
-                } else {
-                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT;
-                    $item->SUM_WITHDRAWAL =  $SUM_JOB_ORDER - $SUM_LENDER_AMT;
-                    $item->SUM_REPLENISHMENT = $SUM_REPLENISHMENT;
-                    $item->SUM_DIRECT = $SUM_DIRECT;
-                }
-            }
-            $item->SUM_JOB_ORDER = $SUM_JOB_ORDER;
-        }
         if ($lender) {
-            return view('print\payment\advance\replenishmentWithdrawalPayment', [
+            return view('print\payment\advance\post-replenishment-withdrawal-payment', [
                 'lender' => $lender,
             ]);
         } else {
@@ -141,23 +105,44 @@ class StatisticPaymentController extends Controller
             );
         }
     }
+    //excel thống kê phiếu bù/trả
+    public function postExportReplenishmentWithdrawalPayment(Request $request)
+    {
+        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
+        if ($lender) {
+            $filename = 'thong-ke-bu-tra' . '(' . date('YmdHis') . ')';
+            Excel::create($filename, function ($excel) use ($lender) {
+                $excel->sheet('Thong ke Bu-Tra', function ($sheet) use ($lender) {
+                    $sheet->loadView('print\payment\advance\post-export-replenishment-withdrawal-payment', [
+                        'lender' => $lender,
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn số phiếu!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+
     //2 phiếu yêu cầu thanh toán
-    public function debitNote($type = 'jobno', $jobno,  $custno, $fromdate, $todate, $debittype, $person, $phone, $bank = 'ACB')
+    public function postDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-
-        $bank_no = ($bank == 'undefined' || $bank == 'null' || $bank == null) ? 'ACB' : $bank;
-        $today = date("Ymd");
+        $bank_no = ($request->bank == 'undefined' || $request->bank == 'null' || $request->bank == null) ? 'ACB' : $request->bank;
         $total_amt = 0;
-        $dor_no = '';
-
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
-        $debit = StatisticPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
+        $debit = StatisticPayment::postDebitNote($request);
         $bank = Bank::des($bank_no);
-        $customer = Customer::arrayCustomer($custno);
-        // dd($customer);
-        $person = Personal::des($person);
+        $person = Personal::des($request->person);
         $company = Company::des('IHT');
         if ($debit == 'error-job-empty') {
             return response()->json(
@@ -208,43 +193,35 @@ class StatisticPaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            $debit_d = StatisticPayment::debitNote_D($type, $jobno,  $fromdate, $todate, $debittype);
-            switch ($type) {
+            switch ($request->type) {
                 case 'job':
-                    foreach ($debit_d as $item) {
-                        $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
-                        $dor_no = $item->DOR_NO;
-                    }
-                    return view('print\payment\debit-note\index', [
+                    return view('print\payment\debit-note\post-job', [
                         'debit' => $debit,
-                        'debit_d' => $debit_d,
                         'company' => $company,
                         'person' => $person,
-                        'phone' => $phone,
-                        'fromdate' => $fromdate,
-                        'todate' => $todate,
+                        'phone' => $request->phone,
                         'total_amt' => $total_amt,
-                        'dor_no' => $dor_no,
                         'bank' => $bank
                     ]);
                     break;
                 case 'customer':
-                    return view('print\payment\debit-note\customer', [
+                    $customer = Customer::postCustomer($request->custno);
+
+                    return view('print\payment\debit-note\post-customer', [
                         'debit' => $debit,
-                        'debit_d' => $debit_d,
                         'company' => $company,
                         'person' => $person,
-                        'phone' => $phone,
+                        'phone' => $request->phone,
                         'bank' => $bank,
                         'customer' => $customer,
                     ]);
                     break;
                 case  'debit_date':
-                    return view('print\payment\debit-note\debit-date', [
+
+                    return view('print\payment\debit-note\post-debit-date', [
                         'debit' => $debit,
-                        'debit_d' => $debit_d,
-                        'fromdate' => $fromdate,
-                        'todate' => $todate,
+                        'fromdate' => $request->fromdate,
+                        'todate' => $request->todate,
                     ]);
                     break;
                 default:
@@ -253,21 +230,16 @@ class StatisticPaymentController extends Controller
         }
     }
     //2.1 xuất excel phiếu yêu cầu thanh toán
-    public function exportDebitNote($type = 'jobno', $jobno,  $custno, $fromdate, $todate, $debittype, $person, $phone, $bank = 'ACB')
+    public function postExportDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-
-        $bank_no = ($bank == 'undefined' || $bank == 'null' || $bank == null) ? 'ACB' : $bank;
-        $today = date("Ymd");
+        $bank_no = ($request->bank == 'undefined' || $request->bank == 'null' || $request->bank == null) ? 'ACB' : $request->bank;
         $total_amt = 0;
         $dor_no = '';
-
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
-        $debit = StatisticPayment::debitNote($type, $jobno, $custno, $fromdate, $todate, $debittype, $person, $phone);
+        $debit = StatisticPayment::postDebitNote($request);
         $bank = Bank::des($bank_no);
-        $customer = Customer::arrayCustomer($custno);
-        $person = Personal::des($person);
+        $phone = $request->phone;
+        $person = Personal::des($request->person);
         $company = Company::des('IHT');
         if ($debit == 'error-job-empty') {
             return response()->json(
@@ -318,54 +290,55 @@ class StatisticPaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            $debit_d = StatisticPayment::debitNote_D($type, $jobno,  $fromdate, $todate, $debittype);
-            switch ($type) {
+            switch ($request->type) {
                 case 'job':
-                    foreach ($debit_d as $item) {
-                        $total_amt += $item->QUANTITY * ($item->PRICE + $item->TAX_AMT);
-                        $dor_no = $item->DOR_NO;
-                    }
-                    ob_end_clean();
-                    ob_start(); //At the very top of your program (first line)
-                    return Excel::create($fromdate . '-'  . $todate . ') ' . '(' . date('dmY') . ')', function ($excel) use ($debit, $debit_d, $company, $person, $phone, $fromdate, $todate, $total_amt, $dor_no, $bank) {
-                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $debit_d, $company, $person, $phone, $fromdate, $todate, $total_amt, $dor_no, $bank) {
-                            $sheet->loadView('print\payment\debit-note\export-job', [
+                    $filename = 'debit-note-job' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($debit, $company, $person, $phone, $bank) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $company, $person, $phone, $bank) {
+                            $sheet->loadView('print\payment\debit-note\post-export-job', [
                                 'debit' => $debit,
-                                'debit_d' => $debit_d,
                                 'company' => $company,
                                 'person' => $person,
                                 'phone' => $phone,
-                                'fromdate' => $fromdate,
-                                'todate' => $todate,
-                                'total_amt' => $total_amt,
-                                'dor_no' => $dor_no,
                                 'bank' => $bank
                             ]);
                             $sheet->setOrientation('landscape');
                         });
-                    })->download('xlsx');
-                    ob_flush();
+                    })->store('xlsx');
+                    return response()->json([
+                        'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+                    ]);
                     break;
                 case 'customer':
-                    ob_end_clean();
-                    ob_start(); //At the very top of your program (first line)
-                    return Excel::create('Thống kê debit note-customer', function ($excel) use ($debit, $debit_d) {
-                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $debit_d) {
-                            $sheet->loadView('print\payment\debit-note\export-customer', [
+                    $filename = 'debit-note-customer' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($debit) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($debit) {
+                            $sheet->loadView('print\payment\debit-note\post-export-customer', [
                                 'debit' => $debit,
-                                'debit_d' => $debit_d,
                             ]);
                             $sheet->setOrientation('landscape');
                         });
-                    })->download('xlsx');
-                    ob_flush();
-                    break;
+                    })->store('xlsx');
+                    return response()->json([
+                        'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+                    ]);
                 case  'debit_date':
-                    return view('print\payment\debit-note\debit-date', [
-                        'debit' => $debit,
-                        'debit_d' => $debit_d,
-                        'fromdate' => $fromdate,
-                        'todate' => $todate,
+                    $today = date("Ymd");
+                    $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
+                    $todate = $request->todate != 'null' ? $request->todate : $today;
+                    $filename = 'debit-note-date' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($debit, $fromdate, $todate) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($debit, $fromdate, $todate) {
+                            $sheet->loadView('print\payment\debit-note\post-export-date', [
+                                'debit' => $debit,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate
+                            ]);
+                            $sheet->setOrientation('landscape');
+                        });
+                    })->store('xlsx');
+                    return response()->json([
+                        'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
                     ]);
                     break;
                 default:
@@ -373,6 +346,8 @@ class StatisticPaymentController extends Controller
             }
         }
     }
+
+
     //5. thống kê số job trong tháng
     public function jobMonthly($type = 'job_start', $custno, $fromdate, $todate)
     {
@@ -419,6 +394,8 @@ class StatisticPaymentController extends Controller
             );
         }
     }
+
+
     //8. thống kê phiếu thu
     public function receipt($receiptno)
     {

@@ -138,8 +138,9 @@ Route::namespace('Api\v1')->group(function () {
             //3.yeu cau thanh toan
             Route::group(['prefix' => 'debit-note'], function () {
                 Route::get('/', 'DebitNoteController@list');
-                Route::get('/custno={custno}', 'DebitNoteController@listCustomer');//print
-                Route::get('/list-job-has-d', 'DebitNoteController@listJobHasD');//print 2. list debit có chi phí
+                Route::get('/custno={custno}', 'DebitNoteController@listCustomer'); //print
+                Route::post('list-cust-job', 'DebitNoteController@postListCustomerJob'); //print
+                Route::get('/list-job-has-d', 'DebitNoteController@listJobHasD'); //print 2. list debit có chi phí
                 Route::get('page={page}', 'DebitNoteController@listPage');
                 Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@search');
 
@@ -206,6 +207,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::group(['prefix' => 'refund'], function () {
                     //1.hang tau, 2.khach hang, 3.dai ly
                     Route::get('type={type}&custno={custno}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'StatisticFileController@refund');
+                    Route::get('post-export', 'StatisticFileController@postExportRefund');
                 });
                 //4.thong ke job order
                 Route::group(['prefix' => 'statistic'], function () {
@@ -222,10 +224,12 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('advance_no={advanceno}', 'StatisticPaymentController@advance');
                     //1.2thống kê phiếu bù và phiếu trả
                     Route::get('replenishment-withdrawal-payment/advanceno={advanceno}', 'StatisticPaymentController@replenishmentWithdrawalPayment');
+                    Route::post('replenishment-withdrawal-payment', 'StatisticPaymentController@postReplenishmentWithdrawalPayment');
                 });
                 //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
                     Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@debitNote');
+                    Route::post('/', 'StatisticPaymentController@postDebitNote');
                 });
                 //3. báo cáo thu chi mỗi tháng(chưa làm)
                 Route::group(['prefix' => 'reports-monthly-revenue-expenditure'], function () {
@@ -240,7 +244,7 @@ Route::namespace('Api\v1')->group(function () {
                 });
                 //8. thống kê phiếu thu
                 Route::group(['prefix' => 'receipts'], function () {
-                    Route::get('receiptno={receiptno}', 'StatisticPaymentController@receipt');
+                    Route::get('receiptno={receiptno}', 'StatisticPaymesntController@receipt');
                 });
             });
             //export excel
@@ -253,19 +257,25 @@ Route::namespace('Api\v1')->group(function () {
             //II. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
                 Route::get('lifting/fromdate={fromdate}&todate={todate}', 'StatisticFileController@lifting');
+                Route::get('job-order/fromdate={fromdate}&todate={todate}', 'StatisticFileController@exportJobOrder_Date');
             });
-             //IV. payment manager(quan ly thu chi)
-             Route::group(['prefix' => 'payment'], function () {
-                  //2. phiếu yêu cầu thanh toán
+            //IV. payment manager(quan ly thu chi)
+            Route::group(['prefix' => 'payment'], function () {
+                //1.phieu chi tam ung
+                Route::group(['prefix' => 'advance'], function () {
+                    //1.2thống kê phiếu bù và phiếu trả
+                     Route::post('replenishment-withdrawal-payment', 'StatisticPaymentController@postExportReplenishmentWithdrawalPayment');
+                });
+                //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
                     Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@exportDebitNote');
+                    Route::post('/', 'StatisticPaymentController@postExportDebitNote');
                 });
-             });
-
+            });
         });
         //test
         Route::group(['prefix' => 'test', 'namespace' => 'Statistic'], function () {
-            Route::get('/', 'StatisticPaymentController@test');
+            Route::get('/', 'StatisticPaymentController@test')->name('showView');
         });
     });
 });

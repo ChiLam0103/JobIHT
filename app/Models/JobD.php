@@ -19,6 +19,7 @@ class JobD extends Model
         if ($type == 'JOB_ORDER') {
             $data = $a->select(
                 'pt.PAY_NAME as ORDER_TYPE_NAME',
+                'jd.JOB_NO',
                 'jd.ORDER_TYPE',
                 'jd.SER_NO',
                 'jd.DESCRIPTION',
@@ -53,8 +54,8 @@ class JobD extends Model
                 'jd.MODIFY_DT',
                 'jd.THANH_TOAN_MK'
             )
-                ->selectRaw('(jd.PRICE + (jd.PRICE * jd.TAX_NOTE)/100 ) AS SAU_THUE')
-                ->selectRaw('(CASE WHEN (jd.TAX_NOTE = 0) THEN ((jd.PRICE + jd.TAX_AMT)* jd.QTY) ELSE (jd.PRICE + (jd.PRICE * jd.TAX_NOTE)/100)* jd.QTY END) AS TONG_TIEN')
+                ->selectRaw('(jd.PRICE + jd.TAX_AMT)  AS SAU_THUE')
+                ->selectRaw('((jd.PRICE + jd.TAX_AMT)*jd.QTY) AS TONG_TIEN')
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
         }

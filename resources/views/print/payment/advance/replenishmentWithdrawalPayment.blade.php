@@ -164,6 +164,7 @@
                     <th>STT</th>
                     <th>Tên</th>
                     <th>Số Phiếu</th>
+                    <th>Loại phiếu</th>
                     <th>Nội dung</th>
                     <th>Số Job</th>
                     <th>Mã Khách Hàng</th>
@@ -178,27 +179,30 @@
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $item->INPUT_USER }}</td>
                         <td>{{ $item->LENDER_NO }}</td>
+                        <td>{{ $item->LENDER_NAME }}</td>
                         <td>{{ $item->LEND_REASON }}</td>
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
-                        <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
-                        <td>{{ number_format($item->SUM_DIRECT) }}</td>
-                        <td>{{ number_format($item->SUM_JOB_ORDER) }}</td>
-                        <td>{{ number_format($item->SUM_WITHDRAWAL) }}</td>
-                        <td>{{ number_format($item->SUM_REPLENISHMENT) }}</td>
+                        <td>{{ number_format($item->SUM_LENDER_AMT, 0, ',', '.') }}</td>
+                        <td>{{ number_format($item->SUM_DIRECT, 0, ',', '.') }}</td>
+                        <td>{{ number_format($item->SUM_JOB_ORDER, 0, ',', '.') }}</td>
+                        <td>{{ number_format($item->SUM_WITHDRAWAL, 0, ',', '.') }}</td>
+                        <td>{{ number_format($item->SUM_REPLENISHMENT, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="6"></td>
-                    <td>{{ number_format($lender->sum('SUM_LENDER_AMT')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_DIRECT')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_JOB_ORDER')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_WITHDRAWAL')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_REPLENISHMENT')) }}</td>
+                    <td colspan="7"></td>
+                    <td>{{ number_format($lender->sum('SUM_LENDER_AMT'), 0, ',', '.') }}</td>
+                    <td>{{ number_format($lender->sum('SUM_DIRECT'), 0, ',', '.') }}</td>
+                    <td>{{ number_format($lender->sum('SUM_JOB_ORDER'), 0, ',', '.') }}</td>
+                    <td>{{ number_format($lender->sum('SUM_WITHDRAWAL'), 0, ',', '.') }}</td>
+                    <td>{{ number_format($lender->sum('SUM_REPLENISHMENT'), 0, ',', '.') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="9" class="text-align-right">Tổng Phiếu Trả và Bù/Chi</td>
-                    <td colspan="2">{{ number_format($lender->sum('SUM_WITHDRAWAL') - $lender->sum('SUM_REPLENISHMENT')) }}</td>
+                    <td colspan="10" class="text-align-right">Tổng Phiếu Trả và Bù/Chi</td>
+                    <td colspan="2">
+                        {{ number_format($lender->sum('SUM_WITHDRAWAL') - $lender->sum('SUM_REPLENISHMENT'), 0, ',', '.') }}
+                    </td>
                 </tr>
             </table>
 

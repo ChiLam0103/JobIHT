@@ -140,7 +140,8 @@
         <div class="col-10 margirn-top margirn-bottom">
             <div class="col-5">
                 <p>Số tiền:&nbsp;<span
-                        class="title-2">{{ number_format($receipt->TOTAL_AMT) }}&nbsp;{{ $receipt->DOR_NO }}</span></p>
+                        class="title-2">{{ number_format($receipt->TOTAL_AMT, 0, ',', '.') }}&nbsp;{{ $receipt->DOR_NO }}</span>
+                </p>
             </div>
             <div class="col-5">
                 <p>Phí Chuyển Khoản:&nbsp;<span
