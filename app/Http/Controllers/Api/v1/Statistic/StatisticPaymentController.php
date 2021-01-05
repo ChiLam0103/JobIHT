@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class StatisticPaymentController extends Controller
 {
-    //1.phieu chi tam ung new
+    //1.1 phieu chi tam ung new
     public function advance($advance_no)
     {
         //khai bao bien
@@ -86,7 +86,7 @@ class StatisticPaymentController extends Controller
             );
         }
     }
-    //1.1thống kê phiếu bù/trả
+    //1.2 thống kê phiếu bù/trả
     public function postReplenishmentWithdrawalPayment(Request $request)
     {
         $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
@@ -105,7 +105,7 @@ class StatisticPaymentController extends Controller
             );
         }
     }
-    //excel thống kê phiếu bù/trả
+    //1.2.1 excel thống kê phiếu bù/trả
     public function postExportReplenishmentWithdrawalPayment(Request $request)
     {
         $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
@@ -133,12 +133,11 @@ class StatisticPaymentController extends Controller
         }
     }
 
-
     //2 phiếu yêu cầu thanh toán
     public function postDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $bank_no = ($request->bank == 'undefined' || $request->bank == 'null' || $request->bank == null) ? 'ACB' : $request->bank;
+        $bank_no = ($request->bankno == 'undefined' || $request->bankno == 'null' || $request->bankno == null) ? 'ACB' : $request->bankno;
         $total_amt = 0;
         $debit = StatisticPayment::postDebitNote($request);
         $bank = Bank::des($bank_no);
@@ -233,7 +232,7 @@ class StatisticPaymentController extends Controller
     public function postExportDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $bank_no = ($request->bank == 'undefined' || $request->bank == 'null' || $request->bank == null) ? 'ACB' : $request->bank;
+        $bank_no = ($request->bankno == 'undefined' || $request->bankno == 'null' || $request->bankno == null) ? 'ACB' : $request->bankno;
         $total_amt = 0;
         $dor_no = '';
         $debit = StatisticPayment::postDebitNote($request);
@@ -302,7 +301,7 @@ class StatisticPaymentController extends Controller
                                 'phone' => $phone,
                                 'bank' => $bank
                             ]);
-                            $sheet->setOrientation('landscape');
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
                         });
                     })->store('xlsx');
                     return response()->json([
@@ -316,7 +315,7 @@ class StatisticPaymentController extends Controller
                             $sheet->loadView('print\payment\debit-note\post-export-customer', [
                                 'debit' => $debit,
                             ]);
-                            $sheet->setOrientation('landscape');
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
                         });
                     })->store('xlsx');
                     return response()->json([
@@ -334,7 +333,7 @@ class StatisticPaymentController extends Controller
                                 'fromdate' => $fromdate,
                                 'todate' => $todate
                             ]);
-                            $sheet->setOrientation('landscape');
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
                         });
                     })->store('xlsx');
                     return response()->json([
@@ -346,18 +345,28 @@ class StatisticPaymentController extends Controller
             }
         }
     }
-
-
     //5. thống kê số job trong tháng
     public function jobMonthly($type = 'job_start', $custno, $fromdate, $todate)
     {
-        $title_vn = 'THỐNG KẾ JOB';
+        $title_vn = '';
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
         $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
         $todate = $todate != 'null' ? $todate : $today;
         $data = StatisticPayment::jobMonthly($type, $custno, $fromdate, $todate);
-
+        switch ($type) {
+            case 'job_start':
+                $title_vn = 'THỐNG KẾ JOB';
+                break;
+            case 'job_order':
+                $title_vn = 'THỐNG KẾ JOB ORDER';
+                break;
+            case  'debit_note':
+                $title_vn = 'THỐNG KẾ DEBIT NOTE';
+                break;
+            default:
+                break;
+        }
         if ($data == 'error-date') {
             return response()->json(
                 [
@@ -394,16 +403,71 @@ class StatisticPaymentController extends Controller
             );
         }
     }
-
-
+    //5.1 xuất excel thống kê số job trong tháng
+    public function postExportJobMonthly(Request $request)
+    {
+        $title_vn = '';
+        $type = $request->type;
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
+        $todate = $request->todate != 'null' ? $request->todate : $today;
+        $data = StatisticPayment::jobMonthly($request->type, $request->custno, $request->fromdate, $request->todate);
+        switch ($type) {
+            case 'job_start':
+                $title_vn = 'THỐNG KẾ JOB';
+                break;
+            case 'job_order':
+                $title_vn = 'THỐNG KẾ JOB ORDER';
+                break;
+            case  'debit_note':
+                $title_vn = 'THỐNG KẾ DEBIT NOTE';
+                break;
+            default:
+                break;
+        }
+        if ($data == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } elseif ($data == 'error-custno') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn Khách Hàng!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $filename = 'job-monthly' . '(' . date('YmdHis') . ')';
+            Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                    $sheet->loadView('print\payment\job-monthly\post-export', [
+                        'data' => $data,
+                        'title_vn' => $title_vn,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type
+                    ]);
+                    $sheet->setOrientation('landscape')->setAutoSize(true);
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
+        }
+    }
     //8. thống kê phiếu thu
-    public function receipt($receiptno)
+    public function receipt($type, $receiptno)
     {
         $title_vn = 'PHIẾU THU';
-        $receipt = StatisticPayment::receipt($receiptno);
+        $receipt = StatisticPayment::receipt($type, $receiptno);
+
         // $list=Receipts::list();
-
-
         $company = Company::des('IHT');
         if ($receipt) {
             return view('print\payment\receipt\index', [
@@ -416,7 +480,7 @@ class StatisticPaymentController extends Controller
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'Phải chọn phiếu theo thứ tự từ nhỏ đến lớn!'
+                    'message' => 'Đã có lỗi xảy ra, vui lòng kiểm tra lại!'
                 ],
                 Response::HTTP_BAD_REQUEST
             );

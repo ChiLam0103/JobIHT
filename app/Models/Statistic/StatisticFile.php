@@ -94,8 +94,9 @@ class StatisticFile extends Model
         try {
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
                 ->where('c.CUST_NO', $custno)
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
                 ->select('jom.JOB_NO')
                 ->get();
             return $data;
@@ -109,10 +110,12 @@ class StatisticFile extends Model
             $array_jobno = explode(",", $jobno);
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
                 ->where('c.CUST_NO', $custno)
                 ->whereIn('jom.JOB_NO', $array_jobno)
-                ->select('c.CUST_NAME', 'l.LENDER_NO', 'jom.*')
+                ->select('c.CUST_NAME', 'jom.*')
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->distinct()
                 ->get();
             return $data;
         } catch (\Exception $e) {

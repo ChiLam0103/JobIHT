@@ -23,9 +23,7 @@
                 <th>Order Type</th>
                 <th>STT</th>
                 <th>Mô Tả</th>
-                {{-- <th>Rev Type</th> --}}
                 <th>Port AMT</th>
-                {{-- <th>Industry Zone Amt</th> --}}
                 <th>Note</th>
                 <th>Đơn Vị Tính</th>
                 <th>Số Lượng</th>
@@ -60,10 +58,7 @@
                     <td>{{ $item_d->PAY_NAME }}</td>
                     <td>{{ $item_d->SER_NO }}</td>
                     <td>{{ $item_d->DESCRIPTION }}</td>
-                    {{-- <td>{{ $item_d->REV_TYPE }}</td> --}}
                     <td>{{ number_format($item_d->PORT_AMT) }}</td>
-                    {{-- <td>{{ number_format($item_d->INDUSTRY_ZONE_AMT) }}</td>
-                    --}}
                     <td>{{ $item_d->NOTE }}</td>
                     <td>{{ $item_d->UNIT }}</td>
                     <td>{{ number_format($item_d->QTY) }}</td>

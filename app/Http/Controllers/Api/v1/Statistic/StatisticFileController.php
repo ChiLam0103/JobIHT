@@ -111,7 +111,6 @@ class StatisticFileController extends Controller
 
         $job_m = StatisticFile::jobOrderCustomer($custno, $jobno);
         $job_d = StatisticFile::jobOrderCustomer_D($custno, $jobno);
-        // dd($job_m,$job_d);
         if ($job_m) {
             return view('print\file\job-order\customer', [
                 'job_m' => $job_m,
@@ -146,16 +145,16 @@ class StatisticFileController extends Controller
             );
         }
     }
-    //export
-    public function exportJobOrder_Date($fromdate, $todate)
+    //2.1 export date
+    public function exportJobOrder_Date(Request $request)
     {
-        $job_m = StatisticFile::jobOrder_Date($fromdate, $todate);
-        $job_d = StatisticFile::getJobOrder_D($fromdate, $todate);
-        // dd($job_m,$job_d);
+        $job_m = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
+        $job_d = StatisticFile::getJobOrder_D($request->fromdate, $request->todate);
         if ($job_m) {
-            ob_end_clean();
-            ob_start(); //At the very top of your program (first line)
-            return Excel::create($fromdate . '-'  . $todate . '-' . 'THỐNG KÊ JOB ORDER', function ($excel) use ($job_m, $job_d) {
+
+            $filename = 'job-order-date' . '(' . date('YmdHis') . ')';
+
+            Excel::create($filename, function ($excel) use ($job_m, $job_d) {
                 $excel->sheet('JOB ORDER', function ($sheet) use ($job_m, $job_d) {
                     $sheet->loadView('print\file\job-order\export-date', [
                         'job_m' => $job_m,
@@ -164,7 +163,9 @@ class StatisticFileController extends Controller
                     $sheet->setOrientation('landscape');
                 });
             })->download('xlsx');
-            ob_flush();
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
         } else {
             return response()->json(
                 [
@@ -182,8 +183,7 @@ class StatisticFileController extends Controller
         $today = date("Ymd");
         $from_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? '19000101' :  $fromdate;
         $to_date = ($todate == 'undefined' || $todate == 'null' || $todate == null) ? $today : $todate;
-        $sum_price = 0;
-        $sum_money_after = 0;
+
         $type_name = "HÃNG TÀU";
         if ($type == 2) {
             $type_name = "KHÁCH HÀNG";
@@ -192,18 +192,12 @@ class StatisticFileController extends Controller
         }
 
         $data = StatisticFile::refund($type, $custno, $jobno, $from_date, $to_date);
-        foreach ($data as $item) {
-            $sum_price += $item->PRICE;
-            $sum_money_after += $item->PRICE + $item->TAX_AMT ;
-        }
         if ($data) {
             return view('print\file\refund\index', [
                 'data' => $data,
                 'type_name' => $type_name,
                 'todate' => $to_date,
                 'fromdate' => $from_date,
-                'sum_price' => $sum_price,
-                'sum_money_after' => $sum_money_after,
             ]);
         } else {
             return response()->json(
@@ -215,6 +209,7 @@ class StatisticFileController extends Controller
             );
         }
     }
+    //3.1 export
     public function postExportRefund(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -239,16 +234,12 @@ class StatisticFileController extends Controller
         }
 
         $data = StatisticFile::postExportRefund($request);
-        foreach ($data as $item) {
-            $sum_price += $item->PRICE;
-            $sum_money_after += $item->PRICE + $item->TAX_AMT ;
-        }
         if ($data) {
 
-            $filename = 'debit-note-job' . '(' . date('YmdHis') . ')';
-            Excel::create($filename, function ($excel) use ($data, $type_name, $from_date, $to_date, $sum_price,$sum_money_after) {
-                $excel->sheet('Debit Note', function ($sheet) use ($data, $type_name, $from_date, $to_date, $sum_price,$sum_money_after) {
-                    $sheet->loadView('print\payment\debit-note\post-export-job', [
+            $filename = 'refund' . '(' . date('YmdHis') . ')';
+            Excel::create($filename, function ($excel) use ($data, $type_name, $from_date, $to_date, $sum_price, $sum_money_after) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data, $type_name, $from_date, $to_date, $sum_price, $sum_money_after) {
+                    $sheet->loadView('print\file\refund\export', [
                         'data' => $data,
                         'type_name' => $type_name,
                         'from_date' => $from_date,

@@ -2,7 +2,7 @@
 <html lang="">
 
 <body>
-    <table>
+    <table style="width:100%">
         <thead>
             <tr>
                 <th>Job No</th>
@@ -26,6 +26,7 @@
         </thead>
         <tbody>
             <span style="display: none;"> {{ $total_vat_tax = 0 }} {{ $total_sum_amt = 0 }}</span>
+
             @foreach ($debit as $item)
                 <tr>
                     <td>{{ $item->JOB_NO }}</td>
@@ -36,7 +37,7 @@
                     <td>{{ $item->CUSTOMS_NO }}</td>
                     <td>{{ $item->CUSTOMS_DATE }}</td>
                     <td>{{ $item->GW }}</td>
-                    <td colspan="9"></td>
+                    <td colspan="8"></td>
                 </tr>
                 <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}}</span>
                     @foreach ($item->debit_d as $item_d)
@@ -69,13 +70,12 @@
         </tbody>
     </table>
     <table style="width:100%">
-        <tr class="text-right font-weight-bold">
-            <th width="71%" colspan="14">TOTAL AMT</th>
+        <tr>
+            <th colspan="14" style="text-align: right">TOTAL AMT</th>
             <th>{{ $total_vat_tax }}</th>
             <th>
                 {{ $total_sum_amt }}
             </th>
-            <th></th>
         </tr>
     </table>
 </body>

@@ -123,10 +123,7 @@
                     <td>{{ $item_d->PAY_NAME }}</td>
                     <td>{{ $item_d->SER_NO }}</td>
                     <td>{{ $item_d->DESCRIPTION }}</td>
-                    {{-- <td>{{ $item_d->REV_TYPE }}</td> --}}
                     <td>{{ number_format($item_d->PORT_AMT, 0, ',', '.') }}</td>
-                    {{-- <td>{{ number_format($item_d->INDUSTRY_ZONE_AMT) }}</td>
-                    --}}
                     <td>{{ $item_d->NOTE }}</td>
                     <td>{{ $item_d->UNIT }}</td>
                     <td>{{ number_format($item_d->QTY, 0, ',', '.') }}</td>

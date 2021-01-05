@@ -183,8 +183,8 @@
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
                         <td>{{ $item->CUST_NAME }}</td>
-                        <td>{{ $item->ORDER_FROM }}</td>
-                        <td>{{ $item->ORDER_TO }}</td>
+                        <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
+                        <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
                         <td>{{ $item->CONTAINER_QTY }}</td>
                         <td>{{ $item->POD }}</td>
                         <td>{{ $item->POL }}</td>
@@ -192,20 +192,7 @@
                         <td>{{ $item->NOTE }}</td>
                     </tr>
                 @endforeach
-                {{-- <tr>
-                    <td colspan="6"></td>
-                    <td>{{ number_format($lender->sum('SUM_LENDER_AMT')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_DIRECT')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_JOB_ORDER')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_WITHDRAWAL')) }}</td>
-                    <td>{{ number_format($lender->sum('SUM_REPLENISHMENT')) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="9" class="text-align-right">Tổng Phiếu Trả và Bù/Chi</td>
-                    <td colspan="2">
-                        {{ number_format($lender->sum('SUM_WITHDRAWAL') - $lender->sum('SUM_REPLENISHMENT')) }}
-                    </td>
-                </tr> --}}
+
             </table>
 
         </div>

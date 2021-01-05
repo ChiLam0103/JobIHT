@@ -42,7 +42,6 @@ class StatisticPayment extends Model
         }
     }
     //1.1thống kê phiếu bù và phiếu trả
-
     public static function postReplenishmentWithdrawalPayment($advanceno)
     {
         try {
@@ -64,15 +63,15 @@ class StatisticPayment extends Model
                 }
                 //kiem tra phieu chi truc tiep
                 if ($item->LENDER_TYPE == 'C') {
-                    $item->SUM_LENDER_AMT = 0;//tong ung
-                    $item->SUM_DIRECT = $SUM_JOB_ORDER;//chi truc tiep
-                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER;//tong job
-                    $item->SUM_REPLENISHMENT_WITHDRAWAL = -$SUM_JOB_ORDER;//tong bu tra
+                    $item->SUM_LENDER_AMT = 0; //tong ung
+                    $item->SUM_DIRECT = $SUM_JOB_ORDER; //chi truc tiep
+                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+                    $item->SUM_REPLENISHMENT_WITHDRAWAL = -$SUM_JOB_ORDER; //tong bu tra
                 } else {
-                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT;//tong ung
-                    $item->SUM_DIRECT = 0;//chi truc tiep
-                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER;//tong job
-                    $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT-$SUM_JOB_ORDER;//tong bu tra
+                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT; //tong ung
+                    $item->SUM_DIRECT = 0; //chi truc tiep
+                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+                    $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT - $SUM_JOB_ORDER; //tong bu tra
                 }
             }
             return $data;
@@ -80,16 +79,8 @@ class StatisticPayment extends Model
             return $e;
         }
     }
-    public static function query()
-    {
-        $data = DB::table('DEBIT_NOTE_M as dnm')
-            ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-            ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->where('c.BRANCH_ID', 'IHTVN1');
-        return $data;
-    }
-    //2 phiếu yêu cầu thanh toán
 
+    //2 phiếu yêu cầu thanh toán
     public static function postDebitNote($request)
     {
         try {
@@ -229,7 +220,6 @@ class StatisticPayment extends Model
             return $e;
         }
     }
-
     public static function postDebitNote_D($request)
     {
         $query = DB::table('DEBIT_NOTE_D as dnd')
@@ -263,9 +253,6 @@ class StatisticPayment extends Model
     public static function jobMonthly($type, $custno, $fromdate, $todate)
     {
         try {
-            $data = '';
-            $table_name = '';
-
             if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
                 $data = 'error-date';
                 return $data;
@@ -273,32 +260,46 @@ class StatisticPayment extends Model
                 $data = 'error-custno';
                 return $data;
             }
+            $data = '';
+            $table_name = '';
             $table_name = $type == 'job_start' ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
+            $table_date = $type == 'job_start' ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
             $data = DB::table($table_name . ' as job')
                 ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
                 ->where('job.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('job.CUST_NO', $custno)
-                ->whereBetween('job.INPUT_DT', [$fromdate, $todate])
-                ->select('c.CUST_NAME', 'job.*')->take(9000)->get();
+                ->whereBetween('job.' . $table_date, [$fromdate, $todate])
+                ->orderBy('job.JOB_NO')
+                ->select('c.CUST_NAME', 'job.*')->get();
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
+
     //8. thống kê phiếu thu
-    public static function receipt($receipt_no)
+    public static function receipt($type, $receiptno)
     {
         try {
             $query = DB::table('RECEIPT as r')
                 ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'r.CUST_NO')
                 ->where('r.BRANCH_ID', 'IHTVN1')
-                ->where('r.RECEIPT_NO', $receipt_no)
+                ->where('r.RECEIPT_NO', $receiptno)
                 ->select('c.CUST_NAME', 'c.CUST_ADDRESS', 'r.RECEIPT_NO', 'r.RECEIPT_DATE', 'r.RECEIPT_REASON', 'r.TOTAL_AMT', 'r.DOR_NO', 'r.TRANSFER_FEES')
                 ->first();
             return $query;
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+    public static function query()
+    {
+        $data = DB::table('DEBIT_NOTE_M as dnm')
+            ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
+            ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->where('c.BRANCH_ID', 'IHTVN1');
+        return $data;
     }
 }

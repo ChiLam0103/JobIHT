@@ -1,96 +1,17 @@
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #FAFAFA;
-        font: 12pt "Tohoma";
-    }
+<!DOCTYPE html>
+<html lang="">
 
-    * {
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-    }
-
-    .page {
-        overflow: hidden;
-        padding: 0.5cm;
-        margin-left: auto;
-        margin-right: auto;
-        background: white;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    @page {
-        size: A4 landscape;
-        margin: 0;
-    }
-
-    @media print {
-        @page {
-            margin: 0;
-            border: initial;
-            border-radius: initial;
-            width: initial;
-            min-height: initial;
-            box-shadow: initial;
-            background: initial;
-            page-break-after: always;
-        }
-    }
-
-    .title {
-        text-align: center;
-        position: relative;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .title-sub {
-        text-align: center;
-        position: relative;
-        font-size: 13px;
-    }
-
-    nav ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .table,
-    .table th,
-    .table td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        text-align: center;
-        font-size: 13px;
-    }
-
-    .table .amount td {
-        border: none;
-    }
-
-    table {
-        width: 100%;
-    }
-
-    .amount td {
-        font-weight: bold;
-    }
-
-    .text-align-left td {
-        text-align: left !important;
-    }
-
-</style>
-
-<body onload="window.print();">
-    <div id="page" class="page">
-        <div class="title">BÁO CÁO REFUND {{ $type_name }}</div>
-        <div class="title-sub"> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
-            {{ date('d/m/Y', strtotime($todate)) }}
-        </div>
-        <br>
-        <table class="table">
+<body>
+        <table>
+            <tr>
+                <th colspan="5"><h3>BÁO CÁO REFUND {{ $type_name }}</h3></th>
+            </tr>
+            <tr>
+                <th colspan="5"><h5>TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+                    {{ date('d/m/Y', strtotime($todate)) }}</h5></th>
+            </tr>
+        </table>
+        <table>
             <tr>
                 <th>MÃ {{ ($type_name == 'ĐẠI LÝ') || ($type_name == 'KHÁCH HÀNG') ? 'KH' : 'HT' }}</th>
                 <th>TÊN {{ $type_name == 'ĐẠI LÝ' ? 'KHÁCH HÀNG' : $type_name }}</th>
@@ -107,7 +28,7 @@
             </tr>
             <span style="display: none">{{$sum_price=0}} {{ $sum_money_after = 0}}{{$sum_money=0}}</span>
             @foreach ($data as $item)
-                <tr class="text-align-left">
+                <tr >
                     <td>{{ $type_name == 'ĐẠI LÝ' ? $item->CUST_NO2 : $item->CUST_NO }}</td>
                     <td>{{ $type_name == 'ĐẠI LÝ' ? $item->CUST_NAME2 : $item->CUST_NAME }}</td>
                     <td>{{ $item->JOB_NO }}</td>
@@ -130,5 +51,6 @@
                 <td colspan="2" style="text-align: left">{{ number_format($sum_money,0,",",".") }}</td>
             </tr>
         </table>
-    </div>
+
 </body>
+</html>

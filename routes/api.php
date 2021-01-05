@@ -223,16 +223,12 @@ Route::namespace('Api\v1')->group(function () {
                     //1.1 phieu chi
                     Route::get('advance_no={advanceno}', 'StatisticPaymentController@advance');
                     //1.2thống kê phiếu bù và phiếu trả
-                    Route::get('replenishment-withdrawal-payment/advanceno={advanceno}', 'StatisticPaymentController@replenishmentWithdrawalPayment');
                     Route::post('replenishment-withdrawal-payment', 'StatisticPaymentController@postReplenishmentWithdrawalPayment');
                 });
                 //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
                     Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@debitNote');
                     Route::post('/', 'StatisticPaymentController@postDebitNote');
-                });
-                //3. báo cáo thu chi mỗi tháng(chưa làm)
-                Route::group(['prefix' => 'reports-monthly-revenue-expenditure'], function () {
                 });
                 //4. báo biểu lợi nhuận(chưa làm)
                 Route::group(['prefix' => 'profit'], function () {
@@ -243,9 +239,7 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobMonthly');
                 });
                 //8. thống kê phiếu thu
-                Route::group(['prefix' => 'receipts'], function () {
-                    Route::get('receiptno={receiptno}', 'StatisticPaymesntController@receipt');
-                });
+                Route::get('receipts/type={type}&receiptno={receiptno}', 'StatisticPaymentController@receipt');
             });
             //export excel
             Route::group(['prefix' => 'export'], function () {
@@ -257,20 +251,17 @@ Route::namespace('Api\v1')->group(function () {
             //II. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
                 Route::get('lifting/fromdate={fromdate}&todate={todate}', 'StatisticFileController@lifting');
-                Route::get('job-order/fromdate={fromdate}&todate={todate}', 'StatisticFileController@exportJobOrder_Date');
+                Route::post('job-order', 'StatisticFileController@exportJobOrder_Date');
+                Route::post('refund', 'StatisticFileController@postExportRefund');
             });
             //IV. payment manager(quan ly thu chi)
             Route::group(['prefix' => 'payment'], function () {
-                //1.phieu chi tam ung
-                Route::group(['prefix' => 'advance'], function () {
-                    //1.2thống kê phiếu bù và phiếu trả
-                     Route::post('replenishment-withdrawal-payment', 'StatisticPaymentController@postExportReplenishmentWithdrawalPayment');
-                });
+                //1.2 thống kê phiếu bù và phiếu trả
+                Route::post('advance/replenishment-withdrawal-payment', 'StatisticPaymentController@postExportReplenishmentWithdrawalPayment');
                 //2. phiếu yêu cầu thanh toán
-                Route::group(['prefix' => 'debit-note'], function () {
-                    Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@exportDebitNote');
-                    Route::post('/', 'StatisticPaymentController@postExportDebitNote');
-                });
+                Route::post('debit-note', 'StatisticPaymentController@postExportDebitNote');
+                //5. thống kê số job trong tháng
+                Route::post('job-monthly', 'StatisticPaymentController@postExportJobMonthly');
             });
         });
         //test

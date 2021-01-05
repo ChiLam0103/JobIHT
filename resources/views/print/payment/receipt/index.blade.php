@@ -3,7 +3,7 @@
         margin: 0;
         padding: 0;
         background-color: #FAFAFA;
-        font: 12pt "Tohoma";
+        font: 11pt "Tohoma";
     }
 
     * {
@@ -60,7 +60,7 @@
 
     .title-2 {
         position: relative;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
     }
 
@@ -132,7 +132,7 @@
                 <span class="title">SỐ PHIẾU: {{ $receipt->RECEIPT_NO }}</span>
             </div>
         </div>
-        <h2 class="title text-center">{{ $title_vn }}</h2>
+        <h1 class="text-center">{{ $title_vn }}</h1>
         <p class="text-center margirn-top">{{ date('d-m-Y', strtotime($receipt->RECEIPT_DATE)) }}</p>
         <p>Người Nộp Tiền:&nbsp;<span class="title-2">{{ $receipt->CUST_NAME }}</span></p>
         <p>Địa Chỉ:&nbsp;<span class="title-2">{{ $receipt->CUST_ADDRESS }}</span></p>

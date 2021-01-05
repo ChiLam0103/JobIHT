@@ -81,7 +81,7 @@ class JobStart extends Model
             default:
                 break;
         }
-        $count = $query->count();
+        $count = (int)($query->count() / $take);
         $data =  $query->skip($skip)
             ->take($take)
             ->select('c.CUST_NAME', 'js.JOB_NO')

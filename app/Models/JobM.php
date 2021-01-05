@@ -41,7 +41,7 @@ class JobM extends Model
             $take = 10;
             $skip = ($page - 1) * $take;
             $query =  JobM::query();
-            $count = $query->count();
+            $count = (int)($query->count() / $take);
             $data =  $query->skip($skip)
                 ->take($take)
                 ->select('c.CUST_NAME', 'jm.JOB_NO')
@@ -84,8 +84,10 @@ class JobM extends Model
             default:
                 break;
         }
-        $count = $query->count();
+        $count = (int)($query->count() / $take);
+        // dd($count);
         $data =  $query->skip($skip)->take($take)->select('c.CUST_NAME', 'jm.*')->get();
+        // dd($data);
         return ['total_page' => $count, 'list' => $data];
     }
     public static function des($id)
