@@ -24,11 +24,11 @@ class JobM extends Model
     public static function list()
     {
         try {
-            $take = 5000;
+            $take = 50;
             $query =  JobM::query();
             $data =  $query
                 ->take($take)
-                ->select('c.CUST_NAME', 'jm.JOB_NO')
+                ->select('c.CUST_NAME', 'jm.*')
                 ->get();
             return $data;
         } catch (\Exception $ex) {
@@ -44,14 +44,14 @@ class JobM extends Model
             $count = (int)($query->count() / $take);
             $data =  $query->skip($skip)
                 ->take($take)
-                ->select('c.CUST_NAME', 'jm.JOB_NO')
+                ->select('c.CUST_NAME', 'jm.*')
                 ->get();
             return ['total_page' => $count, 'list_job' => $data];
         } catch (\Exception $ex) {
             return $ex;
         }
     }
-    public static function search($type, $value, $page)
+    public static function searchPage($type, $value, $page)
     {
         $take = 10;
         $skip = ($page - 1) * $take;
@@ -89,6 +89,41 @@ class JobM extends Model
         $data =  $query->skip($skip)->take($take)->select('c.CUST_NAME', 'jm.*')->get();
         // dd($data);
         return ['total_page' => $count, 'list' => $data];
+    }
+    public static function search($type, $value)
+    {
+        $take = 100;
+        $query =  JobM::query();
+        switch ($type) {
+            case 'job_no':
+                $query->where('jm.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'cust_no':
+                $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'cust_name':
+                $query->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
+                break;
+            case  'customs_no':
+                $query->where('jm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'container_no':
+                $query->where('jm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'note':
+                $query->where('jm.NOTE', 'LIKE', '%' . $value . '%');
+                break;
+            case  'bill_no':
+                $query->where('jm.BILL_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'po_no':
+                $query->where('jm.PO_NO', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
+        }
+        $data =  $query->take($take)->select('c.CUST_NAME', 'jm.*')->get();
+        return ['list' => $data];
     }
     public static function des($id)
     {
@@ -211,7 +246,7 @@ class JobM extends Model
             return $e;
         }
     }
-    //3. duyet cuoc job
+    //4. duyet job
     public static function approved($request)
     {
         try {
@@ -261,6 +296,59 @@ class JobM extends Model
             return ['total_page' => (int)($count / $take), 'list_job' => $data];
         } catch (\Exception $ex) {
             return $ex;
+        }
+    }
+    //5.duyet cuoc cont
+    public static function listApprovedCont($type, $list, $year)
+    {
+        try {
+            $year_from = $year . '0000';
+            $year_to = $year . '1231';
+            $query = DB::table('JOB_ORDER_M as jm')
+                ->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
+                ->orderBy('jm.JOB_NO')
+                ->where('jm.BRANCH_ID', 'IHTVN1')
+                ->where('jd.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('jm.ORDER_DATE', [$year_from, $year_to])
+                ->where('jd.ORDER_TYPE', $type);
+            if ($list == 'pending') {
+                $query->where(function ($query) {
+                    $query->where('jd.THANH_TOAN_MK', 'N')
+                        ->orWhere('jd.THANH_TOAN_MK', null);
+                });
+            } elseif ($list == 'approved') {
+                $query->where('jd.THANH_TOAN_MK', 'Y');
+            }
+
+            $data =  $query->select('jd.*')->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public static function approvedCont($request)
+    {
+        try {
+            if ($request->type == 'lending') {
+                foreach ($request->data as $request) {
+                    $query = DB::table('JOB_ORDER_D')
+                        ->where('JOB_NO', $request['JOB_NO'])
+                        ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                        ->where('SER_NO', $request['SER_NO'])
+                        ->update(['THANH_TOAN_MK' => 'N']);
+                }
+            } else {
+                foreach ($request->data as $request) {
+                    $query = DB::table('JOB_ORDER_D')
+                        ->where('JOB_NO', $request['JOB_NO'])
+                        ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                        ->where('SER_NO', $request['SER_NO'])
+                        ->update(['THANH_TOAN_MK' => 'Y']);
+                }
+            }
+            return '200';
+        } catch (\Exception $e) {
+            return '201';
         }
     }
 }

@@ -108,20 +108,21 @@ class LenderController extends Controller
     {
         $data = Lender::des($id);
         $lenderD = LenderD::des($id);
-        if ($data) {
+        if ($data == '201') {
+
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng kiểm tra lại'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => $data,
                 'lenderD' => $lenderD
             ], Response::HTTP_OK);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
     }
     public function add(Request $request)

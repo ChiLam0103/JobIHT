@@ -21,7 +21,7 @@ class Receipts extends Model
         $query =  Receipts::query();
         $data =  $query
             ->take($take)
-            ->select('r.RECEIPT_NO', 'r.INPUT_USER', 'c.CUST_NAME')
+            ->select('r.*', 'c.CUST_NAME')
             ->get();
         return $data;
     }
@@ -33,7 +33,7 @@ class Receipts extends Model
         $count = $query->count();
         $data =  $query->skip($skip)
             ->take($take)
-            ->select('r.RECEIPT_NO', 'r.INPUT_USER', 'c.CUST_NAME')
+            ->select('r.*', 'c.CUST_NAME')
             ->get();
         return ['total_page' => $count, 'list' => $data];
     }
@@ -68,10 +68,10 @@ class Receipts extends Model
                     'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
                     'PNL_NO' => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? '' : $request['PNL_NO'],
                     'DOR_NO' => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ?  'VND' : $request['DOR_NO'],
-                    'TOTAL_AMT' => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == null) ? '' : $request['TOTAL_AMT'],
+                    'TOTAL_AMT' => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == null) ? 0 : $request['TOTAL_AMT'],
                     'RECEIPT_REASON' => ($request['RECEIPT_REASON'] == 'undefined' || $request['RECEIPT_REASON'] == 'null' || $request['RECEIPT_REASON'] == null) ? '' : $request['RECEIPT_REASON'],
                     'JOB_NO' => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ? '' : $request['JOB_NO'],
-                    'TRANSFER_FEES' => ($request['TRANSFER_FEES'] == 'undefined' || $request['TRANSFER_FEES'] == 'null' || $request['TRANSFER_FEES'] == null) ? '' : $request['TRANSFER_FEES'],
+                    'TRANSFER_FEES' => ($request['TRANSFER_FEES'] == 'undefined' || $request['TRANSFER_FEES'] == 'null' || $request['TRANSFER_FEES'] == null) ? 0 : $request['TRANSFER_FEES'],
                     'BRANCH_ID' => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ? 'IHTVN1' : $request['BRANCH_ID'],
                     'INPUT_USER' =>  $request['INPUT_USER'],
                     'INPUT_DT' =>  date("YmdHis"),
@@ -94,10 +94,10 @@ class Receipts extends Model
                         'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
                         'PNL_NO' => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? '' : $request['PNL_NO'],
                         'DOR_NO' => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ?  'VND' : $request['DOR_NO'],
-                        'TOTAL_AMT' => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == null) ? '' : $request['TOTAL_AMT'],
+                        'TOTAL_AMT' => ($request['TOTAL_AMT'] == 'undefined' || $request['TOTAL_AMT'] == 'null' || $request['TOTAL_AMT'] == null) ? 0 : $request['TOTAL_AMT'],
                         'RECEIPT_REASON' => ($request['RECEIPT_REASON'] == 'undefined' || $request['RECEIPT_REASON'] == 'null' || $request['RECEIPT_REASON'] == null) ? '' : $request['RECEIPT_REASON'],
                         'JOB_NO' => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ? '' : $request['JOB_NO'],
-                        'TRANSFER_FEES' => ($request['TRANSFER_FEES'] == 'undefined' || $request['TRANSFER_FEES'] == 'null' || $request['TRANSFER_FEES'] == null) ? '' : $request['TRANSFER_FEES'],
+                        'TRANSFER_FEES' => ($request['TRANSFER_FEES'] == 'undefined' || $request['TRANSFER_FEES'] == 'null' || $request['TRANSFER_FEES'] == null) ? 0 : $request['TRANSFER_FEES'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'],
                         'MODIFY_DT' => date("YmdHis"),
                     ]

@@ -128,7 +128,7 @@ class DebitNoteM extends Model
     public static function postListCustomerJob($request)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->select('dnm.JOB_NO', 'c.CUST_NAME')->take(7000)->get();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->select('dnm.JOB_NO', 'c.CUST_NAME')->take(5000)->get();
         // dd($data);
         return $data;
     }
@@ -187,7 +187,8 @@ class DebitNoteM extends Model
     public static function des($id)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.JOB_NO', $id)->select('c.CUST_NAME', 'dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.JOB_NO', $id)
+        ->select('c.CUST_NAME', 'dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
         return $data;
     }
     public static function add($request)

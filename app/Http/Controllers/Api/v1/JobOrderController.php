@@ -48,13 +48,31 @@ class JobOrderController extends Controller
             );
         }
     }
-    public function search($type, $value, $page)
+    public function searchPage($type, $value, $page)
     {
-        $data = JobM::search($type, $value, $page);
+        $data = JobM::searchPage($type, $value, $page);
         if ($data) {
             return response()->json([
                 'success' => true,
                 'total_page' => $data['total_page'],
+                'data' => $data['list']
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    public function search($type, $value)
+    {
+        $data = JobM::search($type, $value);
+        if ($data) {
+            return response()->json([
+                'success' => true,
                 'data' => $data['list']
             ], Response::HTTP_OK);
         } else {
@@ -211,6 +229,7 @@ class JobOrderController extends Controller
             );
         }
     }
+    //4. duyet job
     public function listPending($page)
     {
         $data = JobM::listPending($page);
@@ -264,6 +283,43 @@ class JobOrderController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $data
+            ], Response::HTTP_OK);
+        }
+    }
+    //5. duyet cuoc cont
+    public function listApprovedCont($type, $list, $year)
+    {
+        $data = JobM::listApprovedCont($type, $list, $year);
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        }
+    }
+    public function approvedCont(Request $request)
+    {
+        $data = JobM::approvedCont($request);
+        if ($data == '201') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Error'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json([
+                'success' => true,
+                'data' => 'Success'
             ], Response::HTTP_OK);
         }
     }

@@ -68,13 +68,13 @@ class Lender extends Model
         try {
             $take = 100;
             $data =  DB::table('JOB_START as js')
-            ->leftJoin('LENDER as l','js.JOB_NO','l.JOB_NO')
-            ->whereNull('l.JOB_NO')
-            ->where('js.BRANCH_ID', 'IHTVN1') ->select('lt.LENDER_NAME', 'l.*')
-            ->take($take)
-            ->orderByDesc('js.JOB_NO')
-            ->select('js.JOB_NO')
-            ->get();
+                ->leftJoin('LENDER as l', 'js.JOB_NO', 'l.JOB_NO')
+                ->whereNull('l.JOB_NO')
+                ->where('js.BRANCH_ID', 'IHTVN1')->select('lt.LENDER_NAME', 'l.*')
+                ->take($take)
+                ->orderByDesc('js.JOB_NO')
+                ->select('js.JOB_NO')
+                ->get();
             return $data;
         } catch (\Exception $ex) {
             return $ex;
@@ -87,7 +87,7 @@ class Lender extends Model
         $skip = ($page - 1) * $take;
         $query =  Lender::query();
         $query->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
-        ->where('p.BRANCH_ID','IHTVN1');
+            ->where('p.BRANCH_ID', 'IHTVN1');
         switch ($type) {
             case 'job_no':
                 $query->where('l.JOB_NO', 'LIKE', '%' . $value . '%');
@@ -134,30 +134,64 @@ class Lender extends Model
     public static function add($request)
     {
         try {
-            date_default_timezone_set('Asia/Ho_Chi_Minh');
-            $lender_no = Lender::generateLenderNo();
-            DB::table(config('constants.LENDER_TABLE'))
-                ->insert(
-                    [
-                        'LENDER_NO' => $lender_no,
-                        "LENDER_DATE" => date("Ymd"),
-                        "LENDER_TYPE" => $request['LENDER_TYPE'],
-                        "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? null : $request['PNL_NO'],
-                        "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? null : $request['PNL_NAME'],
-                        "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
-                        "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
-                        "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
-                        "CUST_NO" => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
-                        "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
-                        "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
-                        "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
-                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
-                        "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ?  'IHTVN1' : $request['BRANCH_ID'],
-                        "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' : $request['INPUT_USER'],
-                        "INPUT_DT" => date("YmdHis")
-                    ]
-                );
+
+            if ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) {
+
+                date_default_timezone_set('Asia/Ho_Chi_Minh');
+                $lender_no = Lender::generateLenderNo();
+                DB::table(config('constants.LENDER_TABLE'))
+                    ->insert(
+                        [
+                            'LENDER_NO' => $lender_no,
+                            "LENDER_DATE" => date("Ymd"),
+                            "LENDER_TYPE" => $request['LENDER_TYPE'],
+                            "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? null : $request['PNL_NO'],
+                            "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? null : $request['PNL_NAME'],
+                            "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
+                            "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
+                            "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
+                            "CUST_NO" => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                            "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
+                            "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
+                            "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                            "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
+                            "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ?  'IHTVN1' : $request['BRANCH_ID'],
+                            "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' : $request['INPUT_USER'],
+                            "INPUT_DT" => date("YmdHis")
+                        ]
+                    );
+            } else {
+                $exist = DB::table('LENDER')->where('JOB_NO', $request['JOB_NO'])->count();
+                if ($exist == 0) {
+                    date_default_timezone_set('Asia/Ho_Chi_Minh');
+                    $lender_no = Lender::generateLenderNo();
+                    DB::table(config('constants.LENDER_TABLE'))
+                        ->insert(
+                            [
+                                'LENDER_NO' => $lender_no,
+                                "LENDER_DATE" => date("Ymd"),
+                                "LENDER_TYPE" => $request['LENDER_TYPE'],
+                                "PNL_NO" => ($request['PNL_NO'] == 'undefined' || $request['PNL_NO'] == 'null' || $request['PNL_NO'] == null) ? null : $request['PNL_NO'],
+                                "PNL_NAME" => ($request['PNL_NAME'] == 'undefined' || $request['PNL_NAME'] == 'null' || $request['PNL_NAME'] == null) ? null : $request['PNL_NAME'],
+                                "DOR_NO" => ($request['DOR_NO'] == 'undefined' || $request['DOR_NO'] == 'null' || $request['DOR_NO'] == null) ? 'VND' :  $request['DOR_NO'],
+                                "LEND_REASON" => ($request['LEND_REASON'] == 'undefined' || $request['LEND_REASON'] == 'null' || $request['LEND_REASON'] == null) ? '' : $request['LEND_REASON'],
+                                "JOB_NO" => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ?  null : $request['JOB_NO'],
+                                "CUST_NO" => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                                "ORDER_FROM" => ($request['ORDER_FROM'] == 'undefined' || $request['ORDER_FROM'] == 'null' || $request['ORDER_FROM'] == null) ? '' : $request['ORDER_FROM'],
+                                "ORDER_TO" => ($request['ORDER_TO'] == 'undefined' || $request['ORDER_TO'] == 'null' || $request['ORDER_TO'] == null) ? '' : $request['ORDER_TO'],
+                                "CONTAINER_QTY" => ($request['CONTAINER_QTY'] == 'undefined' || $request['CONTAINER_QTY'] == 'null' || $request['CONTAINER_QTY'] == null) ? '' : $request['CONTAINER_QTY'],
+                                "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null) ? '' : $request['QTY'],
+                                "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null) ?  'IHTVN1' : $request['BRANCH_ID'],
+                                "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null) ? '' : $request['INPUT_USER'],
+                                "INPUT_DT" => date("YmdHis")
+                            ]
+                        );
+                } else {
+                    $data = '201';
+                }
+            }
             $data = Lender::des($lender_no);
+
             return $data;
         } catch (\Exception $e) {
             return '201';

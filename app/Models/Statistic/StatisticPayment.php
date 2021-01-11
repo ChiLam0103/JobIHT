@@ -31,8 +31,6 @@ class StatisticPayment extends Model
     {
         try {
             $data = DB::table('LENDER_D as ld')
-                ->rightJoin('LENDER as l', 'l.LENDER_NO', 'ld.LENDER_NO')
-                ->where('l.BRANCH_ID', 'IHTVN1')
                 ->where('ld.BRANCH_ID', 'IHTVN1')
                 ->where('ld.LENDER_NO', $advance)
                 ->select('ld.*')->get();
@@ -79,7 +77,6 @@ class StatisticPayment extends Model
             return $e;
         }
     }
-
     //2 phiếu yêu cầu thanh toán
     public static function postDebitNote($request)
     {
@@ -89,18 +86,25 @@ class StatisticPayment extends Model
             $today = date("Ymd");
             $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
             $todate = $request->todate != 'null' ? $request->todate : $today;
-            $debit_d = StatisticPayment::postDebitNote_D($request);
+            $check_phone = ($request->phone == null || $request->phone == 'undefined' || $request->phone == 'null') ? 0 : 1;
+            $check_person = ($request->person == null || $request->person == 'undefined' || $request->person == 'null') ? 0 : 1;
+            $check_jobno = ($request->jobno == null || $request->jobno == 'undefined' || $request->jobno == 'null') ? 0 : 1;
+            $check_custno = ($request->custno == null || $request->custno == 'undefined' || $request->custno == 'null') ? 0 : 1;
+            $check_debittype = ($request->debittype == null || $request->debittype == 'undefined' || $request->debittype == 'null') ? 0 : 1;
+            $check_fromdate = ($request->fromdate == null || $request->fromdate == 'undefined' || $request->fromdate == 'null') ? 0 : 1;
+            $check_todate = ($request->todate == null || $request->todate == 'undefined' || $request->todate == 'null') ? 0 : 1;
+
             switch ($request->type) {
                 case 'job':
-                    if ($request->phone == null || $request->phone == 'undefined' || $request->phone == 'null') {
+                    if ($check_phone == 0) {
                         $data = 'error-phone';
                         return $data;
                     }
-                    if ($request->person == null || $request->person == 'undefined' || $request->person == 'null') {
+                    if ($check_person == 0) {
                         $data = 'error-person-empty';
                         return $data;
                     }
-                    if ($request->jobno == null || $request->jobno == 'undefined' || $request->jobno == 'null') {
+                    if ($check_jobno == 0) {
                         $data = 'error-job-empty';
                         return $data;
                     }
@@ -108,6 +112,8 @@ class StatisticPayment extends Model
                     if ($request->jobno && $request->person && $request->phone) {
                         $query = StatisticPayment::query();
                         $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->first();
+                        $query_d = StatisticPayment::postDebitNote_D($request);
+                        $debit_d = $query_d->where('dnd.JOB_NO',  $request->jobno)->get();
                         foreach ($debit_d as $item_d) {
                             $total_amt += $item_d->QUANTITY * ($item_d->PRICE + $item_d->TAX_AMT);
                             $data->debit_d[] = [
@@ -120,6 +126,8 @@ class StatisticPayment extends Model
                                 "TAX_AMT" => $item_d->TAX_AMT,
                                 "TOTAL_AMT" => $item_d->TOTAL_AMT,
                                 "NOTE" => $item_d->NOTE,
+                                "DOR_NO" => $item_d->DOR_NO,
+                                "DOR_AMT" => $item_d->DOR_AMT,
                             ];
                         }
                         return $data;
@@ -128,19 +136,19 @@ class StatisticPayment extends Model
                     }
                     break;
                 case 'customer':
-                    if ($request->custno == null || $request->custno == 'undefined' || $request->custno == 'null') {
+                    if ($check_custno == 0) {
                         $data = 'error-custno';
                         return $data;
                     }
-                    if ($request->phone == null || $request->phone == 'undefined' || $request->phone == 'null') {
+                    if ($check_phone == 0) {
                         $data = 'error-phone';
                         return $data;
                     }
-                    if ($request->person == null || $request->person == 'undefined' || $request->person == 'null') {
+                    if ($check_person == 0) {
                         $data = 'error-person-empty';
                         return $data;
                     }
-                    if ($request->jobno == null || $request->jobno == 'undefined' || $request->jobno == 'null') {
+                    if ($check_jobno == 0) {
                         $data = 'error-job-empty';
                         return $data;
                     }
@@ -149,8 +157,53 @@ class StatisticPayment extends Model
                         $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)
                             ->select('dnm.*')->get();
                         foreach ($data as $item) {
+                            $query_d = StatisticPayment::postDebitNote_D($request);
+                            $debit_d = $query_d->where('dnd.JOB_NO', $item->JOB_NO)->get();
                             foreach ($debit_d as $item_d) {
-                                if ($item->JOB_NO == $item_d->JOB_NO) {
+                                $item->debit_d[] = [
+                                    "JOB_NO" => $item_d->JOB_NO,
+                                    "SER_NO" => $item_d->SER_NO,
+                                    "INV_NO" => $item_d->INV_NO,
+                                    "DESCRIPTION" => $item_d->DESCRIPTION,
+                                    "UNIT" => $item_d->UNIT,
+                                    "QUANTITY" => $item_d->QUANTITY,
+                                    "PRICE" => $item_d->PRICE,
+                                    "TAX_AMT" => $item_d->TAX_AMT,
+                                    "TOTAL_AMT" => $item_d->TOTAL_AMT,
+                                    "NOTE" => $item_d->NOTE,
+                                    "DOR_NO" => $item_d->DOR_NO,
+                                    "DOR_AMT" => $item_d->DOR_AMT,
+                                ];
+                            }
+                        }
+                        return $data;
+                    }
+                    break;
+                case 'customer_new':
+                    if ($check_custno == 0) {
+                        $data = 'error-custno';
+                        return $data;
+                    }
+                    if ($check_phone == 0) {
+                        $data = 'error-phone';
+                        return $data;
+                    }
+                    if ($check_person == 0) {
+                        $data = 'error-person-empty';
+                        return $data;
+                    }
+                    if ($check_jobno == 0) {
+                        $data = 'error-job-empty';
+                        return $data;
+                    }
+                    if ($request->custno && $request->person && $request->phone) {
+                        $query = StatisticPayment::query();
+                        $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)->select('dnm.*')->get();
+                        foreach ($data as $item) {
+                            $query_d = StatisticPayment::postDebitNote_D($request);
+                            $debit_d = $query_d->where('dnd.JOB_NO', $item->JOB_NO)->get();
+                            if ($debit_d) {
+                                foreach ($debit_d as $item_d) {
                                     $item->debit_d[] = [
                                         "JOB_NO" => $item_d->JOB_NO,
                                         "SER_NO" => $item_d->SER_NO,
@@ -162,6 +215,8 @@ class StatisticPayment extends Model
                                         "TAX_AMT" => $item_d->TAX_AMT,
                                         "TOTAL_AMT" => $item_d->TOTAL_AMT,
                                         "NOTE" => $item_d->NOTE,
+                                        "DOR_NO" => $item_d->DOR_NO,
+                                        "DOR_AMT" => $item_d->DOR_AMT,
                                     ];
                                 }
                             }
@@ -170,10 +225,10 @@ class StatisticPayment extends Model
                     }
                     break;
                 case  'debit_date':
-                    if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $request->todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+                    if ($check_fromdate == 0 || $check_todate == 0) {
                         $data = 'error-date';
                         return $data;
-                    } elseif ($request->debittype == null || $request->debittype == 'undefined' || $request->debittype == 'null') {
+                    } elseif ($check_debittype == 0) {
                         $data = 'error-debittype';
                         return $data;
                     } else {
@@ -190,6 +245,8 @@ class StatisticPayment extends Model
                         }
                         $data = $query->select('dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE as DEBIT_DATE_M')->distinct()->get();
                         foreach ($data as $item) {
+                            $query_d = StatisticPayment::postDebitNote_D($request);
+                            $debit_d = $query_d->where('dnd.JOB_NO', $item->JOB_NO)->get();
                             foreach ($debit_d as $item_d) {
                                 if ($item->JOB_NO == $item_d->JOB_NO) {
                                     $item->debit_d[] = [
@@ -205,6 +262,7 @@ class StatisticPayment extends Model
                                         "TAX_NOTE" => $item_d->TAX_NOTE,
                                         "TAX_AMT" => $item_d->TAX_AMT,
                                         "TOTAL_AMT" => $item_d->TOTAL_AMT,
+
                                     ];
                                 }
                             }
@@ -223,30 +281,19 @@ class StatisticPayment extends Model
     public static function postDebitNote_D($request)
     {
         $query = DB::table('DEBIT_NOTE_D as dnd')
-            ->leftJoin('DEBIT_NOTE_M as dnm', 'dnm.JOB_NO', 'dnd.JOB_NO')
             ->where('dnd.BRANCH_ID', 'IHTVN1');
-        switch ($request->type) {
-            case 'job':
-                $query->whereIn('dnd.JOB_NO', $request->jobno);
-                $data = $query->get();
-                break;
-            case 'customer':
-                $query->whereIn('dnd.JOB_NO', $request->jobno);
-                $data = $query->get();
-                break;
-            case  'debit_date':
-                $query->whereBetween('dnm.DEBIT_DATE', [$request->fromdate, $request->todate]);
-                if ($request->debittype == "our_company_pay") {
-                    $query->where('dnd.DEB_TYPE', 'Our Company Pay');
-                } elseif ($request->debittype == "pay_in_advance") {
-                    $query->where('dnd.DEB_TYPE', 'Pay In Advance');
-                }
-                $query->select('dnd.JOB_NO', 'dnd.DEB_TYPE', 'dnd.SER_NO', 'dnd.INV_NO', 'dnd.DESCRIPTION', 'dnd.UNIT', 'dnd.DOR_AMT', 'dnd.DOR_RATE', 'dnd.PRICE', 'dnd.QUANTITY', 'dnd.TAX_NOTE', 'dnd.TAX_AMT', 'dnd.TOTAL_AMT');
-                $data = $query->get();
-                break;
-            default:
-                break;
+        if ($request->type == 'debit_date') {
+            $query->leftJoin('DEBIT_NOTE_M as dnm', 'dnm.JOB_NO', 'dnd.JOB_NO')
+                ->whereBetween('dnm.DEBIT_DATE', [$request->fromdate, $request->todate]);
+            if ($request->debittype == "our_company_pay") {
+                $query->where('dnd.DEB_TYPE', 'Our Company Pay');
+            } elseif ($request->debittype == "pay_in_advance") {
+                $query->where('dnd.DEB_TYPE', 'Pay In Advance');
+            }
+        } else {
+            $query->whereIn('dnd.JOB_NO', $request->jobno);
         }
+        $data = $query->select('dnd.*');
         return $data;
     }
     //5. thống kê số job trong tháng
@@ -277,7 +324,118 @@ class StatisticPayment extends Model
             return $e;
         }
     }
+    //6. thong ke thanh toan cua khach hang
+    public static function paymentCustomers($type, $custno, $fromdate, $todate)
+    {
+        try {
+            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+                $data = 'error-date';
+                return $data;
+            } elseif ($custno == null || $custno == 'undefined' || $custno == 'null') {
+                $data = 'error-custno';
+                return $data;
+            }
+            $query = DB::table('DEBIT_NOTE_M as dm')
+                ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
+                ->where('dm.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate])
+                ->orderBy('dm.JOB_NO');
 
+
+            switch ($type) {
+                case 'unpaid':
+                    $query->where(function ($query) {
+                        $query->where('dm.PAYMENT_CHK', 'N')
+                            ->orWhere('dm.PAYMENT_CHK', null);
+                    });
+                    break;
+                case  'paid':
+                    $query->where('dm.PAYMENT_CHK', 'Y');
+                    break;
+                default:
+                    break;
+            }
+            if ($custno) {
+                $query->where('dm.CUST_NO', $custno);
+            }
+            $data = $query->distinct()->take(9000)
+                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO', 'dm.DEBIT_DATE')
+                ->get();
+            foreach ($data as $item) {
+                $query_d = DB::table('DEBIT_NOTE_D as dd')
+                    ->where('dd.JOB_NO', $item->JOB_NO)
+                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END))as TOTAL_AMT")->first();
+                // dd($query_d->TOTAL_AMT);
+                $item->TOTAL_AMT = $query_d->TOTAL_AMT;
+            }
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    //7. thong ke job order
+    public static function jobOrder($type, $custno, $person, $fromdate, $todate)
+    {
+        try {
+            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+                $data = 'error-date';
+                return $data;
+            } elseif ($custno == null || $custno == 'undefined' || $custno == 'null') {
+                $data = 'error-custno';
+                return $data;
+            }
+            $query = DB::table('JOB_ORDER_M as jm')
+                ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
+                ->where('jm.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->orderBy('jm.JOB_NO');
+            $query_d = DB::table('JOB_ORDER_D as jd');
+            if ($custno) {
+                $query->where('jm.CUST_NO', $custno);
+            }
+            switch ($type) {
+                case 'truck_fee':
+                    $job = $query->get();
+                    foreach ($job as $item) {
+                        $job_d = $query_d->where('jd.JOB_NO', $item->JOB_NO)->where('jd.ORDER_TYPE', 'T')->get();
+                        $item->job_d[] = [
+                            "DESCRIPTION" => $job_d->DESCRIPTION,
+                            "UNIT" => $job_d->UNIT,
+                            "QTY" => $job_d->QTY,
+                            "PRICE" => $job_d->PRICE,
+                            "TAX_AMT" => $job_d->TAX_AMT,
+                        ];
+                    }
+                    break;
+                case  'have_not_debit_note':
+
+                    break;
+                case  'unpaid_cont':
+
+                    break;
+                case  'paid_cont':
+
+                    break;
+                default:
+                    break;
+            }
+
+            $data = $query->distinct()->take(9000)
+                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO', 'dm.DEBIT_DATE')
+                ->get();
+            foreach ($data as $item) {
+                $query_d = DB::table('DEBIT_NOTE_D as dd')
+                    ->where('dd.JOB_NO', $item->JOB_NO)
+                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END))as TOTAL_AMT")->first();
+                // dd($query_d->TOTAL_AMT);
+                $item->TOTAL_AMT = $query_d->TOTAL_AMT;
+            }
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     //8. thống kê phiếu thu
     public static function receipt($type, $receiptno)
     {
@@ -299,7 +457,25 @@ class StatisticPayment extends Model
         $data = DB::table('DEBIT_NOTE_M as dnm')
             ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->where('c.BRANCH_ID', 'IHTVN1');
+            ->where('c.BRANCH_ID', 'IHTVN1')
+            ->orderBy('dnm.JOB_NO');
+        return $data;
+    }
+    public static function test($advanceno)
+    {
+        $data =  DB::table('LENDER as l')
+            ->whereIn('L.LENDER_NO', $advanceno)
+            ->where('l.BRANCH_ID', 'IHTVN1')
+            ->select('l.*')->take(10)->get();
+        $data_d = DB::table('LENDER_D as ld')
+            ->where('ld.BRANCH_ID', 'IHTVN1')
+            ->whereIn('ld.LENDER_NO', $advanceno)
+            ->select('ld.*')->get();
+            $array = $data->push($data_d);
+        // dd($data,$advance_d);
+        // $array = $data->merge($data_d);
+        // $array = array_add_multiple($data, array($data_d));
+        dd($array);
         return $data;
     }
 }

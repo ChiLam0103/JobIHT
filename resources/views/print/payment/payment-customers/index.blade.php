@@ -143,7 +143,7 @@
         border: 1px solid black;
         border-collapse: collapse;
         text-align: center;
-        font-size: 11px;
+        font-size: 12px;
     }
 
 
@@ -168,14 +168,9 @@
                     <th>STT</th>
                     <th>Job No</th>
                     <th>Mã KH</th>
-                    <th>Tên Khách</th>
-                    <th>Order From</th>
-                    <th>Order To</th>
-                    <th>Container Qty</th>
-                    <th>POL</th>
-                    <th>POD</th>
-                    <th>ETD/ETA</th>
-                    <th>Description</th>
+                    <th>Tên KH</th>
+                    <th>Ngày Nhập Job</th>
+                    <th>Tổng Số Tiền</th>
                 </tr>
                 @foreach ($data as $key => $item)
                     <tr>
@@ -183,16 +178,14 @@
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
                         <td>{{ $item->CUST_NAME }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
-                        <td>{{ $item->CONTAINER_QTY }}</td>
-                        <td>{{ $item->POD }}</td>
-                        <td>{{ $item->POL }}</td>
-                        <td> {{ $type == 'job_start' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
-                        <td>{{ $item->NOTE }}</td>
+                        <td>{{ date('Y/m/d', strtotime($item->DEBIT_DATE)) }}</td>
+                        <td>{{ number_format($item->TOTAL_AMT, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
-
+                <tr>
+                    <th colspan="5" style="text-align: right">TỔNG SỐ TIỀN:</th>
+                    <th>{{ number_format($data->sum('TOTAL_AMT'), 0, ',', '.') }}</th>
+                </tr>
             </table>
 
         </div>

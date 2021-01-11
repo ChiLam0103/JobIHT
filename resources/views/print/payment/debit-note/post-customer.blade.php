@@ -38,8 +38,7 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
-            /* margin-bottom: 1cm;
-        margin-top: 1cm; */
+            margin: 15mm 0mm 15mm 0mm;
         }
     }
 
@@ -320,46 +319,58 @@
                     <th>Descriptions</th>
                     <th>Invoice No</th>
                     <th>Unit</th>
+                    <th>Currency</th>
                     <th>Qty</th>
                     <th>Price</th>
                     <th>VAT Tax</th>
                     <th>Total Amt</th>
                 </tr>
-                <span style="display: none;">{{ $total_amt = 0 }} {{ $total_vat = 0 }}</span>
+                <span style="display: none;">
+                    {{ $total_amt = 0 }}
+                    {{ $total_amt_do = 0 }}
+                    {{ $total_vat = 0 }}
+                </span>
                 @foreach ($item->debit_d as $item_d)
                     <tr>
                         <td class="text-center">{{ $item_d['SER_NO'] }}</td>
                         <td>{{ $item_d['DESCRIPTION'] }}</td>
                         <td>{{ $item_d['INV_NO'] }}</td>
                         <td class="text-center">{{ $item_d['UNIT'] }}</td>
+                        <td class="text-center">{{ $item_d['DOR_NO'] }}</td>
                         <td class="text-center">{{ number_format($item_d['QUANTITY'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($item_d['PRICE'], 0, ',', '.') }}</td>
+                        <td class="text-right">
+                            {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['PRICE'], 0, ',', '.') : number_format($item_d['DOR_AMT'], 0, ',', '.') }}
+                        </td>
                         <td class="text-right">{{ number_format($item_d['TAX_AMT'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($item_d['TOTAL_AMT'], 0, ',', '.') }}</td>
-                        <span style="display: none;">{{ $total_amt += $item_d['TOTAL_AMT'] }}
+                        <td class="text-right">
+                            {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['TOTAL_AMT'], 0, ',', '.') : number_format($item_d['DOR_AMT'] * $item_d['QUANTITY'], 0, ',', '.') }}
+                        </td>
+                        <span style="display: none;">
+                            {{ $total_amt += $item_d['TOTAL_AMT'] }}
                             {{ $total_vat += $item_d['TAX_AMT'] }}
+                            {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
+                            {{ $curency = $item_d['DOR_NO'] }}
                         </span>
                     </tr>
                 @endforeach
                 <tr class="text-right font-weight-bold">
-                    <td colspan="6">JOB AMT</td>
+                    <td colspan="7">JOB AMT</td>
                     <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
-                    <td>
-                        {{ number_format($total_amt, 0, ',', '.') }}
-                    </td>
+                    <td> {{ number_format($curency == 'VND' ? $total_amt : $total_amt_do, 0, ',', '.') }}</td>
                 </tr>
             </table>
 
             <span style="display: none;">
                 {{ $total_vat_tax += $total_vat }}
-                {{ $total_sum_amt += $total_amt }}
+                {{ $total_sum_amt +=$curency == 'VND' ? $total_amt : $total_amt_do }}
             </span>
         @endforeach
+
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
-                <td width="71%">TOTAL AMT</td>
-                <td>{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
-                <td>
+                <td >TOTAL AMT</td>
+                <td  width="11%">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
+                <td  width="12%">
                     {{ number_format($total_sum_amt, 0, ',', '.') }}
                 </td>
             </tr>

@@ -12,6 +12,7 @@ class DebitNoteD extends Model
         $data = DB::table('DEBIT_NOTE_D as dnd')
             ->where('dnd.JOB_NO', $id)
             ->select('dnd.*')
+            ->selectRaw("(CASE WHEN (dnd.TAX_NOTE = '0%') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TOTAL_AMT")
             ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->get();
         return $data;
@@ -24,9 +25,9 @@ class DebitNoteD extends Model
             ->where('BRANCH_ID', 'IHTVN1');
         $count = $query->count();
         $job = $query->orderByDesc('JOB_NO')->take(1)->select('SER_NO')->first();
-        if($count == 0){
+        if ($count == 0) {
             $count = (int) $count + 1;
-        }else{
+        } else {
             $count = (int) $job->SER_NO + 1;
         }
         $data = sprintf("%'.02d", $count);

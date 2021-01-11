@@ -312,35 +312,44 @@
                 <th>Descriptions</th>
                 <th>Invoice No</th>
                 <th>Unit</th>
+                <th>Currency</th>
                 <th>Qty</th>
                 <th>Price</th>
                 <th>VAT Tax</th>
                 <th>Total Amt</th>
             </tr>
-            <span style="display: none;">{{ $total_amt = 0 }} {{ $total_vat = 0 }}</span>
-            @foreach ($debit->debit_d as $item)
+            <span style="display: none;">{{ $total_amt = 0 }} {{ $total_amt_do = 0 }} {{ $total_vat = 0 }}</span>
+            @foreach ($debit->debit_d as $item_d)
                 <tr>
-                    <td class="text-center">{{ $item['SER_NO'] }}</td>
-                    <td>{{ $item['DESCRIPTION'] }}</td>
-                    <td>{{ $item['INV_NO'] }}</td>
-                    <td class="text-center">{{ $item['UNIT'] }}</td>
-                    <td class="text-center">{{ number_format($item['QUANTITY'], 0, ',', '.') }}</td>
-                    <td class="text-right">{{ number_format($item['PRICE'], 0, ',', '.') }}</td>
-                    <td class="text-right">{{ number_format($item['TAX_AMT'], 0, ',', '.') }}</td>
-                    <td class="text-right">{{ number_format($item['TOTAL_AMT'], 0, ',', '.') }}</td>
-                    <span
-                    style="display: none;">{{ $total_amt +=$item['TOTAL_AMT']  }}
-                    {{ $total_vat += $item['TAX_AMT'] }}
-                </span>
+                    <td class="text-center">{{ $item_d['SER_NO'] }}</td>
+                    <td>{{ $item_d['DESCRIPTION'] }}</td>
+                    <td>{{ $item_d['INV_NO'] }}</td>
+                    <td class="text-center">{{ $item_d['UNIT'] }}</td>
+                    <td class="text-center">{{ $item_d['DOR_NO'] }}</td>
+                    <td class="text-center">{{ number_format($item_d['QUANTITY'], 0, ',', '.') }}</td>
+                    <td class="text-right">
+                        {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['PRICE'], 0, ',', '.') : number_format($item_d['DOR_AMT'], 0, ',', '.') }}
+                    </td>
+                    <td class="text-right">{{ number_format($item_d['TAX_AMT'], 0, ',', '.') }}</td>
+                    <td class="text-right">
+                        {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['TOTAL_AMT'], 0, ',', '.') : number_format($item_d['DOR_AMT'] * $item_d['QUANTITY'], 0, ',', '.') }}
+                    </td>
+                    <span style="display: none;">
+                        {{ $total_amt += $item_d['TOTAL_AMT'] }}
+                        {{ $total_vat += $item_d['TAX_AMT'] }}
+                        {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
+                        {{ $curency = $item_d['DOR_NO'] }}
+                    </span>
                 </tr>
 
             @endforeach
             <tr class="text-right font-weight-bold">
-                <td colspan="6">TOTAL AMT</td>
-                <td>{{ number_format($total_vat, 0, ',', '.')}}</td>
-                <td>{{ number_format($total_amt, 0, ',', '.')}} {{ $debit->DOR_NO}}</td>
+                <td colspan="7">JOB AMT</td>
+                <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
+                <td> {{ number_format($curency == 'VND' ? $total_amt : $total_amt_do, 0, ',', '.') }}</td>
             </tr>
         </table>
+
         <span>We are looking forwards to reveiving your payment in the soonest time.</span><br>
         <span>If you have further infomation, please do not hesitate to contact with us.</span><br>
         <span>Also you can settle the payment to:</span><br>
@@ -348,8 +357,7 @@
             <span>Banker name: {{ $bank->BANK_NAME }}</span><br>
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
-            {{-- {{ dd($bank) }} --}}
-            @if (trim($bank->SWIFT_CODE) != "")
+            @if (!$bank->SWIFT_CODE)
                 <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
                 <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
                 <span>Adress: {{ $bank->ADDRESS }}</span><br>

@@ -98,7 +98,8 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
                 Route::get('page={page}', 'JobOrderController@listPage');
-                Route::get('search/type={type}&value={value}&page={page}', 'JobOrderController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'JobOrderController@searchPage');
+                Route::get('search/type={type}&value={value}', 'JobOrderController@search');
                 Route::get('des/job={id}&type={TYPE}', 'JobOrderController@des');
                 Route::post('add', 'JobOrderController@add');
                 Route::post('add-d', 'JobOrderController@addJobD');
@@ -111,6 +112,11 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('list-pending/page={page}', 'JobOrderController@listPending');
                 Route::get('list-approved/page={page}', 'JobOrderController@listApproved');
                 Route::post('/', 'JobOrderController@approved');
+            });
+            //5. duyet cuoc cont
+            Route::group(['prefix' => 'approved-cont'], function () {
+                Route::get('type={type}&list={list}&year={year}', 'JobOrderController@listApprovedCont');
+                Route::post('/', 'JobOrderController@approvedCont');
             });
             //pay
             Route::group(['prefix' => 'pay'], function () {
@@ -229,15 +235,16 @@ Route::namespace('Api\v1')->group(function () {
                 Route::group(['prefix' => 'debit-note'], function () {
                     Route::get('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}&debittype={debittype}&person={person}&phone={phone}&bankno={bankno}', 'StatisticPaymentController@debitNote');
                     Route::post('/', 'StatisticPaymentController@postDebitNote');
+                    Route::get('/', 'StatisticPaymentController@postDebitNote');
                 });
                 //4. báo biểu lợi nhuận(chưa làm)
-                Route::group(['prefix' => 'profit'], function () {
-                    Route::post('type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@profit');
-                });
+                Route::post('profit/type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@profit');
                 //5. thống kê số job trong tháng
-                Route::group(['prefix' => 'job-monthly'], function () {
-                    Route::get('type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobMonthly');
-                });
+                Route::get('job-monthly/type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobMonthly');
+                //6. thong ke thanh toan cua khach hang
+                Route::get('payment-customers/type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@paymentCustomers');
+                //7. thong ke job order
+                 Route::get('job-order/type={type}&custno={custno}&person={person}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobOrder');
                 //8. thống kê phiếu thu
                 Route::get('receipts/type={type}&receiptno={receiptno}', 'StatisticPaymentController@receipt');
             });
@@ -262,11 +269,13 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('debit-note', 'StatisticPaymentController@postExportDebitNote');
                 //5. thống kê số job trong tháng
                 Route::post('job-monthly', 'StatisticPaymentController@postExportJobMonthly');
+                //6. thong ke thanh toan cua khach hang
+                Route::post('payment-customers', 'StatisticPaymentController@postExportPaymentCustomers');
             });
         });
         //test
         Route::group(['prefix' => 'test', 'namespace' => 'Statistic'], function () {
-            Route::get('/', 'StatisticPaymentController@test')->name('showView');
+            Route::post('/', 'StatisticPaymentController@test')->name('showView');
         });
     });
 });

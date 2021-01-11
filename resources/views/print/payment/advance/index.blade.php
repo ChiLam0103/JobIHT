@@ -229,7 +229,7 @@
             <table style="width:100%" id="debit_d">
                 <tr>
                     <th>STT</th>
-                    <th>Số tiền/Money</th>
+                    <th>Số tiền/Amount</th>
                     <th>Nhân viên/Person</th>
                     <th>Ngày/Date</th>
                     <th>Ghi chú/Note</th>
@@ -253,7 +253,7 @@
                             <td>{{ $INPUT_USER_jobD }}</td>
                         @endif
                         <td>{{ date('Y/m/d', strtotime($INPUT_DT_jobD)) }}</td>
-                        <td>TỔNG TIỀN JOB ORDER</td>
+                        <td>TỔNG TIỀN JOB ORDER/TOTAL AMOUNT JOB ORDER</td>
                     </tr>
                 @endif
                 <tr>
@@ -265,11 +265,11 @@
             <table id="form-sign">
                 <tr>
                     <th style="width:16.6%">Tài vụ/<br> Finance</th>
-                    <th style="width:16.6%">Thủ Quỹ/ <br>Treasurer</th>
-                    <th style="width:16.6%">Người Nhận Tiền/<br> Money receiver</th>
+                    <th style="width:16.6%">Thủ Quỹ/ <br>Cashier</th>
+                    <th style="width:16.6%">Người Nhận Tiền/<br>Receiver </th>
                     <th style="width:16.6%">Duyệt/<br> Approved by</th>
-                    <th style="width:16.6%">Chủ Quản Đơn Vị/<br> Unit Manager</th>
-                    <th style="width:16.6%">Người Xin {{ $title_vn }}/ Person {{ $title_en }}</th>
+                    <th style="width:16.6%">Chủ Quản Đơn Vị/<br> Department Manager</th>
+                    <th style="width:16.6%">Người Xin {{ $title_vn }}/ {{ $title_en }}</th>
                 </tr>
                 <tr>
                     <td></td>

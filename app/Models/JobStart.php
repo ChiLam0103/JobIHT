@@ -29,7 +29,7 @@ class JobStart extends Model
             $count = $query->count();
             $data =  $query->skip($skip)
                 ->take($take)
-                ->select('c.CUST_NAME', 'js.JOB_NO')
+                ->select('c.CUST_NAME', 'js.*')
                 ->get();
             return ['total_page' => $count, 'list_job' => $data];
         } catch (\Exception $ex) {
@@ -43,7 +43,7 @@ class JobStart extends Model
             $query = JobStart::query();
             $data =  $query
                 ->take($take)
-                ->select('c.CUST_NAME', 'js.JOB_NO')
+                ->select('c.CUST_NAME', 'js.*')
                 ->get();
             return $data;
         } catch (\Exception $ex) {

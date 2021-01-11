@@ -1,206 +1,234 @@
 <!DOCTYPE html>
 <html lang="">
+<style>
+    .table,
+    .table th,
+    .table td {
+        border: 1px solid #000;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 20px;
+    }
+
+</style>
 
 <body>
     <table>
         <thead>
-            <tr colspan="2" style="text-align: center">
-                <td>
+            <tr>
+                <th colspan="9" style="text-align: center">
                     <h1>{{ $company->COMP_NAME }}</h1>
-                </td>
+                </th>
             </tr>
-            <tr colspan="6" style="text-align: left">
-                <th>Add: {{ $company->COMP_ADDRESS1 }}</th>
+            <tr>
+                <th colspan="9" style="text-align: center">Add: {{ $company->COMP_ADDRESS1 }}</th>
             </tr>
-            <tr colspan="6" style="text-align: left">
-                <th>Tel: {{ $company->COMP_TEL1 }}/{{ $company->COMP_TEL2 }}</th>
+            <tr>
+                <th colspan="9" style="text-align: center">Tel: {{ $company->COMP_TEL1 }}/{{ $company->COMP_TEL2 }}</th>
             </tr>
-            <tr colspan="6" style="text-align: left">
-                <th>Fax: {{ $company->COMP_FAX1 }}/{{ $company->COMP_FAX2 }}</th>
+            <tr>
+                <th colspan="9" style="text-align: center">Fax: {{ $company->COMP_FAX1 }}/{{ $company->COMP_FAX2 }}</th>
             </tr>
         </thead>
     </table>
     <table>
         <thead>
             <tr>
-                <td colspan="2" style="text-align: center">
-                    <h1 style="color: yellow">DEBIT NOTE</h1>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: center">
-                    RECEIVE
-                </td>
+                <th colspan="9" class="title">
+                     DEBIT NOTE
+                </th>
             </tr>
         </thead>
     </table>
-    <table>
+    <table class="table">
         <tr>
-            <td>To:</td>
-            <td>{{ $debit->CUST_NAME }}</td>
+            <th colspan="5">
+                RECEIVE
+            </th>
+            <td colspan="4"></td>
         </tr>
         <tr>
-            <td>Attn:</td>
-            <td>{{ $debit->CUST_BOSS }}</td>
+            <th>To:</th>
+            <td colspan="4">{{ $debit->CUST_NAME }}</td>
+            <th colspan="2">Please Contact With:</th>
+            <td colspan="2">{{ $person->PNL_NAME }}</td>
         </tr>
         <tr>
-            <td>Add:</td>
-            <td>{{ $debit->CUST_ADDRESS }}</td>
+            <th>Attn:</th>
+            <td colspan="4">{{ $debit->CUST_BOSS }}</td>
+            <th colspan="2">Accountting:</th>
+            <td colspan="2">{{ $phone }}</td>
         </tr>
         <tr>
-            <td>Tel:</td>
-            <td>{{ $debit->CUST_TEL1 }}</td>
+            <th>Add:</th>
+            <td colspan="4">{{ $debit->CUST_ADDRESS }}</td>
+            <td colspan="4"></td>
         </tr>
         <tr>
-            <td>Fax:</td>
-            <td>{{ $debit->CUST_FAX }}</td>
+            <th>Tel:</th>
+            <td colspan="4">{{ $debit->CUST_TEL1 }}</td>
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <th>Fax:</th>
+            <td colspan="4">{{ $debit->CUST_FAX }}</td>
+            <td colspan="4"></td>
         </tr>
     </table>
-    <table>
-        <tr>
-            <td>Date:</td>
-            <td>{{ date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
-        </tr>
-        <tr>
-            <td>Debit Note No:</td>
-            <td>{{ $debit->JOB_NO }}</td>
-        </tr>
-        <tr>
-            <td>Please Contact With:</td>
-            <td>{{ $person->PNL_NAME }}</td>
-        </tr>
-        <tr>
-            <td>Accountting:</td>
-            <td>{{ $phone }}</td>
-        </tr>
 
-    </table>
-    <table style="width:100%">
+    <table class="table">
         <tr>
-            <td>From:</td>
-            <td>{{ $debit->TRANS_FROM }}</td>
+            <th colspan="2">From:</th>
+            <td colspan="3">{{ $debit->TRANS_FROM }}</td>
+            <th>To:</th>
+            <td colspan="3">{{ $debit->TRANS_TO }}</td>
         </tr>
         <tr>
-            <td>Customs No:</td>
-            <td>{{ $debit->CUSTOMS_NO }}</td>
+            <th colspan="2">Customs No:</th>
+            <td colspan="3">{{ $debit->CUSTOMS_NO }}</td>
+            <th>Custom Date:</th>
+            <td colspan="3">{{ date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
         </tr>
         <tr>
-            <td>NW:</td>
-            <td>{{ $debit->NW }}</td>
+            <th colspan="2">NW:</th>
+            <td colspan="3">{{ $debit->NW }}</td>
+            <th>GW:</th>
+            <td colspan="3">{{ $debit->GW }}</td>
         </tr>
         <tr>
-            <td>Job Order:</td>
-            <td>{{ $debit->JOB_NO }}</td>
+            <th colspan="2">Job Order:</th>
+            <td colspan="3">{{ $debit->JOB_NO }}</td>
+            <th>Note:</th>
+            <td colspan="3">{{ $debit->NOTE }}</td>
         </tr>
         <tr>
-            <td>QTY:</td>
-            <td>{{ $debit->CONTAINER_QTY }}</td>
-        </tr>
-        <tr>
-            <td>Po No:</td>
-            <td>{{ $debit->PO_NO }}</td>
-        </tr>
-        <tr>
-            <td>Container No:</td>
-            <td>{{ $debit->CONTAINER_NO }}</td>
-        </tr>
-    </table>
-    <table style="width:100%">
-        <tr>
-            <td>To:</td>
-            <td>{{ $debit->TRANS_TO }}</td>
-        </tr>
-        <tr>
-            <td>Custom date:</td>
-            <td>{{ date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
-        </tr>
-        <tr>
-            <td>GW:</td>
-            <td>{{ $debit->GW }}</td>
-        </tr>
-        <tr>
-            <td>Note:</td>
-            <td>{{ $debit->NOTE }}</td>
-        </tr>
-        <tr>
+            <td colspan="2">QTY:</td>
+            <td colspan="3">{{ $debit->CONTAINER_QTY }}</td>
             <td>Invoices No:</td>
-            <td>{{ $debit->INVOICE_NO }}</td>
+            <td colspan="3">{{ $debit->INVOICE_NO }}</td>
         </tr>
         <tr>
-            <td>Bill No:</td>
-            <td>{{ $debit->BILL_NO }}</td>
+            <th colspan="2">Po No:</th>
+            <td colspan="3"> {{ $debit->PO_NO }}</td>
+            <th>Bill No:</th>
+            <td colspan="3">{{ $debit->BILL_NO }}</td>
+        </tr>
+        <tr>
+            <th colspan="2">Container No:</th>
+            <td colspan="3">{{ $debit->CONTAINER_NO }}</td>
+            <td colspan="4"></td>
         </tr>
     </table>
-    <table style="width:100%" id="debit_d">
+    <table>
+        <tr>
+            <th colspan="9">
+                <h3>We would like to make the Debit Note as follows:</h3>
+            </th>>
+        </tr>
+        <span style="display: none;"> {{ $total_vat_tax = 0 }} {{ $total_sum_amt = 0 }}</span>
+    </table>
+    <table class="table">
         <tr>
             <th>STT</th>
             <th>Descriptions</th>
             <th>Invoice No</th>
             <th>Unit</th>
+            <th>Currency</th>
             <th>Qty</th>
             <th>Price</th>
             <th>VAT Tax</th>
             <th>Total Amt</th>
         </tr>
-        <span style="display: none;">{{ $total_amt = 0 }} {{ $total_vat = 0 }}</span>
-        @foreach ($debit->debit_d as $item)
+        <span style="display: none;">
+            {{ $total_amt = 0 }}
+            {{ $total_amt_do = 0 }}
+            {{ $total_vat = 0 }}
+        </span>
+
+        @foreach ($debit->debit_d as $item_d)
             <tr>
-                <td class="text-center">{{ $item['SER_NO'] }}</td>
-                <td>{{ $item['DESCRIPTION'] }}</td>
-                <td>{{ $item['INV_NO'] }}</td>
-                <td class="text-center">{{ $item['UNIT'] }}</td>
-                <td class="text-center">{{ number_format($item['QUANTITY']) }}</td>
-                <td class="text-right">{{ number_format($item['PRICE']) }}</td>
-                <td class="text-right">{{ number_format($item['TAX_AMT']) }}</td>
-                <td class="text-right">{{ number_format($item['TOTAL_AMT']) }}</td>
-                <span style="display: none;">{{ $total_amt += $item['TOTAL_AMT'] }}
-                    {{ $total_vat += $item['TAX_AMT'] }}
+                <td class="text-center">{{ $item_d['SER_NO'] }}</td>
+                <td>{{ $item_d['DESCRIPTION'] }}</td>
+                <td>{{ $item_d['INV_NO'] }}</td>
+                <td class="text-center">{{ $item_d['UNIT'] }}</td>
+                <td class="text-center">{{ $item_d['DOR_NO'] }}</td>
+                <td class="text-center">{{ number_format($item_d['QUANTITY']) }}</td>
+                <td class="text-right">
+                    {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['PRICE']) : number_format($item_d['DOR_AMT']) }}
+                </td>
+                <td class="text-right">{{ number_format($item_d['TAX_AMT']) }}</td>
+                <td class="text-right">
+                    {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['TOTAL_AMT']) : number_format($item_d['DOR_AMT'] * $item_d['QUANTITY']) }}
+                </td>
+                <span style="display: none;">
+                    {{ $total_amt += $item_d['TOTAL_AMT'] }}
+                    {{ $total_vat += $item_d['TAX_AMT'] }}
+                    {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
+                    {{ $curency = $item_d['DOR_NO'] }}
                 </span>
             </tr>
-
         @endforeach
-        <tr class="text-right font-weight-bold">
-            <td colspan="6">TOTAL AMT</td>
-            <td>{{ number_format($total_vat) }}</td>
-            <td>{{ number_format($total_amt) }} {{ $debit->DOR_NO }}</td>
+        <tr>
+            <th colspan="7" style="text-align: right">JOB AMT</th>
+            <th>{{ number_format($total_vat) }}</th>
+            <th> {{ number_format($curency == 'VND' ? $total_amt : $total_amt_do) }}</th>
         </tr>
+    </table>
+
+    <span style="display: none;">
+        {{ $total_vat_tax += $total_vat }}
+        {{ $total_sum_amt += $curency == 'VND' ? $total_amt : $total_amt_do }}
+    </span>
+    <table class="table">
+        <tr>
+            <th colspan="7" style="text-align: right">TOTAL AMT</th>
+            <th>{{ number_format($total_vat_tax) }}</th>
+            <th>
+                {{ number_format($total_sum_amt) }}
+            </th>
+        </tr>
+
     </table>
     <table>
         <tr>
-            <td>We are looking forwards to reveiving your payment in the soonest time.</td>
+            <th colspan="9">We are looking forwards to reveiving your payment in the soonest time.</th>
         </tr>
         <tr>
-            <td>If you have further infomation, please do not hesitate to contact with us.</td>
+            <th colspan="9">If you have further infomation, please do not hesitate to contact with us.</th>
         </tr>
         <tr>
-            <td>Also you can settle the payment to:</td>
+            <th colspan="9">Also you can settle the payment to:</th>
         </tr>
         <tr>
-            <th>Banker name: {{ $bank->BANK_NAME }}</th>
+            <th colspan="9">Banker name: {{ $bank->BANK_NAME }}</th>
         </tr>
         <tr>
-            <th>Account no: {{ $bank->ACCOUNT_NO }}</th>
+            <th colspan="9">Account no: {{ $bank->ACCOUNT_NO }}</th>
         </tr>
         <tr>
-            <th>Account name: {{ $bank->ACCOUNT_NAME }}</th>
+            <th colspan="9">Account name: {{ $bank->ACCOUNT_NAME }}</th>
         </tr>
-        @if (trim($bank->SWIFT_CODE) != '')
+        @if (!$bank->SWIFT_CODE)
             <tr>
-                <th>Swift code: {{ $bank->SWIFT_CODE }}</th>
+                <th colspan="9">Swift code: {{ $bank->SWIFT_CODE }}</th>
             </tr>
             <tr>
-                <th>Bank address: {{ $bank->BANK_ADDRESS }}</th>
+                <th colspan="9">Bank address: {{ $bank->BANK_ADDRESS }}</th>
             </tr>
             <tr>
-                <th>Adress: {{ $bank->ADDRESS }}</th>
+                <th colspan="9">Adress: {{ $bank->ADDRESS }}</th>
             </tr>
         @endif
     </table>
-    <table style="width:100%">
+    <table>
         <tr>
-            <th>SALE</th>
-            <th>ACCOUNTANT</th>
-            <th>APPROVAL</th>
+            <th colspan="3">SALE</th>
+            <th colspan="3">ACCOUNTANT</th>
+            <th colspan="3">APPROVAL</th>
         </tr>
     </table>
 </body>

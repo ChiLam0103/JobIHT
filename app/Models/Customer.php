@@ -72,38 +72,30 @@ class Customer extends Model
         $group_name = "";
         $cust_type = "";
         switch ($group) {
-            case 1 || 'customer':
+            case 'customer':
                 $group_name = "Khách hàng";
                 $cust_type = 1;
                 break;
-            case 2 || 'carriers':
+            case 'carriers':
                 $group_name = "Hãng tàu";
                 $cust_type = 2;
                 break;
-            case 3 || 'agency':
+            case 'agency':
                 $group_name = "Đại lý";
                 $cust_type = 3;
                 break;
-            case 4 || 'garage':
+            case 'garage':
                 $group_name = "Nhà xe";
                 $cust_type = 4;
                 break;
-            default:
-                break;
         }
-
         $take = 10;
         $skip = ($page - 1) * $take;
         $query =  Customer::query();
-        switch ($type) {
-            case 1 || 'no':
+        if ($type== 1 || $type =='no') {
                 $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
-                break;
-            case 2 || 'name':
-                $query->where('c.CUST_NAME', 'LIKE', '%' . $value . '%');
-                break;
-            default:
-                break;
+        }elseif ($type== 2 || $type =='name')   {
+                $query->where('c.CUST_NAME', 'LIKE', '%' .trim($value) . '%');
         }
         $count = $query->where('c.CUST_TYPE', $cust_type)->count();
         $data =  $query->skip($skip)->take($take)->select('c.*', 'b.BRANCH_NAME')->where('c.CUST_TYPE', $cust_type)->get();
