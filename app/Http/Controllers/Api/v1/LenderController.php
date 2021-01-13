@@ -132,7 +132,7 @@ class LenderController extends Controller
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'Error'
+                    'message' => 'Vui lòng kiểm tra lại số JOB đã tạo chưa'
                 ],
                 Response::HTTP_BAD_REQUEST
             );

@@ -213,6 +213,7 @@ class StatisticPayment extends Model
                                         "QUANTITY" => $item_d->QUANTITY,
                                         "PRICE" => $item_d->PRICE,
                                         "TAX_AMT" => $item_d->TAX_AMT,
+                                        "TAX_NOTE" => $item_d->TAX_NOTE,
                                         "TOTAL_AMT" => $item_d->TOTAL_AMT,
                                         "NOTE" => $item_d->NOTE,
                                         "DOR_NO" => $item_d->DOR_NO,
@@ -378,41 +379,38 @@ class StatisticPayment extends Model
     public static function jobOrder($type, $custno, $person, $fromdate, $todate)
     {
         try {
-            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
-                $data = 'error-date';
-                return $data;
-            } elseif ($custno == null || $custno == 'undefined' || $custno == 'null') {
-                $data = 'error-custno';
-                return $data;
-            }
+            $flag_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
+            $flag_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
+            $flag_person = ($person == null || $person == 'undefined' || $person == 'null') ? 0 : 1;
             $query = DB::table('JOB_ORDER_M as jm')
                 ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
                 ->where('jm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->orderBy('jm.JOB_NO');
-            $query_d = DB::table('JOB_ORDER_D as jd');
-            if ($custno) {
+            if ($flag_custno == 1) {
                 $query->where('jm.CUST_NO', $custno);
+            }
+            if ($flag_date == 1) {
+                // $query->whereBetween('jm.ORDER_DATE', [$fromdate, $todate]);
+            }
+            if ($flag_person == 1) {
+                $query->where('jm.INPUT_USER', $person);
             }
             switch ($type) {
                 case 'truck_fee':
-                    $job = $query->get();
-                    foreach ($job as $item) {
-                        $job_d = $query_d->where('jd.JOB_NO', $item->JOB_NO)->where('jd.ORDER_TYPE', 'T')->get();
-                        $item->job_d[] = [
-                            "DESCRIPTION" => $job_d->DESCRIPTION,
-                            "UNIT" => $job_d->UNIT,
-                            "QTY" => $job_d->QTY,
-                            "PRICE" => $job_d->PRICE,
-                            "TAX_AMT" => $job_d->TAX_AMT,
-                        ];
-                    }
+                    $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
+                        ->where('jd.ORDER_TYPE', 'T')
+                        ->select('c.CUST_NAME', 'jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.UNIT', 'jd.QTY', 'jd.PRICE', 'jd.TAX_AMT');
                     break;
                 case  'have_not_debit_note':
-
+                    $query->leftJoin('DEBIT_NOTE_M as dm', 'jm.JOB_NO', 'dm.JOB_NO')
+                        ->whereNull('dm.JOB_NO')
+                        ->select('c.CUST_NAME', 'jm.*');
                     break;
                 case  'unpaid_cont':
-
+                    $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
+                        ->where('jd.ORDER_TYPE', 'C')
+                        ->select('c.CUST_NAME', 'jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT','jd.INDUSTRY_ZONE_AMT');
                     break;
                 case  'paid_cont':
 
@@ -420,17 +418,10 @@ class StatisticPayment extends Model
                 default:
                     break;
             }
-
-            $data = $query->distinct()->take(9000)
-                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO', 'dm.DEBIT_DATE')
+            $data = $query->take(9000)
                 ->get();
-            foreach ($data as $item) {
-                $query_d = DB::table('DEBIT_NOTE_D as dd')
-                    ->where('dd.JOB_NO', $item->JOB_NO)
-                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END))as TOTAL_AMT")->first();
-                // dd($query_d->TOTAL_AMT);
-                $item->TOTAL_AMT = $query_d->TOTAL_AMT;
-            }
+
+            dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
@@ -471,7 +462,7 @@ class StatisticPayment extends Model
             ->where('ld.BRANCH_ID', 'IHTVN1')
             ->whereIn('ld.LENDER_NO', $advanceno)
             ->select('ld.*')->get();
-            $array = $data->push($data_d);
+        $array = $data['0']->push($data_d);
         // dd($data,$advance_d);
         // $array = $data->merge($data_d);
         // $array = array_add_multiple($data, array($data_d));

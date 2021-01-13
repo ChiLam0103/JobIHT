@@ -164,28 +164,92 @@
             </div>
             <br>
             <table style="width:100%">
-                <tr>
-                    <th>STT</th>
-                    <th>Job No</th>
-                    <th>Mã KH</th>
-                    <th>Tên KH</th>
-                    <th>Ngày Nhập Job</th>
-                    <th>Tổng Số Tiền</th>
-                </tr>
-                @foreach ($data as $key => $item)
+                @switch($type)
+                    @case('truck_fee')
                     <tr>
-                        <td>{{ $key + 1 }}</td>
-                        <td>{{ $item->JOB_NO }}</td>
-                        <td>{{ $item->CUST_NO }}</td>
-                        <td>{{ $item->CUST_NAME }}</td>
-                        <td>{{ date('Y/m/d', strtotime($item->DEBIT_DATE)) }}</td>
-                        <td>{{ number_format($item->TOTAL_AMT, 0, ',', '.') }}</td>
+                        <th>STT</th>
+                        <th>Job No</th>
+                        <th>Mã KH</th>
+                        <th>Order From</th>
+                        <th>Order To</th>
+                        <th>Description</th>
+                        <th>Đơn vị</th>
+                        <th>SL</th>
+                        <th>Đơn Giá</th>
+                        <th>Thuế</th>
+                        <th>Tổng Tiền</th>
+                        <th>User Tạo</th>
                     </tr>
-                @endforeach
-                <tr>
-                    <th colspan="5" style="text-align: right">TỔNG SỐ TIỀN:</th>
-                    <th>{{ number_format($data->sum('TOTAL_AMT'), 0, ',', '.') }}</th>
-                </tr>
+                    <span style="display: none">{{ $total_money = 0 }}</span>
+                    @foreach ($data as $key => $item)
+                        <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $item->JOB_NO }}</td>
+                            <td>{{ $item->CUST_NO }}</td>
+                            <td>{{ $item->ORDER_FROM }}</td>
+                            <td>{{ $item->ORDER_TO }}</td>
+                            <td>{{ $item->DESCRIPTION }}</td>
+                            <td>{{ $item->UNIT }}</td>
+                            <td>{{ number_format($item->QTY, 0, ',', '.') }}</td>
+                            <td>{{ number_format($item->PRICE, 0, ',', '.') }}</td>
+                            <td>{{ number_format($item->TAX_AMT, 0, ',', '.') }}</td>
+                            <td>{{ number_format($item->PRICE * $item->QTY + $item->TAX_AMT, 0, ',', '.') }}</td>
+                            <td>{{ $item->INPUT_USER }}</td>
+                        </tr>
+                        <span style="display: none">{{ $total_money += $item->PRICE * $item->QTY + $item->TAX_AMT }}</span>
+                    @endforeach
+                    <tr>
+                        <th colspan="10" style="text-align: right">TỔNG SỐ TIỀN:</th>
+                        <th colspan="2">{{ number_format($total_money, 0, ',', '.') }}</th>
+                    </tr>
+                    @break
+                    @case('have_not_debit_note')
+                    <tr>
+                        <th>STT</th>
+                        <th>Job No</th>
+                        <th>Mã KH</th>
+                        <th>Order From</th>
+                        <th>Order To</th>
+                        <th>Cont. Qty</th>
+                        <th>Customs No</th>
+                        <th>Customs Dt</th>
+                        <th>Bill No</th>
+                        <th>NW</th>
+                        <th>GW</th>
+                        <th>POL</th>
+                        <th>POD</th>
+                        <th>User Tạo</th>
+                    </tr>
+                    @foreach ($data as $key => $item)
+                        <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $item->JOB_NO }}</td>
+                            <td>{{ $item->CUST_NO }}</td>
+                            <td>{{ $item->ORDER_FROM }}</td>
+                            <td>{{ $item->ORDER_TO }}</td>
+                            <td>{{ $item->CONTAINER_QTY }}</td>
+                            <td>{{ $item->CUSTOMS_NO }}</td>
+                            <td>{{ $item->CUSTOMS_DATE }}</td>
+                            <td>{{ $item->BILL_NO }}</td>
+                            <td>{{ $item->NW }}</td>
+                            <td>{{ $item->GW }}</td>
+                            <td>{{ $item->POL }}</td>
+                            <td>{{ $item->POD }}</td>
+                            <td>{{ $item->INPUT_USER }}</td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <th colspan="2" style="text-align: right">TỔNG CỘNG:</th>
+                        <th colspan="12" style="text-align: left">{{ number_format(count($data)) }} PHIẾU</th>
+                    </tr>
+                    @break
+                    @case('unpaid_cont')
+
+                    @break
+                    @default
+
+                @endswitch
+
             </table>
 
         </div>

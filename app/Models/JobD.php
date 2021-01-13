@@ -55,7 +55,7 @@ class JobD extends Model
                 'jd.THANH_TOAN_MK'
             )
                 ->selectRaw('(CASE WHEN (jd.QTY = 0) THEN (jd.PRICE + jd.TAX_AMT) ELSE (jd.PRICE + (jd.TAX_AMT/jd.QTY))  END) AS SAU_THUE')
-                ->selectRaw('(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE (jd.PRICE + (jd.TAX_AMT/jd.QTY)*jd.QTY) END) AS TONG_TIEN')
+                ->selectRaw('(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) AS TONG_TIEN')
                 ->selectRaw("(CASE WHEN (jd.THANH_TOAN_MK = 'Y') THEN 'Approved' ELSE 'Pending' END) as THANH_TOAN_TEXT")
                 ->get();
         }

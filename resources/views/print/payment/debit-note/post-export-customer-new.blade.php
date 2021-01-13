@@ -8,12 +8,13 @@
         border-collapse: collapse;
         text-align: left;
     }
-    .table2
-     {
+
+    .table2 {
         border: 1px solid #000;
         border-collapse: collapse;
         text-align: left;
     }
+
     .title {
         text-align: center;
         font-size: 20px;
@@ -49,7 +50,7 @@
             </tr>
         </thead>
     </table>
-    <table class="table2">
+    <table>
         <tr>
             <th colspan="5">
                 RECEIVE
@@ -159,44 +160,46 @@
                         <td colspan="2">{{ $item_d['DESCRIPTION'] }}</td>
                         <td>{{ $item_d['INV_NO'] }}</td>
                         <td class="text-center">{{ $item_d['UNIT'] }}</td>
-                        {{-- <td class="text-center">{{ $item_d['DOR_NO'] }}</td> --}}
-                        <td class="text-center">{{ ($item_d['QUANTITY']) }}</td>
-                        <td class="text-center">{{$item_d['DOR_NO'] == 'VND' ? ($item_d['PRICE']) : ($item_d['DOR_AMT'])}}</td>
-                        <td class="text-right">{{ ($item_d['TAX_AMT']) }}</td>
+                        <td class="text-center">{{ $item_d['QUANTITY'] }}</td>
+                        <td class="text-center">{{ ($bank->BANK_NO == 'ACB') ? $item_d['PRICE'] : $item_d['DOR_AMT'] }}
+                        </td>
+                        <td class="text-right">{{ $item_d['TAX_AMT'] }}</td>
                         <td class="text-right">
-                            {{ $item_d['DOR_NO'] == 'VND' ? ($item_d['TOTAL_AMT']) : ($item_d['DOR_AMT'] * $item_d['QUANTITY']) }}
+                            {{-- {{dd(($item_d['QUANTITY'] * $item_d['PRICE']) + ($item_d['QUANTITY'] * $item_d['PRICE'] )  )}} --}}
+                            {{ ($bank->BANK_NO == 'ACB') ? ($item_d['QUANTITY'] * $item_d['PRICE'] + ($item_d['QUANTITY'] * $item_d['PRICE'] * $item_d['TAX_NOTE']) / 100) : $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
                         </td>
                         <span style="display: none;">
                             {{ $total_amt += $item_d['TOTAL_AMT'] }}
                             {{ $total_vat += $item_d['TAX_AMT'] }}
                             {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
-                            {{ $curency = $item_d['DOR_NO'] }}
                         </span>
                     </tr>
                 @endforeach
             @endif
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <th>{{ ($total_vat) }}</th>
-                <th> {{ ($curency == 'VND' ? $total_amt : $total_amt_do) }}</th>
+                <th>{{ ($bank->BANK_NO == 'ACB') ? $total_vat : '' }}</th>
+                <th> {{ ($bank->BANK_NO == 'ACB') ? $total_amt : $total_amt_do }}</th>
             </tr>
         </table>
 
         <span style="display: none;">
             {{ $total_vat_tax += $total_vat }}
-            {{ $total_sum_amt += $curency == 'VND' ? $total_amt : $total_amt_do }}
+            {{ $total_sum_amt += ($bank->BANK_NO == 'ACB') ? $total_amt : $total_amt_do }}
         </span>
     @endforeach
+    {{ dd(1) }}
     <table class="table">
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
-            <th>{{ ($total_vat_tax) }}</th>
+            <th>{{ $bank->BANK_NO == 'ACB' ? $total_vat_tax : '' }}</th>
             <th>
-                {{ ($total_sum_amt) }}
+                {{ $total_sum_amt }}
             </th>
         </tr>
 
     </table>
+
     <table>
         <tr>
             <th colspan="9">We are looking forwards to reveiving your payment in the soonest time.</th>
@@ -216,7 +219,10 @@
         <tr>
             <th colspan="9">Account name: {{ $bank->ACCOUNT_NAME }}</th>
         </tr>
-        @if (!$bank->SWIFT_CODE)
+
+        @if ($bank->BANK_NO == 'ACB')
+
+        @else
             <tr>
                 <th colspan="9">Swift code: {{ $bank->SWIFT_CODE }}</th>
             </tr>
@@ -227,6 +233,7 @@
                 <th colspan="9">Adress: {{ $bank->ADDRESS }}</th>
             </tr>
         @endif
+
     </table>
     <table>
         <tr>

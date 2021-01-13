@@ -244,7 +244,7 @@ Route::namespace('Api\v1')->group(function () {
                 //6. thong ke thanh toan cua khach hang
                 Route::get('payment-customers/type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@paymentCustomers');
                 //7. thong ke job order
-                 Route::get('job-order/type={type}&custno={custno}&person={person}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobOrder');
+                Route::get('job-order/type={type}&custno={custno}&person={person}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobOrder');
                 //8. thống kê phiếu thu
                 Route::get('receipts/type={type}&receiptno={receiptno}', 'StatisticPaymentController@receipt');
             });
@@ -271,6 +271,8 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('job-monthly', 'StatisticPaymentController@postExportJobMonthly');
                 //6. thong ke thanh toan cua khach hang
                 Route::post('payment-customers', 'StatisticPaymentController@postExportPaymentCustomers');
+                //7. thong ke job order
+                Route::post('job-order', 'StatisticPaymentController@postExportjobOrder');
             });
         });
         //test

@@ -621,32 +621,14 @@ class StatisticPaymentController extends Controller
                 $title_vn = 'BÁO BIỂU THỐNG KÊ JOB ORDER CHƯA MỞ DEBIT NOTE';
                 break;
             case  'unpaid_cont':
-                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU';
+                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU (CHƯA DUYỆT)';
                 break;
             case  'paid_cont':
-                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU';
+                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU (ĐÃ DUYỆT)';
                 break;
             default:
                 break;
         }
-        if ($data == 'error-date') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn lại ngày!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        } elseif ($data == 'error-custno') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn Khách Hàng!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-        // dd($data);
         if ($data) {
             return view('print\payment\payment-customers\index', [
                 'data' => $data,

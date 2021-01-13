@@ -24,11 +24,11 @@ class JobM extends Model
     public static function list()
     {
         try {
-            $take = 50;
+            $take = 5000;
             $query =  JobM::query();
             $data =  $query
                 ->take($take)
-                ->select('c.CUST_NAME', 'jm.*')
+                ->select('c.CUST_NAME', 'jm.JOB_NO')
                 ->get();
             return $data;
         } catch (\Exception $ex) {

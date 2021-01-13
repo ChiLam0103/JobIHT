@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use App\Models\Statistic\StatisticFile;
 use App\Models\PayType;
 use App\Models\Company;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class StatisticFileController extends Controller
@@ -148,21 +148,25 @@ class StatisticFileController extends Controller
     //2.1 export date
     public function exportJobOrder_Date(Request $request)
     {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
+        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
         $job_m = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
-        $job_d = StatisticFile::getJobOrder_D($request->fromdate, $request->todate);
+        // $job_d = StatisticFile::getJobOrder_D($request->fromdate, $request->todate);
         if ($job_m) {
-
             $filename = 'job-order-date' . '(' . date('YmdHis') . ')';
-
-            Excel::create($filename, function ($excel) use ($job_m, $job_d) {
-                $excel->sheet('JOB ORDER', function ($sheet) use ($job_m, $job_d) {
+            Excel::create($filename, function ($excel) use ($job_m, $from_date, $to_date) {
+                $excel->sheet('JOB ORDER', function ($sheet) use ($job_m, $from_date, $to_date) {
                     $sheet->loadView('print\file\job-order\export-date', [
                         'job_m' => $job_m,
-                        'job_d' => $job_d,
+                        'from_date' => $from_date,
+                        'to_date' => $to_date,
+                        // 'job_d' => $job_d,
                     ]);
                     $sheet->setOrientation('landscape');
                 });
-            })->download('xlsx');
+            })->store('xlsx');
             return response()->json([
                 'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
             ]);

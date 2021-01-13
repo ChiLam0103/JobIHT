@@ -88,6 +88,23 @@ class StatisticFile extends Model
             return $e;
         }
     }
+    public static function getJobOrder_D2($fromdate, $todate, $jobno)
+    {
+        try {
+            $data =  DB::table('JOB_ORDER_M as jom')
+                ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+                ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('jod.BRANCH_ID', 'IHTVN1')
+                ->where('jod.JOB_NO', $jobno)
+                ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate])
+                ->select('pt.PAY_NAME', 'jod.*')
+                ->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     //2.2 in job order theo khach hang
     public static function getJobOrderCustomer($custno)
     {
