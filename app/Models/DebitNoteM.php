@@ -72,6 +72,13 @@ class DebitNoteM extends Model
         $data =  $query->take($take)->get();
         return $data;
     }
+    public static function listTake($take)
+    {
+        $take = $take;
+        $query =  DebitNoteM::query();
+        $data =  $query->take($take)->get();
+        return $data;
+    }
     public static function listPage($page)
     {
         $take = 10;

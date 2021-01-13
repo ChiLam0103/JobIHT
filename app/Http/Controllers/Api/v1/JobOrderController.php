@@ -29,6 +29,24 @@ class JobOrderController extends Controller
             );
         }
     }
+    public function listTake($take)
+    {
+        $data = JobM::listTake($take);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function listPage($page)
     {
         $data = JobM::listPage($page);

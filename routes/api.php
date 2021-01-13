@@ -87,6 +87,7 @@ Route::namespace('Api\v1')->group(function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
                 Route::get('page={page}', 'JobStartController@listPage');
+                Route::get('take={take}', 'JobStartController@listTake');
                 Route::get('', 'JobStartController@list');
                 Route::get('search/type={type}&value={value}&page={page}', 'JobStartController@search');
                 Route::get('not-created', 'JobStartController@listNotCreatedOrder');
@@ -97,6 +98,7 @@ Route::namespace('Api\v1')->group(function () {
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
+                Route::get('take={take}', 'JobOrderController@listTake');
                 Route::get('page={page}', 'JobOrderController@listPage');
                 Route::get('search/type={type}&value={value}&page={page}', 'JobOrderController@searchPage');
                 Route::get('search/type={type}&value={value}', 'JobOrderController@search');
@@ -129,6 +131,7 @@ Route::namespace('Api\v1')->group(function () {
             //1.phieu chi tam ung
             Route::group(['prefix' => 'lender'], function () {
                 Route::get('', 'LenderController@list');
+                Route::get('take={take}', 'LenderController@listTake');
                 Route::get('page={page}', 'LenderController@listpage');
                 Route::get('job-not-created', 'LenderController@listJobNotCreated');
                 Route::get('list-advance', 'LenderController@listAdvance');
@@ -148,6 +151,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('list-cust-job', 'DebitNoteController@postListCustomerJob'); //print
                 Route::get('/list-job-has-d', 'DebitNoteController@listJobHasD'); //print 2. list debit có chi phí
                 Route::get('page={page}', 'DebitNoteController@listPage');
+                Route::get('take={take}', 'DebitNoteController@listTake');
                 Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@search');
 
                 Route::get('des/{id}', 'DebitNoteController@des');

@@ -50,6 +50,20 @@ class JobStart extends Model
             return $ex;
         }
     }
+    public static function listTake($take)
+    {
+        try {
+            $take = $take;
+            $query = JobStart::query();
+            $data =  $query
+                ->take($take)
+                ->select('c.CUST_NAME', 'js.*')
+                ->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
     public static function search($type, $value, $page)
     {
         $take = 10;

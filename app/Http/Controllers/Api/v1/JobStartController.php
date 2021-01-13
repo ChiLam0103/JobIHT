@@ -10,6 +10,24 @@ use App\Models\JobStart;
 
 class JobStartController extends Controller
 {
+    public function listTake($take)
+    {
+        $data = JobStart::listTake($take);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function listPage($page)
     {
         $data = JobStart::listPage($page);

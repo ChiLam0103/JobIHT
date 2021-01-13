@@ -31,11 +31,11 @@ class UserController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            $permission = Permission::des($data->USER_NO);
+            // $permission = Permission::des($data->USER_NO);
             return response()->json([
                 'success' => true,
                 'data' => $data,
-                'permission' => $permission,
+                // 'permission' => $permission,
                 'message' => 'Đăng nhập thành công'
             ], Response::HTTP_OK);
         }

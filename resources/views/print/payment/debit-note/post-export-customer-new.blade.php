@@ -161,15 +161,14 @@
                         <td>{{ $item_d['INV_NO'] }}</td>
                         <td class="text-center">{{ $item_d['UNIT'] }}</td>
                         <td class="text-center">{{ $item_d['QUANTITY'] }}</td>
-                        <td class="text-center">{{ ($bank->BANK_NO == 'ACB') ? $item_d['PRICE'] : $item_d['DOR_AMT'] }}
+                        <td class="text-center">{{ trim($bank->BANK_NO) == 'ACB' ? $item_d['PRICE'] : $item_d['DOR_AMT'] }}
                         </td>
                         <td class="text-right">{{ $item_d['TAX_AMT'] }}</td>
                         <td class="text-right">
-                            {{-- {{dd(($item_d['QUANTITY'] * $item_d['PRICE']) + ($item_d['QUANTITY'] * $item_d['PRICE'] )  )}} --}}
-                            {{ ($bank->BANK_NO == 'ACB') ? ($item_d['QUANTITY'] * $item_d['PRICE'] + ($item_d['QUANTITY'] * $item_d['PRICE'] * $item_d['TAX_NOTE']) / 100) : $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
+                            {{ trim($bank->BANK_NO) == 'ACB' ? ($item_d['TAX_AMT'] + $item_d['PRICE'])*$item_d['QUANTITY'] : $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
                         </td>
                         <span style="display: none;">
-                            {{ $total_amt += $item_d['TOTAL_AMT'] }}
+                            {{ $total_amt +=($item_d['TAX_AMT'] + $item_d['PRICE'])*$item_d['QUANTITY']}}
                             {{ $total_vat += $item_d['TAX_AMT'] }}
                             {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
                         </span>
@@ -178,17 +177,16 @@
             @endif
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <th>{{ ($bank->BANK_NO == 'ACB') ? $total_vat : '' }}</th>
-                <th> {{ ($bank->BANK_NO == 'ACB') ? $total_amt : $total_amt_do }}</th>
+                <th>{{  trim($bank->BANK_NO) == 'ACB' ? $total_vat : '' }}</th>
+                <th> {{  trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}</th>
             </tr>
         </table>
 
         <span style="display: none;">
             {{ $total_vat_tax += $total_vat }}
-            {{ $total_sum_amt += ($bank->BANK_NO == 'ACB') ? $total_amt : $total_amt_do }}
+            {{ $total_sum_amt +=  trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}
         </span>
     @endforeach
-    {{ dd(1) }}
     <table class="table">
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
@@ -220,7 +218,7 @@
             <th colspan="9">Account name: {{ $bank->ACCOUNT_NAME }}</th>
         </tr>
 
-        @if ($bank->BANK_NO == 'ACB')
+        @if (trim($bank->BANK_NO) == 'ACB')
 
         @else
             <tr>
@@ -243,5 +241,4 @@
         </tr>
     </table>
 </body>
-
 </html>

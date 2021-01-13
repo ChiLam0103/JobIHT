@@ -35,6 +35,20 @@ class Lender extends Model
             return $ex;
         }
     }
+    public static function listTake($take)
+    {
+        try {
+            $take = $take;
+            $query =  Lender::query();
+            $data =  $query
+                ->take($take)
+                ->select('lt.LENDER_NAME', 'l.*')
+                ->get();
+            return $data;
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
     public static function listPage($page)
     {
         try {
