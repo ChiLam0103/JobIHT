@@ -98,7 +98,7 @@ class JobM extends Model
                 break;
         }
         $count = (int)($query->count());
-        $data =  $query->select('c.CUST_NAME', 'jm.*')->get();
+        $data =  $query->select('c.CUST_NAME', 'jm.*')->skip($skip)->take($take)->get();
         return ['total_page' => $count, 'list' => $data];
     }
     public static function search($type, $value)

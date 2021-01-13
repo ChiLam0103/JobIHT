@@ -28,7 +28,7 @@ class Receipts extends Model
     public static function listPage($page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  Receipts::query();
         $count = $query->count();
         $data =  $query->skip($skip)
@@ -122,7 +122,7 @@ class Receipts extends Model
     public static function search($type, $value, $page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  Receipts::query();
         switch ($type) {
             case 'receipt_no':
@@ -137,7 +137,7 @@ class Receipts extends Model
             default:
                 break;
         }
-        $count = (int)($query->count() / $take);
+        $count = (int)($query->count());
         $data =  $query->skip($skip)->take($take)->get();
         return ['total_page' => $count, 'list' => $data];
     }
