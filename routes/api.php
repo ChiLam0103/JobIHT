@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\Route;
 // header('Access-Control-Allow-Methods:  POST, GET, OPTIONS, PUT, DELETE');
 // header('Access-Control-Allow-Headers:  Content-Type, X-Auth-Token, Origin, Authorization');
 
+
+//web quản lý chương trình
 Route::namespace('Api\v1')->group(function () {
-    //web
     Route::group(['prefix' => 'v1'], function () {
         //user
         Route::group(['middleware' =>  'cors', 'prefix' => 'user'], function () {
@@ -282,6 +283,15 @@ Route::namespace('Api\v1')->group(function () {
         //test
         Route::group(['prefix' => 'test', 'namespace' => 'Statistic'], function () {
             Route::post('/', 'StatisticPaymentController@test')->name('showView');
+        });
+    });
+});
+
+//app dành cho shipper chạy ngoài
+Route::namespace('Api\v2')->group(function () {
+    Route::group(['prefix' => 'v2'], function () {
+        Route::group(['middleware' =>  'cors', 'prefix' => 'user'], function () {
+            Route::post('login', 'UserController@login');
         });
     });
 });

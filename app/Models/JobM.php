@@ -9,8 +9,7 @@ class JobM extends Model
 {
     public static function query()
     {
-        $query = DB::table('JOB_START as js')
-            ->leftjoin('JOB_ORDER_M as jm', 'js.JOB_NO', '=', 'jm.JOB_NO')
+        $query = DB::table('JOB_ORDER_M as jm')
             ->leftjoin('CUSTOMER as c', 'jm.CUST_NO', '=', 'c.CUST_NO')
             ->orderBy('jm.JOB_NO', 'desc')
             ->where(function ($query) {
