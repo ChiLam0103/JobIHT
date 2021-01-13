@@ -24,7 +24,7 @@ class JobStart extends Model
     {
         try {
             $take = 10;
-            $skip = ($page - 1) * $take;
+            $skip =  $page == 0 ?  $take : $page * $take;
             $query =  JobStart::query();
             $count = $query->count();
             $data =  $query->skip($skip)
@@ -67,7 +67,7 @@ class JobStart extends Model
     public static function search($type, $value, $page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  JobStart::query();
         switch ($type) {
             case 'job_no':
@@ -95,7 +95,7 @@ class JobStart extends Model
             default:
                 break;
         }
-        $count = (int)($query->count() / $take);
+        $count = (int)($query->count());
         $data =  $query->skip($skip)
             ->take($take)
             ->select('c.CUST_NAME', 'js.JOB_NO')

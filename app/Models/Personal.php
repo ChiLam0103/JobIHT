@@ -28,7 +28,7 @@ class Personal extends Model
     public static function listPage($page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  Personal::query();
         $count = $query->count();
         $data =  $query->skip($skip)

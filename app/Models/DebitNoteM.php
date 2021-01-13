@@ -82,7 +82,7 @@ class DebitNoteM extends Model
     public static function listPage($page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  DebitNoteM::query();
         $count = $query->count();
         $data =  $query->skip($skip)
@@ -93,7 +93,7 @@ class DebitNoteM extends Model
     public static function search($type, $value, $page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  DebitNoteM::query();
         switch ($type) {
             case 'job_no':
@@ -172,7 +172,7 @@ class DebitNoteM extends Model
     public static function listPendingPage($page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  DebitNoteM::queryPendingPaid();
         $count = $query->where(function ($query) {
             $query->where('dnm.PAYMENT_CHK', null)
@@ -185,7 +185,7 @@ class DebitNoteM extends Model
     public static function listPaidPage($page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  DebitNoteM::queryPendingPaid();
         $count = $query->where('dnm.PAYMENT_CHK', 'Y')->count();
         $data =  $query->skip($skip)->take($take)->get();

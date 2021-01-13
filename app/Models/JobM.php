@@ -52,9 +52,9 @@ class JobM extends Model
     {
         try {
             $take = 10;
-            $skip = ($page - 1) * $take;
+            $skip =  $page == 0 ?  $take : $page * $take;
             $query =  JobM::query();
-            $count = (int)($query->count() / $take);
+            $count = (int)($query->count());
             $data =  $query->skip($skip)
                 ->take($take)
                 ->select('c.CUST_NAME', 'jm.*')
@@ -67,7 +67,7 @@ class JobM extends Model
     public static function searchPage($type, $value, $page)
     {
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  JobM::query();
         switch ($type) {
             case 'job_no':
@@ -97,10 +97,8 @@ class JobM extends Model
             default:
                 break;
         }
-        $count = (int)($query->count() / $take);
-        // dd($count);
-        $data =  $query->skip($skip)->take($take)->select('c.CUST_NAME', 'jm.*')->get();
-        // dd($data);
+        $count = (int)($query->count());
+        $data =  $query->select('c.CUST_NAME', 'jm.*')->get();
         return ['total_page' => $count, 'list' => $data];
     }
     public static function search($type, $value)
@@ -280,7 +278,7 @@ class JobM extends Model
     {
         try {
             $take = 10;
-            $skip = ($page - 1) * $take;
+            $skip =  $page == 0 ?  $take : $page * $take;
             $query =  JobM::query();
             $query->take($take)
                 ->where(function ($query) {
@@ -290,7 +288,7 @@ class JobM extends Model
                 ->select('c.CUST_NAME', 'jm.*');
             $count = $query->count();
             $data =  $query->skip($skip)->get();
-            return ['total_page' => (int)($count / $take), 'list_job' => $data];
+            return ['total_page' => (int)($count), 'list_job' => $data];
         } catch (\Exception $ex) {
             return $ex;
         }
@@ -306,7 +304,7 @@ class JobM extends Model
                 ->select('c.CUST_NAME', 'jm.*');
             $count = $query->count();
             $data =  $query->skip($skip)->get();
-            return ['total_page' => (int)($count / $take), 'list_job' => $data];
+            return ['total_page' => (int)($count), 'list_job' => $data];
         } catch (\Exception $ex) {
             return $ex;
         }

@@ -53,14 +53,12 @@ class Lender extends Model
     {
         try {
             $take = 10;
-            $skip = ($page - 1) * $take;
+            $skip =  $page == 0 ?  $take : $page * $take;
             $query =  Lender::query();
             $count = $query->count();
             $data =  $query->skip($skip)
                 ->take($take)
-                // ->leftJoin('LENDER_D as ld','l.LENDER_NO','ld.LENDER_NO')
                 ->select('lt.LENDER_NAME', 'l.*')
-                // ->selectRaw('sum(ld.LENDER_AMT) as sum_LENDER_NAME')
                 ->get();
             return ['total_page' => $count, 'list' => $data];
         } catch (\Exception $ex) {
@@ -98,7 +96,7 @@ class Lender extends Model
     {
 
         $take = 10;
-        $skip = ($page - 1) * $take;
+        $skip =  $page == 0 ?  $take : $page * $take;
         $query =  Lender::query();
         $query->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
             ->where('p.BRANCH_ID', 'IHTVN1');
