@@ -52,7 +52,7 @@ class JobM extends Model
     {
         try {
             $take = 10;
-            $skip =  $page == 0 ?  $take : $page * $take;
+            $skip = ($page - 1) * $take;
             $query =  JobM::query();
             $count = (int)($query->count());
             $data =  $query->skip($skip)
@@ -67,7 +67,7 @@ class JobM extends Model
     public static function searchPage($type, $value, $page)
     {
         $take = 10;
-        $skip =  $page == 0 ?  $take : $page * $take;
+        $skip = ($page - 1) * $take;
         $query =  JobM::query();
         switch ($type) {
             case 'job_no':
@@ -278,7 +278,7 @@ class JobM extends Model
     {
         try {
             $take = 10;
-            $skip =  $page == 0 ?  $take : $page * $take;
+            $skip = ($page - 1) * $take;
             $query =  JobM::query();
             $query->take($take)
                 ->where(function ($query) {

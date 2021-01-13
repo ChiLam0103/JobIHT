@@ -53,7 +53,7 @@ class Lender extends Model
     {
         try {
             $take = 10;
-            $skip =  $page == 0 ?  $take : $page * $take;
+            $skip = ($page - 1) * $take;
             $query =  Lender::query();
             $count = $query->count();
             $data =  $query->skip($skip)
@@ -96,7 +96,7 @@ class Lender extends Model
     {
 
         $take = 10;
-        $skip =  $page == 0 ?  $take : $page * $take;
+        $skip = ($page - 1) * $take;
         $query =  Lender::query();
         $query->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
             ->where('p.BRANCH_ID', 'IHTVN1');

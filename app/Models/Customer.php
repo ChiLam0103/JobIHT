@@ -60,7 +60,7 @@ class Customer extends Model
                 break;
         }
         $take = 10;
-        $skip =  $page == 0 ?  $take : $page * $take;
+        $skip = ($page - 1) * $take;
         $query =  Customer::query();
         $count = $query->where('c.CUST_TYPE', $type)->count();
         $data =  $query->skip($skip)->take($take)->select('c.*', 'b.BRANCH_NAME')->get();

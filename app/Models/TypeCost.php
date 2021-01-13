@@ -21,7 +21,7 @@ class TypeCost extends Model
     public static function listPage($page)
     {
         $take = 10;
-        $skip =  $page == 0 ?  $take : $page * $take;
+        $skip = ($page - 1) * $take;
         $query =  TypeCost::query();
         $count = $query->count();
         $data =  $query->skip($skip)
