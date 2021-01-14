@@ -100,7 +100,7 @@
             </tr>
             @foreach ($job_m as $item)
                 <tr>
-                    <td>{{ $item->JOB_NO }}</td>
+                         <td>{{ $item->JOB_NO }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>
                     <td>{{ $item->CUST_NO }}</td>
                     <td style="text-align: left;">{{ $item->CUST_NAME }}</td>

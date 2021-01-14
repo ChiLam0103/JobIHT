@@ -224,7 +224,7 @@ class Customer extends Model
     public static function postCustomer($custno)
     {
         $query =  Customer::query();
-        $data = $query->whereIn('c.CUST_NO',$custno)->select('c.CUST_NAME','c.CUST_BOSS','c.CUST_ADDRESS','c.CUST_TEL1','c.CUST_FAX')->first();
+        $data = $query->whereIn('c.CUST_NO',$custno)->select('c.CUST_NO','c.CUST_NAME','c.CUST_BOSS','c.CUST_ADDRESS','c.CUST_TEL1','c.CUST_FAX')->first();
         return $data;
     }
 }

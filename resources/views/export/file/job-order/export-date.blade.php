@@ -51,8 +51,7 @@
                     <td>{{ $item->CONSIGNEE }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
                     <td>{{ $item->SHIPPER }}</td>
-
-                    @foreach (\App\Models\Statistic\StatisticFile::getJobOrder_D2($from_date, $to_date, $item->JOB_NO) as $item_d)
+                    @foreach (\App\Models\Statistic\StatisticFile::getJobOrder_D($item->JOB_NO) as $item_d)
                 <tr>
                     <td colspan="15" style="border: none"></td>
                     <td>{{ $item_d->PAY_NAME }}</td>
@@ -68,7 +67,6 @@
                     </td>
                 </tr>
             @endforeach
-
             </tr>
             @endforeach
         </tbody>

@@ -129,11 +129,12 @@ class StatisticFileController extends Controller
     public function jobOrder_Date($fromdate, $todate)
     {
         $job_m = StatisticFile::jobOrder_Date($fromdate, $todate);
-        $job_d = StatisticFile::getJobOrder_D($fromdate, $todate);
+        // dd($job_m);
+        // $job_d = StatisticFile::getJobOrder_D2($fromdate, $todate);
         if ($job_m) {
             return view('print\file\job-order\date', [
                 'job_m' => $job_m,
-                'job_d' => $job_d
+                // 'job_d' => $job_d
             ]);
         } else {
             return response()->json(
@@ -153,16 +154,14 @@ class StatisticFileController extends Controller
         $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
         $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
         $job_m = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
-        // $job_d = StatisticFile::getJobOrder_D($request->fromdate, $request->todate);
         if ($job_m) {
             $filename = 'job-order-date' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($job_m, $from_date, $to_date) {
                 $excel->sheet('JOB ORDER', function ($sheet) use ($job_m, $from_date, $to_date) {
-                    $sheet->loadView('print\file\job-order\export-date', [
+                    $sheet->loadView('export\file\job-order\export-date', [
                         'job_m' => $job_m,
                         'from_date' => $from_date,
                         'to_date' => $to_date,
-                        // 'job_d' => $job_d,
                     ]);
                     $sheet->setOrientation('landscape');
                 });
@@ -188,11 +187,18 @@ class StatisticFileController extends Controller
         $from_date = ($fromdate == 'undefined' || $fromdate == 'null' || $fromdate == null) ? '19000101' :  $fromdate;
         $to_date = ($todate == 'undefined' || $todate == 'null' || $todate == null) ? $today : $todate;
 
-        $type_name = "HÃNG TÀU";
-        if ($type == 2) {
-            $type_name = "KHÁCH HÀNG";
-        } elseif ($type == 3) {
-            $type_name = "ĐẠI LÝ";
+        switch (true) {
+            case ($type == 'carriers') || ($type == "1"):
+                $type_name = "HÃNG TÀU";
+                break;
+            case ($type == 'customer') || ($type == "2"):
+                $type_name = "KHÁCH HÀNG";
+                break;
+            case ($type == 'agency') || ($type == "3"):
+                $type_name = "ĐẠI LÝ";
+                break;
+            default:
+                break;
         }
 
         $data = StatisticFile::refund($type, $custno, $jobno, $from_date, $to_date);
@@ -218,36 +224,34 @@ class StatisticFileController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
-        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
+        $fromdate = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
+        $todate = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
         $sum_price = 0;
         $sum_money_after = 0;
-        switch ($request->type) {
-            case 'carriers' || '1':
+        switch (true) {
+            case ($request->type == 'carriers') || ($request->type == "1"):
                 $type_name = "HÃNG TÀU";
                 break;
-            case 'customer' || '2':
+            case ($request->type == 'customer') || ($request->type == "2"):
                 $type_name = "KHÁCH HÀNG";
                 break;
-            case 'agency' || '3':
+            case ($request->type == 'agency') || ($request->type == "3"):
                 $type_name = "ĐẠI LÝ";
                 break;
             default:
-                $type_name = "HÃNG TÀU";
                 break;
         }
-
-        $data = StatisticFile::postExportRefund($request);
+        $data = StatisticFile::refund($request->type, $request->custno, $request->jobno, $request->fromdate, $request->todate);
         if ($data) {
 
             $filename = 'refund' . '(' . date('YmdHis') . ')';
-            Excel::create($filename, function ($excel) use ($data, $type_name, $from_date, $to_date, $sum_price, $sum_money_after) {
-                $excel->sheet('Debit Note', function ($sheet) use ($data, $type_name, $from_date, $to_date, $sum_price, $sum_money_after) {
-                    $sheet->loadView('print\file\refund\export', [
+            Excel::create($filename, function ($excel) use ($data, $type_name, $fromdate, $todate, $sum_price, $sum_money_after) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data, $type_name, $fromdate, $todate, $sum_price, $sum_money_after) {
+                    $sheet->loadView('export\file\refund\index', [
                         'data' => $data,
                         'type_name' => $type_name,
-                        'from_date' => $from_date,
-                        'to_date' => $to_date,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
                         'sum_price' => $sum_price,
                         'sum_money_after' => $sum_money_after
                     ]);
@@ -310,7 +314,7 @@ class StatisticFileController extends Controller
             );
         }
     }
-    //5 thống kê nâng hạ
+    //5 thống kê nâng hạ (export)
     public function lifting($fromdate, $todate)
     {
         $data = StatisticFile::lifting($fromdate, $todate);
@@ -319,7 +323,7 @@ class StatisticFileController extends Controller
             ob_start(); //At the very top of your program (first line)
             return Excel::create($fromdate . '-'  . $todate . '-' . 'THỐNG KÊ NÂNG HẠ', function ($excel) use ($data) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data) {
-                    $sheet->loadView('print\file\lifting\index', [
+                    $sheet->loadView('export\file\lifting\index', [
                         'data' => $data
                     ]);
                     $sheet->setOrientation('landscape');

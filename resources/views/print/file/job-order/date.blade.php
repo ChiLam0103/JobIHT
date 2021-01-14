@@ -15,9 +15,7 @@
 
 
     .page {
-        /* width: 21cm; */
         overflow: hidden;
-        /* min-height: 297mm; */
         padding: 0.5cm;
         margin-left: auto;
         margin-right: auto;
@@ -118,26 +116,22 @@
                         <td>{{ $item->CONSIGNEE }}</td>
                         <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
                         <td>{{ $item->SHIPPER }}</td>
-                        @foreach ($job_d as $item_d)
-                            @if ($item->JOB_NO == $item_d->JOB_NO)
-                    <tr>
-                        <td colspan="15" style="border: none"></td>
-                        <td>{{ $item_d->PAY_NAME }}</td>
-                        <td>{{ $item_d->SER_NO }}</td>
-                        <td>{{ $item_d->DESCRIPTION }}</td>
-                        <td>{{ number_format($item_d->PORT_AMT, 0, ',', '.') }}</td>
-                        <td>{{ $item_d->NOTE }}</td>
-                        <td>{{ $item_d->UNIT }}</td>
-                        <td>{{ number_format($item_d->QTY, 0, ',', '.') }}</td>
-                        <td>{{ number_format($item_d->PRICE, 0, ',', '.') }}</td>
-                        <td>{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
-                        <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY, 0, ',', '.') }}
-                        </td>
-                    </tr>
-
-                @endif
-                @endforeach
-
+                    @foreach (\App\Models\Statistic\StatisticFile::getJobOrder_D($item->JOB_NO) as $item_d)
+                        <tr>
+                            <td colspan="15" style="border: none"></td>
+                            <td>{{ $item_d->PAY_NAME }}</td>
+                            <td>{{ $item_d->SER_NO }}</td>
+                            <td>{{ $item_d->DESCRIPTION }}</td>
+                            <td>{{ number_format($item_d->PORT_AMT) }}</td>
+                            <td>{{ $item_d->NOTE }}</td>
+                            <td>{{ $item_d->UNIT }}</td>
+                            <td>{{ number_format($item_d->QTY) }}</td>
+                            <td>{{ number_format($item_d->PRICE) }}</td>
+                            <td>{{ number_format($item_d->TAX_AMT) }}</td>
+                            <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY) }}
+                            </td>
+                        </tr>
+                     @endforeach
                 </tr>
                 @endforeach
             </tbody>

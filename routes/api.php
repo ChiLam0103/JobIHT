@@ -262,9 +262,12 @@ Route::namespace('Api\v1')->group(function () {
         Route::group(['prefix' => 'export', 'namespace' => 'Statistic'], function () {
             //II. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
-                Route::get('lifting/fromdate={fromdate}&todate={todate}', 'StatisticFileController@lifting');
+                //2.job order
                 Route::post('job-order', 'StatisticFileController@exportJobOrder_Date');
+                //3. báo biểu refund
                 Route::post('refund', 'StatisticFileController@postExportRefund');
+                //5. thống kê nâng hạ
+                Route::get('lifting/fromdate={fromdate}&todate={todate}', 'StatisticFileController@lifting');
             });
             //IV. payment manager(quan ly thu chi)
             Route::group(['prefix' => 'payment'], function () {

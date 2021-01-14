@@ -166,25 +166,30 @@
     .col-1 {
         width: 10%;
     }
+
     #lnkPrint {
         margin-top: 1em;
         background: aquamarine;
     }
-    #lnkPrint:active::after{
+
+    #lnkPrint:active::after {
         display: none;
     }
+
 </style>
 <script>
     function myFunction() {
-      var x = document.getElementById("lnkPrint");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-        window.print();
-      }
+        var x = document.getElementById("lnkPrint");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+            window.print();
+        }
     }
- </script>
+
+</script>
+
 <body onload="window.print();">
     <div id="page" class="page">
         <button type="button" id="lnkPrint" onclick="myFunction()">Click the button to print the current page</button>
@@ -319,26 +324,26 @@
                 <th>Total Amt</th>
             </tr>
             <span style="display: none;">{{ $total_amt = 0 }} {{ $total_amt_do = 0 }} {{ $total_vat = 0 }}</span>
-            @foreach ($debit->debit_d as $item_d)
+            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('job', null, null, $debit->JOB_NO, null) as $item_d)
                 <tr>
-                    <td class="text-center">{{ $item_d['SER_NO'] }}</td>
-                    <td>{{ $item_d['DESCRIPTION'] }}</td>
-                    <td>{{ $item_d['INV_NO'] }}</td>
-                    <td class="text-center">{{ $item_d['UNIT'] }}</td>
-                    <td class="text-center">{{ $item_d['DOR_NO'] }}</td>
-                    <td class="text-center">{{ number_format($item_d['QUANTITY'], 0, ',', '.') }}</td>
+                    <td class="text-center">{{ $item_d->SER_NO }}</td>
+                    <td>{{ $item_d->DESCRIPTION }}</td>
+                    <td>{{ $item_d->INV_NO }}</td>
+                    <td class="text-center">{{ $item_d->UNIT }}</td>
+                    <td class="text-center">{{ $item_d->DOR_NO }}</td>
+                    <td class="text-center">{{ number_format($item_d->QUANTITY, 0, ',', '.') }}</td>
                     <td class="text-right">
-                        {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['PRICE'], 0, ',', '.') : number_format($item_d['DOR_AMT'], 0, ',', '.') }}
+                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 0, ',', '.') }}
                     </td>
-                    <td class="text-right">{{ number_format($item_d['TAX_AMT'], 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
                     <td class="text-right">
-                        {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['TOTAL_AMT'], 0, ',', '.') : number_format($item_d['DOR_AMT'] * $item_d['QUANTITY'], 0, ',', '.') }}
+                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 0, ',', '.') }}
                     </td>
                     <span style="display: none;">
-                        {{ $total_amt += $item_d['TOTAL_AMT'] }}
-                        {{ $total_vat += $item_d['TAX_AMT'] }}
-                        {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
-                        {{ $curency = $item_d['DOR_NO'] }}
+                        {{ $total_amt += $item_d->TOTAL_AMT }}
+                        {{ $total_vat += $item_d->TAX_AMT }}
+                        {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
+                        {{ $curency = $item_d->DOR_NO }}
                     </span>
                 </tr>
 

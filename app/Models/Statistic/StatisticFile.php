@@ -60,45 +60,24 @@ class StatisticFile extends Model
         try {
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate])
-                ->select('c.CUST_NAME', 'l.LENDER_NO', 'jom.*')
+                ->select('c.CUST_NAME', 'jom.JOB_NO', 'jom.ORDER_DATE', 'jom.CUST_NO', 'jom.ORDER_FROM', 'jom.ORDER_TO', 'jom.NW', 'jom.GW', 'jom.POL', 'jom.POL', 'jom.POD', 'jom.ETD_ETA', 'jom.PO_NO', 'jom.CONTAINER_QTY', 'jom.CONSIGNEE', 'jom.CUSTOMS_DATE', 'jom.SHIPPER')
                 ->get();
+
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function getJobOrder_D($fromdate, $todate)
+    public static function getJobOrder_D($jobno)
     {
         try {
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+            $data =  DB::table('JOB_ORDER_D as jod')
                 ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('jod.BRANCH_ID', 'IHTVN1')
-                ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate])
-                ->select('pt.PAY_NAME', 'jod.*')
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function getJobOrder_D2($fromdate, $todate, $jobno)
-    {
-        try {
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('jod.BRANCH_ID', 'IHTVN1')
                 ->where('jod.JOB_NO', $jobno)
-                ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate])
-                ->select('pt.PAY_NAME', 'jod.*')
+                ->select('pt.PAY_NAME', 'jod.JOB_NO', 'jod.SER_NO', 'jod.DESCRIPTION', 'jod.PORT_AMT', 'jod.NOTE', 'jod.UNIT', 'jod.QTY', 'jod.PRICE', 'jod.TAX_AMT', 'jod.TAX_NOTE')
                 ->get();
             return $data;
         } catch (\Exception $e) {
@@ -175,17 +154,17 @@ class StatisticFile extends Model
                 })
                 ->select('c.CUST_NO', 'c.CUST_NAME', 'jom.BILL_NO', 'jod.*');
 
-            if ($type == '1') { //hang tau
+            if ($type == '1' || $type = "carriers") { //hang tau
                 $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '5')
                     ->where('c.CUST_TYPE', 2);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO2', $custno);
-            } elseif ($type == '2') { //khach hang
+            } elseif ($type == '2' || $type = "customer") { //khach hang
                 $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '6')
                     ->where('c.CUST_TYPE', 1);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO', $custno);
-            } elseif ($type == '3') { //dai ly
+            } elseif ($type == '3' || $type = "agent") { //dai ly
                 $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
                     ->leftJoin('CUSTOMER as c2', 'jom.CUST_NO', 'c2.CUST_NO')
                     ->where('jod.ORDER_TYPE', '7')
@@ -198,60 +177,6 @@ class StatisticFile extends Model
             //job_no
             ($jobno == 'undefined' || $jobno == 'null' || $jobno == null) ? null : $query->where('jom.JOB_NO', $jobno);
 
-            $data = $query->orderBy('jom.JOB_NO')->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function postExportRefund($request)
-    {
-        try {
-            //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
-            //CUST_TYPE: 1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
-            $today = date("Ymd");
-            $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
-            $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
-            $query = DB::table('JOB_ORDER_M as jom')
-                ->join('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->join('JOB_START as js', 'jom.JOB_NO', 'js.JOB_NO')
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('c.BRANCH_ID', 'IHTVN1')
-                ->whereBetween('js.JOB_DATE', [$from_date, $to_date])
-                ->where(function ($query) {
-                    $query->where('jod.THANH_TOAN_MK', 'N')
-                        ->orWhere('jod.THANH_TOAN_MK', null);
-                })
-                ->select('c.CUST_NO', 'c.CUST_NAME', 'jom.BILL_NO', 'jod.*');
-            switch ($request->type) { //hang tau
-                case 'carriers' || '1':
-                    $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
-                        ->where('jod.ORDER_TYPE', '5')
-                        ->where('c.CUST_TYPE', 2);
-                    ($request->custno == 'undefined' || $request->custno == 'null' || $request->custno == null) ? null : $query->where('jom.CUST_NO2', $request->custno);
-                    break;
-                case 'customer' || '2': //khach hang
-                    $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                        ->where('jod.ORDER_TYPE', '6')
-                        ->where('c.CUST_TYPE', 1);
-                    ($request->custno == 'undefined' || $request->custno == 'null' || $request->custno == null) ? null : $query->where('jom.CUST_NO', $request->custno);
-
-                    break;
-                case 'agency' || '3': //dai ly
-                    $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
-                        ->leftJoin('CUSTOMER as c2', 'jom.CUST_NO', 'c2.CUST_NO')
-                        ->where('jod.ORDER_TYPE', '7')
-                        ->where('c.CUST_TYPE', 3)
-                        ->where('c2.BRANCH_ID', 'IHTVN1')
-                        ->selectRaw('c2.CUST_NO as CUST_NO2 , c2.CUST_NAME as CUST_NAME2');
-                    ($request->custno == 'undefined' || $request->custno == 'null' || $request->custno == null) ? null : $query->where('jom.CUST_NO3', $request->custno);
-
-                    break;
-                default:
-                    break;
-            }
-            //job_no
-            ($request->jobno == 'undefined' || $request->jobno == 'null' || $request->jobno == null) ? null : $query->where('jom.JOB_NO', $request->jobno);
             $data = $query->orderBy('jom.JOB_NO')->get();
             return $data;
         } catch (\Exception $e) {
