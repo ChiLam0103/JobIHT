@@ -633,12 +633,69 @@ class StatisticPaymentController extends Controller
                 break;
         }
         if ($data) {
-            return view('print\payment\payment-customers\index', [
+            return view('print\payment\job-order\index', [
                 'data' => $data,
                 'fromdate' => $fromdate,
                 'todate' => $todate,
                 'type' => $type,
                 'title_vn' => $title_vn,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Phải chọn phiếu theo thứ tự từ nhỏ đến lớn!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+    //7. thong ke job order
+    public function postExportjobOrder(Request $request)
+    {
+        $title_vn = '';
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
+        $todate = $request->todate != 'null' ? $request->todate : $today;
+        $data = StatisticPayment::jobOrder($request->type, $request->custno, $request->person, $fromdate, $todate);
+        $type = $request->type;
+        switch ($type) {
+            case 'truck_fee':
+                $title_vn = 'BÁO BIỂU THỐNG KÊ TRUCKING FEE';
+                $filename = 'statistics-trucking-fee' . '(' . date('YmdHis') . ')';
+                break;
+            case 'have_not_debit_note':
+                $title_vn = 'BÁO BIỂU THỐNG KÊ JOB ORDER CHƯA MỞ DEBIT NOTE';
+                $filename = 'statistics-have-not-debit-note' . '(' . date('YmdHis') . ')';
+                break;
+                break;
+            case  'unpaid_cont':
+                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU (CHƯA DUYỆT)';
+                $filename = 'statistics-unpaid-cont' . '(' . date('YmdHis') . ')';
+                break;
+            case  'paid_cont':
+                $title_vn = 'BÁO BIỂU THỐNG KÊ CƯỢC TÀU (ĐÃ DUYỆT)';
+                $filename = 'statistics-paid-cont' . '(' . date('YmdHis') . ')';
+                break;
+            default:
+                break;
+        }
+        if ($data) {
+            Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                $excel->sheet('statistics', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                    $sheet->loadView('export\payment\job-order\index', [
+                        'data' => $data,
+                        'title_vn' => $title_vn,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type
+                    ]);
+                    $sheet->setOrientation('landscape')->setAutoSize(true);
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
             ]);
         } else {
             return response()->json(

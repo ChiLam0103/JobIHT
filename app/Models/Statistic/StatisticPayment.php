@@ -306,7 +306,7 @@ class StatisticPayment extends Model
                 $query->where('jm.CUST_NO', $custno);
             }
             if ($flag_date == 1) {
-                // $query->whereBetween('jm.ORDER_DATE', [$fromdate, $todate]);
+                $query->whereBetween('jm.ORDER_DATE', [$fromdate, $todate]);
             }
             if ($flag_person == 1) {
                 $query->where('jm.INPUT_USER', $person);
@@ -325,18 +325,25 @@ class StatisticPayment extends Model
                 case  'unpaid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
                         ->where('jd.ORDER_TYPE', 'C')
-                        ->select('c.CUST_NAME', 'jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
+                        ->where(function ($query) {
+                            $query->where('jd.THANH_TOAN_MK', 'N')
+                                ->orWhere('jd.THANH_TOAN_MK', null);
+                        })
+                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
                     break;
                 case  'paid_cont':
-
-                    break;
+                    $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
+                    ->where('jd.ORDER_TYPE', 'C')
+                    ->where('jd.THANH_TOAN_MK', 'Y')
+                    ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
+                break;
                 default:
                     break;
             }
             $data = $query->take(9000)
                 ->get();
 
-            dd($data);
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
