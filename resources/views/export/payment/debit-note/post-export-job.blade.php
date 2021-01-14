@@ -149,26 +149,26 @@
             {{ $total_vat = 0 }}
         </span>
 
-        @foreach ($debit->debit_d as $item_d)
+        @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('job', null, null, $debit->JOB_NO, null) as $item_d)
             <tr>
-                <td class="text-center">{{ $item_d['SER_NO'] }}</td>
-                <td>{{ $item_d['DESCRIPTION'] }}</td>
-                <td>{{ $item_d['INV_NO'] }}</td>
-                <td class="text-center">{{ $item_d['UNIT'] }}</td>
-                <td class="text-center">{{ $item_d['DOR_NO'] }}</td>
-                <td class="text-center">{{ number_format($item_d['QUANTITY']) }}</td>
+                <td class="text-center">{{ $item_d->SER_NO }}</td>
+                <td>{{ $item_d->DESCRIPTION }}</td>
+                <td>{{ $item_d->INV_NO }}</td>
+                <td class="text-center">{{ $item_d->UNIT }}</td>
+                <td class="text-center">{{ $item_d->DOR_NO }}</td>
+                <td class="text-center">{{ number_format($item_d->QUANTITY) }}</td>
                 <td class="text-right">
-                    {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['PRICE']) : number_format($item_d['DOR_AMT']) }}
+                    {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE) : number_format($item_d->DOR_AMT) }}
                 </td>
-                <td class="text-right">{{ number_format($item_d['TAX_AMT']) }}</td>
+                <td class="text-right">{{ number_format($item_d->TAX_AMT) }}</td>
                 <td class="text-right">
-                    {{ $item_d['DOR_NO'] == 'VND' ? number_format($item_d['TOTAL_AMT']) : number_format($item_d['DOR_AMT'] * $item_d['QUANTITY']) }}
+                    {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT) : number_format($item_d->DOR_AMT * $item_d->QUANTITY) }}
                 </td>
                 <span style="display: none;">
-                    {{ $total_amt += $item_d['TOTAL_AMT'] }}
-                    {{ $total_vat += $item_d['TAX_AMT'] }}
-                    {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
-                    {{ $curency = $item_d['DOR_NO'] }}
+                    {{ $total_amt += $item_d->TOTAL_AMT }}
+                    {{ $total_vat += $item_d->TAX_AMT }}
+                    {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
+                    {{ $curency = $item_d->DOR_NO }}
                 </span>
             </tr>
         @endforeach

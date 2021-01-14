@@ -113,7 +113,7 @@ class StatisticPaymentController extends Controller
             $filename = 'thong-ke-bu-tra' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($lender) {
                 $excel->sheet('Thong ke Bu-Tra', function ($sheet) use ($lender) {
-                    $sheet->loadView('print\payment\advance\post-export-replenishment-withdrawal-payment', [
+                    $sheet->loadView('export\payment\advance\post-export-replenishment-withdrawal-payment', [
                         'lender' => $lender,
                     ]);
                     $sheet->setOrientation('landscape');
@@ -133,7 +133,7 @@ class StatisticPaymentController extends Controller
         }
     }
 
-    //2 phiếu yêu cầu thanh toán
+    //2 print- phiếu yêu cầu thanh toán
     public function postDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -220,6 +220,7 @@ class StatisticPaymentController extends Controller
                         'debit' => $debit,
                         'fromdate' => $request->fromdate,
                         'todate' => $request->todate,
+                        'debittype' => $request->debittype,
                     ]);
                     break;
                 default:
@@ -227,7 +228,7 @@ class StatisticPaymentController extends Controller
             }
         }
     }
-    //2.1 xuất excel phiếu yêu cầu thanh toán
+    //2.1 export-phiếu yêu cầu thanh toán
     public function postExportDebitNote(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -299,7 +300,7 @@ class StatisticPaymentController extends Controller
                         $filename = 'debit-note-job' . '(' . date('YmdHis') . ')';
                         Excel::create($filename, function ($excel) use ($debit, $company, $person, $phone, $bank) {
                             $excel->sheet('Debit Note', function ($sheet) use ($debit, $company, $person, $phone, $bank) {
-                                $sheet->loadView('print\payment\debit-note\post-export-job', [
+                                $sheet->loadView('export\payment\debit-note\post-export-job', [
                                     'debit' => $debit,
                                     'company' => $company,
                                     'person' => $person,
@@ -314,13 +315,13 @@ class StatisticPaymentController extends Controller
                         ]);
                         break;
                     case 'customer':
-                        $filename = 'debit-note-customer' . '(' . date('YmdHis') . ')';
+                        $filename = 'debit-note-customer-' . trim($customer->CUST_NO) . '(' . date('YmdHis') . ')';
                         Excel::create($filename, function ($excel) use ($debit) {
                             $excel->sheet('Debit Note', function ($sheet) use ($debit) {
-                                $sheet->loadView('print\payment\debit-note\post-export-customer', [
+                                $sheet->loadView('export\payment\debit-note\post-export-customer', [
                                     'debit' => $debit,
                                 ]);
-                                $sheet->setOrientation('landscape')->setAutoSize(true);
+                                $sheet->setOrientation('landscape');
                             });
                         })->store('xlsx');
                         return response()->json([
@@ -328,10 +329,10 @@ class StatisticPaymentController extends Controller
                         ]);
                         break;
                     case 'customer_new':
-                        $filename = 'debit-note-customer-new' . '(' . date('YmdHis') . ')';
+                        $filename = 'debit-note-customer-new-' . trim($customer->CUST_NO) . '(' . date('YmdHis') . ')';
                         Excel::create($filename, function ($excel) use ($debit, $company, $person, $phone, $bank, $customer) {
                             $excel->sheet('Debit Note', function ($sheet) use ($debit, $company, $person, $phone, $bank, $customer) {
-                                $sheet->loadView('print\payment\debit-note\post-export-customer-new', [
+                                $sheet->loadView('export\payment\debit-note\post-export-customer-new', [
                                     'debit' => $debit,
                                     'company' => $company,
                                     'person' => $person,
@@ -351,14 +352,16 @@ class StatisticPaymentController extends Controller
                         $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
                         $todate = $request->todate != 'null' ? $request->todate : $today;
                         $filename = 'debit-note-date' . '(' . date('YmdHis') . ')';
-                        Excel::create($filename, function ($excel) use ($debit, $fromdate, $todate) {
-                            $excel->sheet('Debit Note', function ($sheet) use ($debit, $fromdate, $todate) {
-                                $sheet->loadView('print\payment\debit-note\post-export-date', [
+                        $debittype = ($request->debittype == 'undefined' || $request->debittype == 'null' || $request->debittype == null) ? 'all' : $request->debittype;
+                        Excel::create($filename, function ($excel) use ($debit, $fromdate, $todate, $debittype) {
+                            $excel->sheet('Debit Note', function ($sheet) use ($debit, $fromdate, $todate, $debittype) {
+                                $sheet->loadView('export\payment\debit-note\post-export-date', [
                                     'debit' => $debit,
                                     'fromdate' => $fromdate,
-                                    'todate' => $todate
+                                    'todate' => $todate,
+                                    'debittype' => $debittype,
                                 ]);
-                                $sheet->setOrientation('landscape')->setAutoSize(true);
+                                $sheet->setOrientation('landscape');
                             });
                         })->store('xlsx');
                         return response()->json([
@@ -472,7 +475,7 @@ class StatisticPaymentController extends Controller
             $filename = 'job-monthly' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
-                    $sheet->loadView('print\payment\job-monthly\post-export', [
+                    $sheet->loadView('export\payment\job-monthly\post-export', [
                         'data' => $data,
                         'title_vn' => $title_vn,
                         'fromdate' => $fromdate,
@@ -589,7 +592,7 @@ class StatisticPaymentController extends Controller
             $filename = 'payment-customers' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
-                    $sheet->loadView('print\payment\payment-customers\post-export', [
+                    $sheet->loadView('export\payment\payment-customers\post-export', [
                         'data' => $data,
                         'title_vn' => $title_vn,
                         'fromdate' => $fromdate,

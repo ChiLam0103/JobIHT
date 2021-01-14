@@ -153,38 +153,36 @@
                 {{ $total_amt_do = 0 }}
                 {{ $total_vat = 0 }}
             </span>
-            @if ($item->debit_d)
-                @foreach ($item->debit_d as $item_d)
-                    <tr>
-                        <td class="text-center">{{ $item_d['SER_NO'] }}</td>
-                        <td colspan="2">{{ $item_d['DESCRIPTION'] }}</td>
-                        <td>{{ $item_d['INV_NO'] }}</td>
-                        <td class="text-center">{{ $item_d['UNIT'] }}</td>
-                        <td class="text-center">{{ $item_d['QUANTITY'] }}</td>
-                        <td class="text-center">{{ trim($bank->BANK_NO) == 'ACB' ? $item_d['PRICE'] : $item_d['DOR_AMT'] }}
-                        </td>
-                        <td class="text-right">{{ $item_d['TAX_AMT'] }}</td>
-                        <td class="text-right">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? ($item_d['TAX_AMT'] + $item_d['PRICE'])*$item_d['QUANTITY'] : $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
-                        </td>
-                        <span style="display: none;">
-                            {{ $total_amt +=($item_d['TAX_AMT'] + $item_d['PRICE'])*$item_d['QUANTITY']}}
-                            {{ $total_vat += $item_d['TAX_AMT'] }}
-                            {{ $total_amt_do += $item_d['DOR_AMT'] * $item_d['QUANTITY'] }}
-                        </span>
-                    </tr>
-                @endforeach
-            @endif
+            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer_new', null, null, $item->JOB_NO, null) as $item_d)
+                <tr>
+                    <td class="text-center">{{ $item_d->SER_NO }}</td>
+                    <td colspan="2">{{ $item_d->DESCRIPTION }}</td>
+                    <td>{{ $item_d->INV_NO }}</td>
+                    <td class="text-center">{{ $item_d->UNIT }}</td>
+                    <td class="text-center">{{ $item_d->QUANTITY }}</td>
+                    <td class="text-center">{{ trim($bank->BANK_NO) == 'ACB' ? $item_d->PRICE : $item_d->DOR_AMT }}
+                    </td>
+                    <td class="text-right">{{ $item_d->TAX_AMT }}</td>
+                    <td class="text-right">
+                        {{ trim($bank->BANK_NO) == 'ACB' ? ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY : $item_d->DOR_AMT * $item_d->QUANTITY }}
+                    </td>
+                    <span style="display: none;">
+                        {{ $total_amt += ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY }}
+                        {{ $total_vat += $item_d->TAX_AMT }}
+                        {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
+                    </span>
+                </tr>
+            @endforeach
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <th>{{  trim($bank->BANK_NO) == 'ACB' ? $total_vat : '' }}</th>
-                <th> {{  trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}</th>
+                <th>{{ trim($bank->BANK_NO) == 'ACB' ? $total_vat : '' }}</th>
+                <th> {{ trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}</th>
             </tr>
         </table>
 
         <span style="display: none;">
             {{ $total_vat_tax += $total_vat }}
-            {{ $total_sum_amt +=  trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}
+            {{ $total_sum_amt += trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}
         </span>
     @endforeach
     <table class="table">
@@ -241,4 +239,5 @@
         </tr>
     </table>
 </body>
+
 </html>
