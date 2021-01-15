@@ -188,7 +188,7 @@
     <table class="table">
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
-            <th>{{ $bank->BANK_NO == 'ACB' ? $total_vat_tax : '' }}</th>
+            <th>{{ trim($bank->BANK_NO) == 'ACB' ? $total_vat_tax : '' }}</th>
             <th>
                 {{ $total_sum_amt }}
             </th>
