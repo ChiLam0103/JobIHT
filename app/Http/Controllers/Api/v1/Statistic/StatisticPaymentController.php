@@ -132,7 +132,6 @@ class StatisticPaymentController extends Controller
             );
         }
     }
-
     //2 print- phiếu yêu cầu thanh toán
     public function postDebitNote(Request $request)
     {
@@ -372,6 +371,40 @@ class StatisticPaymentController extends Controller
                         break;
                 }
                 break;
+        }
+    }
+    //4. báo biểu lợi nhuận
+    public function profit($type, $jobno, $custno, $fromdate, $todate)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
+        $data = StatisticPayment::profit($type, $jobno, $custno, $fromdate, $todate);
+        if ($data == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        if ($data) {
+            return view('print\payment\profit\index', [
+                'data' => $data,
+                'fromdate' => $fromdate,
+                'todate' => $todate,
+                'type' => $type,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng kiểm tra lại!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         }
     }
     //5. thống kê số job trong tháng

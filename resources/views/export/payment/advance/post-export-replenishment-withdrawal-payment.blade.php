@@ -35,22 +35,22 @@
                     <td>{{ $item->LENDER_TYPE == 'U' ? 'PTU' : ($item->LENDER_TYPE == 'C' ? 'CTT' : 'CTU') }}</td>
                     <td>{{ $item->CUST_NO }}</td>
                     <td>{{ $item->LEND_REASON }}</td>
-                    <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
-                    <td>{{ number_format($item->SUM_DIRECT) }}</td>
-                    <td>{{ number_format($item->SUM_JOB_ORDER) }}</td>
-                    <td>{{ number_format($item->SUM_REPLENISHMENT_WITHDRAWAL) }}</td>
+                    <td>{{ $item->SUM_LENDER_AMT }}</td>
+                    <td>{{ $item->SUM_DIRECT }}</td>
+                    <td>{{ $item->SUM_JOB_ORDER }}</td>
+                    <td>{{ $item->SUM_REPLENISHMENT_WITHDRAWAL }}</td>
                 </tr>
             @endforeach
             <tr>
                 <td colspan="7"></td>
-                <td>{{ number_format($lender->sum('SUM_LENDER_AMT')) }}</td>
-                <td>{{ number_format($lender->sum('SUM_DIRECT')) }}</td>
-                <td>{{ number_format($lender->sum('SUM_JOB_ORDER')) }}</td>
-                <td>{{ number_format($lender->sum('SUM_REPLENISHMENT_WITHDRAWAL')) }}</td>
+                <td>{{ $lender->sum('SUM_LENDER_AMT') }}</td>
+                <td>{{ $lender->sum('SUM_DIRECT') }}</td>
+                <td>{{ $lender->sum('SUM_JOB_ORDER') }}</td>
+                <td>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') }}</td>
             </tr>
             <tr>
                 <th colspan="10" style="text-align: right">Tổng Phiếu Trả và Bù/Chi</th>
-                <th>{{ number_format($lender->sum('SUM_REPLENISHMENT_WITHDRAWAL')) }}</th>
+                <th>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') }}</th>
             </tr>
         </tbody>
     </table>

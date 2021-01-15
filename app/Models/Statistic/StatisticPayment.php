@@ -212,6 +212,57 @@ class StatisticPayment extends Model
         $data = $query->select('dnd.*')->get();
         return $data;
     }
+    //4. báo biểu lợi nhuận
+    public static function profit($type, $jobno, $custno, $fromdate, $todate)
+    {
+        try {
+            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+                $data = 'error-date';
+                return $data;
+            }
+            $query = DB::table('DEBIT_NOTE_M as dm')
+                ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
+                ->where('dm.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate])
+                ->orderBy('dm.JOB_NO');
+            switch ($type) {
+                case 'all':
+
+                    break;
+                case 'jobno':
+                    break;
+                case 'customer':
+                    $query->where('dm.CUST_NO', $custno);
+                    break;
+            }
+            $data = $query->distinct()
+                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')
+                ->get();
+
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    public static function profitDebitNoteD($jobno)
+    {
+        $data = DB::table('DEBIT_NOTE_D as dnd')
+            ->where('dnd.JOB_NO', $jobno)
+            ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
+            ->where('dnd.BRANCH_ID', 'IHTVN1')
+            ->get();
+        return $data;
+    }
+    public static function profitJobOrderD($jobno)
+    {
+        $data = DB::table('JOB_ORDER_D as jd')
+            ->where('jd.JOB_NO', $jobno)
+            ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
+            ->where('jd.BRANCH_ID', 'IHTVN1')
+            ->get();
+        return $data;
+    }
     //5. thống kê số job trong tháng
     public static function jobMonthly($type, $custno, $fromdate, $todate)
     {
@@ -281,7 +332,7 @@ class StatisticPayment extends Model
             foreach ($data as $item) {
                 $query_d = DB::table('DEBIT_NOTE_D as dd')
                     ->where('dd.JOB_NO', $item->JOB_NO)
-                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END))as TOTAL_AMT")->first();
+                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END)) as TOTAL_AMT")->first();
                 // dd($query_d->TOTAL_AMT);
                 $item->TOTAL_AMT = $query_d->TOTAL_AMT;
             }
@@ -333,10 +384,10 @@ class StatisticPayment extends Model
                     break;
                 case  'paid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
-                    ->where('jd.ORDER_TYPE', 'C')
-                    ->where('jd.THANH_TOAN_MK', 'Y')
-                    ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
-                break;
+                        ->where('jd.ORDER_TYPE', 'C')
+                        ->where('jd.THANH_TOAN_MK', 'Y')
+                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
+                    break;
                 default:
                     break;
             }

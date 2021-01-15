@@ -243,7 +243,7 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('/', 'StatisticPaymentController@postDebitNote');
                 });
                 //4. báo biểu lợi nhuận(chưa làm)
-                Route::post('profit/type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@profit');
+                Route::get('profit/type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@profit');
                 //5. thống kê số job trong tháng
                 Route::get('job-monthly/type={type}&custno={custno}&fromdate={fromdate}&todate={todate}', 'StatisticPaymentController@jobMonthly');
                 //6. thong ke thanh toan cua khach hang
