@@ -216,7 +216,9 @@ class StatisticPayment extends Model
     public static function profit($type, $jobno, $custno, $fromdate, $todate)
     {
         try {
-            if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
+            $check_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
+            $check_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
+            if ($check_date == 0) {
                 $data = 'error-date';
                 return $data;
             }
@@ -224,8 +226,18 @@ class StatisticPayment extends Model
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate])
-                ->orderBy('dm.JOB_NO');
+                ->orderBy('dm.JOB_NO')
+                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
+            $query_2 = DB::table('DEBIT_NOTE_M as dm')
+                ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
+                ->where('dm.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->orderBy('dm.JOB_NO')
+                ->select('dm.JOB_NO');
+            if ($check_date == 1) {
+                $query->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
+                $query_2->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
+            }
             switch ($type) {
                 case 'all':
 
@@ -233,27 +245,27 @@ class StatisticPayment extends Model
                 case 'jobno':
                     break;
                 case 'customer':
-                    $query->where('dm.CUST_NO', $custno);
+                    if ($check_custno == 1) {
+                        $query->where('dm.CUST_NO', $custno);
+                        $query_2->where('dm.CUST_NO', $custno);
+                    }
                     break;
             }
-            $data = $query->distinct()
-                ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')
-                ->get();
-
-            return $data;
+            $thanh_toan = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
+                ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
+                ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
+            $chi_phi = $query_2->leftJoin('JOB_ORDER_D as jd', 'jd.JOB_NO', 'dm.JOB_NO')
+                ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
+                ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
+                ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
+                ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
+                ->groupBy('dm.JOB_NO')->get();
+            return ['thanh_toan' => $thanh_toan, 'chi_phi' => $chi_phi];
         } catch (\Exception $e) {
             return $e;
         }
     }
-    public static function profitDebitNoteD($jobno)
-    {
-        $data = DB::table('DEBIT_NOTE_D as dnd')
-            ->where('dnd.JOB_NO', $jobno)
-            ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
-            ->where('dnd.BRANCH_ID', 'IHTVN1')
-            ->get();
-        return $data;
-    }
+
     public static function profitJobOrderD($jobno)
     {
         $data = DB::table('JOB_ORDER_D as jd')
