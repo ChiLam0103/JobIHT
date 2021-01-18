@@ -234,9 +234,9 @@
                     <th>Ngày/Date</th>
                     <th>Ghi chú/Note</th>
                 </tr>
-                @foreach ($advance_d as $item_d)
+                @foreach ($advance_d as $key => $item_d )
                     <tr>
-                        <td>{{ $item_d->SER_NO }}</td>
+                        <td>0{{  $key + 1 }}</td>
                         <td>{{ number_format($item_d->LENDER_AMT, 0, ',', '.') }}</td>
                         <td>{{ $item_d->INPUT_USER }}</td>
                         <td>{{ date('Y/m/d', strtotime($advance->LENDER_DATE)) }}</td>
