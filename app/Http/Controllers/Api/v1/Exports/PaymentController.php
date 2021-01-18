@@ -190,7 +190,52 @@ class PaymentController extends Controller
                 break;
         }
     }
+    //4. báo biểu lợi nhuận
+    public function profit(Request $request)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
+        $todate = $request->todate != 'null' ? $request->todate : $today;
+        $data = StatisticPayment::profit($request->type, $request->jobno, $request->custno, $fromdate, $todate);
 
+        if ($data == 'error-date') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng chọn lại ngày!',
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        if ($data) {
+            $filename = 'profit' . '(' . date('YmdHis') . ')';
+            $thanh_toan = $data['thanh_toan'];
+            $chi_phi = $data['chi_phi'];
+            Excel::create($filename, function ($excel) use ($thanh_toan, $chi_phi, $fromdate, $todate) {
+                $excel->sheet('Debit Note', function ($sheet) use ($thanh_toan, $chi_phi, $fromdate, $todate) {
+                    $sheet->loadView('export\payment\profit\index', [
+                        'thanh_toan' => $thanh_toan,
+                        'chi_phi' => $chi_phi,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Vui lòng kiểm tra lại!'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //5.1 xuất excel thống kê số job trong tháng
     public function postExportJobMonthly(Request $request)
     {

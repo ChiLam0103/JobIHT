@@ -222,7 +222,6 @@ class PaymentController extends Controller
                 'chi_phi' => $data['chi_phi'],
                 'fromdate' => $fromdate,
                 'todate' => $todate,
-                'type' => $type,
             ]);
         } else {
             return response()->json(
