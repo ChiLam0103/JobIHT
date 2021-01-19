@@ -242,6 +242,8 @@ Route::namespace('Api\v1')->group(function () {
                     Route::post('/', 'PaymentController@postDebitNote');
                     Route::get('/', 'PaymentController@postDebitNote');
                 });
+                //3. báo cáo thu chi mỗi tháng
+                Route::get('revenue-expenditure-each-month/type={type}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'PaymentController@revenueExpenditureEachMonth');
                 //4. báo biểu lợi nhuận
                 Route::get('profit/type={type}&jobno={jobno}&custno={custno}&fromdate={fromdate}&todate={todate}', 'PaymentController@profit');
                 //5. thống kê số job trong tháng
