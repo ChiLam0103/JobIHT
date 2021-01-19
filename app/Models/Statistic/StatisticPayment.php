@@ -222,45 +222,72 @@ class StatisticPayment extends Model
                 $data = 'error-date';
                 return $data;
             }
+            // $query = DB::table('DEBIT_NOTE_M as dm')
+            //     ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
+            //     ->where('dm.BRANCH_ID', 'IHTVN1')
+            //     ->where('c.BRANCH_ID', 'IHTVN1')
+            //     ->orderBy('dm.JOB_NO')
+            //     ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
+            // $query_2 = DB::table('DEBIT_NOTE_M as dm')
+            //     ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
+            //     ->where('dm.BRANCH_ID', 'IHTVN1')
+            //     ->where('c.BRANCH_ID', 'IHTVN1')
+            //     ->orderBy('dm.JOB_NO')
+            //     ->select('dm.JOB_NO');
+            // if ($check_date == 1) {
+            //     $query->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
+            //     $query_2->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
+            // }
+            // switch ($type) {
+            //     case 'all':
+
+            //         break;
+            //     case 'jobno':
+            //         break;
+            //     case 'customer':
+            //         if ($check_custno == 1) {
+            //             $query->where('dm.CUST_NO', $custno);
+            //             $query_2->where('dm.CUST_NO', $custno);
+            //         }
+            //         break;
+            // }
+            // $thanh_toan = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
+            //     ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
+            //     ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
+            // $chi_phi = $query_2->leftJoin('JOB_ORDER_D as jd', 'jd.JOB_NO', 'dm.JOB_NO')
+            //     ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
+            //     ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
+            //     ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
+            //     ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
+            //     ->groupBy('dm.JOB_NO')->get();
+
+            // return ['thanh_toan' => $thanh_toan, 'chi_phi' => $chi_phi];
             $query = DB::table('DEBIT_NOTE_M as dm')
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->orderBy('dm.JOB_NO')
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
-            $query_2 = DB::table('DEBIT_NOTE_M as dm')
-                ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
-                ->where('dm.BRANCH_ID', 'IHTVN1')
-                ->where('c.BRANCH_ID', 'IHTVN1')
-                ->orderBy('dm.JOB_NO')
-                ->select('dm.JOB_NO');
             if ($check_date == 1) {
                 $query->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
-                $query_2->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
             }
             switch ($type) {
                 case 'all':
 
                     break;
                 case 'jobno':
+                    $query->where('dm.JOB_NO', $jobno);
                     break;
                 case 'customer':
                     if ($check_custno == 1) {
                         $query->where('dm.CUST_NO', $custno);
-                        $query_2->where('dm.CUST_NO', $custno);
                     }
                     break;
             }
-            $thanh_toan = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
+            $data = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
                 ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
                 ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
-            $chi_phi = $query_2->leftJoin('JOB_ORDER_D as jd', 'jd.JOB_NO', 'dm.JOB_NO')
-                ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
-                ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
-                ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
-                ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
-                ->groupBy('dm.JOB_NO')->get();
-            return ['thanh_toan' => $thanh_toan, 'chi_phi' => $chi_phi];
+            return $data;
         } catch (\Exception $e) {
             return $e;
         }
@@ -271,6 +298,9 @@ class StatisticPayment extends Model
         $data = DB::table('JOB_ORDER_D as jd')
             ->where('jd.JOB_NO', $jobno)
             ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
+            ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
+            ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
+            ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
             ->where('jd.BRANCH_ID', 'IHTVN1')
             ->get();
         return $data;

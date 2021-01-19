@@ -141,7 +141,6 @@ class StatisticFile extends Model
         try {
             //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
             //CUST_TYPE: 1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
-
             $query = DB::table('JOB_ORDER_M as jom')
                 ->join('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
                 ->join('JOB_START as js', 'jom.JOB_NO', 'js.JOB_NO')
@@ -153,27 +152,29 @@ class StatisticFile extends Model
                         ->orWhere('jod.THANH_TOAN_MK', null);
                 })
                 ->select('c.CUST_NO', 'c.CUST_NAME', 'jom.BILL_NO', 'jod.*');
-
-            if ($type == '1' || $type = "carriers") { //hang tau
-                $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
+            switch (true) {
+                case ($type == '1') || ($type == "carriers"):
+                    $query->join('CUSTOMER as c', 'jom.CUST_NO2', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '5')
                     ->where('c.CUST_TYPE', 2);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO2', $custno);
-            } elseif ($type == '2' || $type = "customer") { //khach hang
-                $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+                    break;
+                case ($type == '2') || ($type == "customer"):
+                    $query->join('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                     ->where('jod.ORDER_TYPE', '6')
                     ->where('c.CUST_TYPE', 1);
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO', $custno);
-            } elseif ($type == '3' || $type = "agent") { //dai ly
-                $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
+                    break;
+                case $type == '3' || $type == "agent":
+                    $query->leftJoin('CUSTOMER as c', 'jom.CUST_NO3', 'c.CUST_NO')
                     ->leftJoin('CUSTOMER as c2', 'jom.CUST_NO', 'c2.CUST_NO')
                     ->where('jod.ORDER_TYPE', '7')
                     ->where('c.CUST_TYPE', 3)
                     ->where('c2.BRANCH_ID', 'IHTVN1')
                     ->selectRaw('c2.CUST_NO as CUST_NO2 , c2.CUST_NAME as CUST_NAME2');
                 ($custno == 'undefined' || $custno == 'null' || $custno == null) ? null : $query->where('jom.CUST_NO3', $custno);
+                    break;
             }
-
             //job_no
             ($jobno == 'undefined' || $jobno == 'null' || $jobno == null) ? null : $query->where('jom.JOB_NO', $jobno);
 

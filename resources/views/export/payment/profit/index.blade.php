@@ -30,13 +30,16 @@
                 <td>{{ $item->CUST_NO }}</td>
                 <td>{{ $item->CUST_NAME }}</td>
                 <td> {{ number_format($item->TIEN_THANH_TOAN, 0, ',', '.') }} </td>
+                <span
+                    style="display: none">{{ $chi_phi = \App\Models\Statistic\StatisticPayment::profitJobOrderD($item->JOB_NO) }}</span>
                 @foreach ($chi_phi as $item_2)
-                    @if ($item->JOB_NO == $item_2->JOB_NO)
+                    {{-- @if ($item->JOB_NO == $item_2->JOB_NO) --}}
                         <td> {{ number_format($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT, 0, ',', '.') }}
                         </td>
                         <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT), 0, ',', '.') }}
                         </td>
-                    @endif
+                        {{--
+                    @endif --}}
                 @endforeach
                 </td>
             </tr>

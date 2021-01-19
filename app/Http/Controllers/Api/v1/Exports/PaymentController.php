@@ -210,13 +210,13 @@ class PaymentController extends Controller
         }
         if ($data) {
             $filename = 'profit' . '(' . date('YmdHis') . ')';
-            $thanh_toan = $data['thanh_toan'];
-            $chi_phi = $data['chi_phi'];
-            Excel::create($filename, function ($excel) use ($thanh_toan, $chi_phi, $fromdate, $todate) {
-                $excel->sheet('Debit Note', function ($sheet) use ($thanh_toan, $chi_phi, $fromdate, $todate) {
+            // $thanh_toan = $data['thanh_toan'];
+            // $chi_phi = $data['chi_phi'];
+            Excel::create($filename, function ($excel) use ($data, $fromdate, $todate) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data, $fromdate, $todate) {
                     $sheet->loadView('export\payment\profit\index', [
-                        'thanh_toan' => $thanh_toan,
-                        'chi_phi' => $chi_phi,
+                        'thanh_toan' => $data,
+                        // 'chi_phi' => $chi_phi,
                         'fromdate' => $fromdate,
                         'todate' => $todate,
                     ]);

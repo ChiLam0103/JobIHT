@@ -218,8 +218,9 @@ class PaymentController extends Controller
         }
         if ($data) {
             return view('print\payment\profit\index', [
-                'thanh_toan' => $data['thanh_toan'],
-                'chi_phi' => $data['chi_phi'],
+                // 'thanh_toan' => $data['thanh_toan'],
+                // 'chi_phi' => $data['chi_phi'],
+                'thanh_toan' => $data,
                 'fromdate' => $fromdate,
                 'todate' => $todate,
             ]);
