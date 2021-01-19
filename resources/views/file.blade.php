@@ -22,9 +22,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <!--1. in phếu theo dõi -->
-                        <div class="card card-default">
-                            <form method="get" action="{{ route('statistics.print.file.job-start') }}">
-                                @csrf
+                        <div class="card card-default" id="job-start">
                             <div class="card-header">
                                 <h3 class="card-title">1. In Phiếu Theo Dõi</h3>
                                 <div class="card-tools">
@@ -42,7 +40,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>From:</label>
-                                            <select class="form-control select2" style="width: 100%;">
+                                            <select class="form-control select2" style="width: 100%;" name="fromjob">
                                                 @foreach ($list_job_start as $item)
                                                     <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
                                                         {{ $item->CUST_NAME }}</option>
@@ -53,7 +51,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>To: </label>
-                                            <select class="form-control select2" style="width: 100%;">
+                                            <select class="form-control select2" style="width: 100%;" name="tojob">
                                                 @foreach ($list_job_start as $item)
                                                     <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
                                                         {{ $item->CUST_NAME }}</option>
@@ -66,12 +64,11 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
-                                <button type="button" class="btn btn-primary "><i class="fa fa-print"
+                                <button type="submit" class="btn btn-primary btnPrint"><i class="fa fa-print"
                                         aria-hidden="true"></i> In</button>
                                 <button type="button" class="btn btn-success "><i class="fa fa-file-excel"
                                         aria-hidden="true"></i> Excel</button>
                             </div>
-                        </form>
                         </div>
                         <!-- /.in phếu theo dõi -->
 

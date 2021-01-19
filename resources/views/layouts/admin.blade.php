@@ -89,6 +89,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="public/admin/plugins/select2/js/select2.full.min.js"></script>
     <!-- Bootstrap4 Duallistbox -->
     <script src="public/admin/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+    <!-- admin-->
+    <script src="public/admin/dist/js/script.js"></script>
     <script>
         //Initialize Select2 Elements
         $('.select2').select2()
@@ -100,11 +102,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         //Bootstrap Duallistbox
         $('.duallistbox').bootstrapDualListbox();
-
-        function btnPrint() {
-            var selVal = $('[name=duallistbox_demo1]').val();
-            console.log('#duallistbox', selVal);
-        }
 
     </script>
 </body>

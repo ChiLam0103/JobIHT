@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Statistics\Prints;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
-
+use Illuminate\Http\Request;
 use App\Models\Statistic\StatisticFile;
 use App\Models\PayType;
 use App\Models\Company;
@@ -31,6 +31,10 @@ class FileController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+    }
+    public function jobStart2(Request $request)
+    {
+       return 1;
     }
     //2 in job order
     public function jobOrder($jobno)
