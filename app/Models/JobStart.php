@@ -57,7 +57,7 @@ class JobStart extends Model
             $query = JobStart::query();
             $data =  $query
                 ->take($take)
-                ->select('c.CUST_NAME', 'js.*')
+                ->select('c.CUST_NAME', 'js.JOB_NO')
                 ->get();
             return $data;
         } catch (\Exception $ex) {

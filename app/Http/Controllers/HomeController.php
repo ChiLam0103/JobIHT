@@ -30,7 +30,10 @@ class HomeController extends Controller
     {
         return view('home');
     }
-
+    public function file()
+    {
+        return view('file');
+    }
     public function exportDebt( ExcelService $excelService)
     {
         $listResult=JobStart::list();
