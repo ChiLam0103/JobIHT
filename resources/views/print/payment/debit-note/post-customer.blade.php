@@ -320,11 +320,11 @@
                     <th>Descriptions</th>
                     <th>Invoice No</th>
                     <th>Unit</th>
-                    <th>Currency</th>
+                    {{-- <th>Currency</th> --}}
                     <th>Qty</th>
                     <th>Price</th>
-                    <th style="width:4em">VAT Tax</th>
-                    <th style="width:4em">Total Amt</th>
+                    <th style="width:5em">VAT Tax</th>
+                    <th style="width:5em">Total Amt</th>
                 </tr>
                 <span style="display: none;">
                     {{ $total_amt = 0 }}
@@ -337,7 +337,7 @@
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
-                        <td class="text-center">{{ $item_d->DOR_NO }}</td>
+                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
                         <td class="text-center">{{ number_format($item_d->QUANTITY, 0, ',', '.') }}</td>
                         <td class="text-right">
                             {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 0, ',', '.') }}
@@ -355,7 +355,7 @@
                     </tr>
                 @endforeach
                 <tr class="text-right font-weight-bold">
-                    <td colspan="7">JOB AMT</td>
+                    <td colspan="6">JOB AMT</td>
                     <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
                     <td> {{ number_format($curency == 'VND' ? $total_amt : $total_amt_do, 0, ',', '.') }}</td>
                 </tr>
@@ -370,8 +370,8 @@
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
-                <td style="width:5em">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
-                <td style="width:4.9em">
+                <td style="width:6.2em">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
+                <td style="width:6.2em">
                     {{ number_format($total_sum_amt, 0, ',', '.') }}
                 </td>
             </tr>
