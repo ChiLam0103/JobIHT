@@ -50,13 +50,9 @@ $("#job-order .btnPrint").click(function () {
             break;
         case "date-tab":
             var date = $("#job-order #content-date-tab  [name='date']").val();
-            console.log(date)
-            var fromdate = date.slice(0, 10);
-            var todate = date.slice(13, 23);
-            var dt_to1 = start.format('YYYYMMDDDD');
-            // var dt_to = $.datepicker.formatDate('yy-mm-dd', new Date());
-            console.log('dt_to1' + dt_to1);
-            console.log('dt_to' + dt_to);
+            var fromdate = formartDate(date.slice(0, 10));
+            var todate = formartDate(date.slice(13, 23));
+            var url = "api/v1/print/file/job-order/fromdate=" + fromdate + "&todate=" + todate;
             break;
     }
 
@@ -69,10 +65,17 @@ $("#job-order .btnPrint").click(function () {
         success: function (result) {
             // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
             window.open(url);
-            // console.log(result);
+            console.log(result);
         }
     });
 });
+function formartDate(date) {
+    var day = date.substr(0, 2);
+    var month = date.substr(3, 2);
+    var year = date.substr(6, 4);
+    date = year + month + day;
+    return date;
+}
 function btnPrint() {
     var selVal = $('[name=duallistbox_demo1]').val();
     console.log('#duallistbox', selVal);
