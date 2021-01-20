@@ -230,7 +230,7 @@
                 <table style="width:100%">
                     <tr>
                         <td>Date:</td>
-                        <td>{{ date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
+                        <td>{{$debit->DEBIT_DATE == null ? '' : date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
                     </tr>
                     <tr>
                         <td>Debit Note No:</td>
@@ -290,7 +290,7 @@
                     </tr>
                     <tr>
                         <td>Custom date:</td>
-                        <td>{{ date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
+                        <td>{{$debit->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
                     </tr>
                     <tr>
                         <td>GW:</td>

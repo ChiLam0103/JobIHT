@@ -18,10 +18,17 @@ class FileController extends Controller
         $job = StatisticFile::jobStart($fromjob, $tojob);
         $company = Company::des('IHT');
         if ($job) {
-            return view('print\file\job-start\job', [
-                'job' => $job,
-                'company' => $company
-            ]);
+            // return view('print\file\job-start\job', [
+            //     'job' => $job,
+            //     'company' => $company
+            // ]);
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'ok'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         } else {
             return response()->json(
                 [

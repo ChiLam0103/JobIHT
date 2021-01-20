@@ -25,8 +25,14 @@ Route::namespace('Statistics')->group(function () {
         //1. báo biểu hồ sơ
         Route::group(['prefix' => 'file'], function () {
             // 1.in phieu theo doi
-            Route::get('job-start?fromjob={fromjob}&tojob={tojob}', 'FileController@jobStart');
-            Route::get('job-start', 'FileController@jobStart2');
+            // Route::get('job-start?fromjob={fromjob}&tojob={tojob}', 'FileController@jobStart');
+            Route::get('job-start?fromjob={fromjob}&tojob={tojob}', function () {
+                return 'Hello World';
+            });
+            Route::get('job-start', function () {
+                return 'Hello World123123';
+            });
+            // Route::get('job-start', 'FileController@jobStart2');
             //2.in job order
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('jobno={jobno}', 'FileController@jobOrder');

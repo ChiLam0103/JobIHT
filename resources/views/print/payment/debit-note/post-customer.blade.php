@@ -292,7 +292,8 @@
                         </tr>
                         <tr>
                             <td>Custom date:</td>
-                            <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
+                            <td>{{ $item->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}
+                            </td>
                         </tr>
                         <tr>
                             <td>GW:</td>
@@ -322,8 +323,8 @@
                     <th>Currency</th>
                     <th>Qty</th>
                     <th>Price</th>
-                    <th>VAT Tax</th>
-                    <th>Total Amt</th>
+                    <th style="width:4em">VAT Tax</th>
+                    <th style="width:4em">Total Amt</th>
                 </tr>
                 <span style="display: none;">
                     {{ $total_amt = 0 }}
@@ -362,15 +363,15 @@
 
             <span style="display: none;">
                 {{ $total_vat_tax += $total_vat }}
-                {{ $total_sum_amt +=$curency == 'VND' ? $total_amt : $total_amt_do }}
+                {{ $total_sum_amt += $curency == 'VND' ? $total_amt : $total_amt_do }}
             </span>
         @endforeach
 
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
-                <td >TOTAL AMT</td>
-                <td  width="11%">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
-                <td  width="12%">
+                <td>TOTAL AMT</td>
+                <td style="width:5em">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
+                <td style="width:4.9em">
                     {{ number_format($total_sum_amt, 0, ',', '.') }}
                 </td>
             </tr>

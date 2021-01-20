@@ -4,8 +4,8 @@
 <body>
     <table>
         <th>Phiếu yêu cầu thanh toán (payment report)</th>
-        <th> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
-            {{ date('d/m/Y', strtotime($todate)) }}
+        <th> TỪ NGÀY: {{ $fromdate == null ? '' : date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ $todate == null ? '' : date('d/m/Y', strtotime($todate)) }}
         </th>
     </table>
     <table>

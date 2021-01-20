@@ -91,7 +91,7 @@
             <th colspan="2">Customs No:</th>
             <td colspan="3">{{ $debit->CUSTOMS_NO }}</td>
             <th>Custom Date:</th>
-            <td colspan="3">{{ date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
+            <td colspan="3">{{$debit->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
         </tr>
         <tr>
             <th colspan="2">NW:</th>

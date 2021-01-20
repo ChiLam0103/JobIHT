@@ -178,8 +178,8 @@
     <div id="page" class="page">
         <button type="button" id="lnkPrint" onclick="myFunction()">Click the button to print the current page</button>
         <p class="title">Phiếu yêu cầu thanh toán (payment report)</p>
-        <div class="title-sub"> TỪ NGÀY: {{ date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
-            {{ date('d/m/Y', strtotime($todate)) }}
+        <div class="title-sub"> TỪ NGÀY: {{ $fromdate == null ? '' : date('d/m/Y', strtotime($fromdate)) }} - ĐẾN NGÀY:
+            {{ $todate == null ? '' : date('d/m/Y', strtotime($todate)) }}
         </div>
         <table>
             <tr>
@@ -208,7 +208,7 @@
                 </tr>
                 @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('debit_date', $fromdate, $todate, $item->JOB_NO, $debittype) as $item_d)
                     <tr>
-                        {{-- {{dd($item_d)}} --}}
+                        {{-- {{ dd($item_d) }} --}}
                         <td colspan="3"></td>
                         <td>{{ $item_d->DEB_TYPE }} </td>
                         <td>{{ $item_d->SER_NO }} </td>
