@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Services\ExcelService;
-use App\Models\Users;
-use App\User;
-
 use App\Models\JobStart;
+use App\Models\JobM;
+use App\Models\Customer;
+
 class HomeController extends Controller
 {
     /**
@@ -32,16 +31,14 @@ class HomeController extends Controller
     }
     public function file()
     {
-        return view('file');
+        $list_job_start = JobStart::listTake(10000);
+        $list_job_order = JobM::listTake(10000);
+        $list_customer = Customer::listTake(1, 5000);
+        // dd($list_customer);
+        return view('file', [
+            'list_job_start' => $list_job_start,
+            'list_job_order' => $list_job_order,
+            'list_customer' => $list_customer,
+        ]);
     }
-    public function exportDebt( ExcelService $excelService)
-    {
-        $listResult=JobStart::list();
-        return $excelService->exportDebt($listResult);
-    }
-    public function replenishmentWithdrawalPayment()
-    {
-        return view('print\payment\advance\replenishmentWithdrawalPayment');
-    }
-
 }

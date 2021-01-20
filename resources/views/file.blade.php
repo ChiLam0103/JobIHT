@@ -34,8 +34,6 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <span style="display: none">{{ $list_job_start = \App\Models\JobStart::listTake(5000) }}
-                                </span>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -43,7 +41,8 @@
                                             <select class="form-control select2" style="width: 100%;" name="fromjob">
                                                 @foreach ($list_job_start as $item)
                                                     <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
-                                                        {{ $item->CUST_NAME }}</option>
+                                                        {{ $item->CUST_NAME }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -54,11 +53,116 @@
                                             <select class="form-control select2" style="width: 100%;" name="tojob">
                                                 @foreach ($list_job_start as $item)
                                                     <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
-                                                        {{ $item->CUST_NAME }}</option>
+                                                        {{ $item->CUST_NAME }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary btnPrint"><i class="fa fa-print"
+                                        aria-hidden="true"></i> In</button>
+                            </div>
+                        </div>
+                        <!-- /.in phếu theo dõi -->
+
+                        <!--2. in job order -->
+                        <div class="card card-default" id="job-order">
+                            <div class="card-header">
+                                <h3 class="card-title">2. In Job Order</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                            class="fas fa-minus"></i></button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                            class="fas fa-remove"></i></button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" id="job-order-custom-content-below-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="job-tab" data-toggle="pill"
+                                            href="#content-job-tab" role="tab"
+                                            aria-controls="content-job-tab" aria-selected="true">Job Order</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="customer-tab" data-toggle="pill"
+                                            href="#content-customer-tab" role="tab"
+                                            aria-controls="content-customer-tab" aria-selected="false">Khách
+                                            Hàng</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="date-tab" data-toggle="pill"
+                                            href="#content-date-tab" role="tab"
+                                            aria-controls="content-date-tab" aria-selected="false">Ngày Job</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="job-order-custom-content-below-tabContent">
+                                    <div class="tab-pane fade show active" id="content-job-tab" role="tabpanel"
+                                        aria-labelledby="job-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Chọn Job Order: </label>
+                                                    <select class="form-control select2" style="width: 100%;" name="jobno">
+                                                        @foreach ($list_job_order as $item)
+                                                            <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
+                                                                {{ $item->CUST_NAME }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="content-customer-tab" role="tabpanel"
+                                        aria-labelledby="customer-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Mã Khách Hàng: </label>
+                                                    <select class="form-control select2" style="width: 100%;" name="custno">
+                                                        @foreach ($list_customer as $item)
+                                                            <option value="{{ $item->CUST_NO }}">{{ $item->CUST_NO }} -
+                                                                {{ $item->CUST_NAME }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Chọn Job Order: </label>
+                                                    <select class="form-control select2" style="width: 100%;" name="jobno">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="content-date-tab" role="tabpanel"
+                                        aria-labelledby="date-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Chọn ngày: </label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar-alt"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control float-right" name="date"
+                                                            id="reservation">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <!-- /.row -->
                             </div>
@@ -71,7 +175,6 @@
                             </div>
                         </div>
                         <!-- /.in phếu theo dõi -->
-
                         <div class="card card-default">
                             <div class="card-header">
                                 <h3 class="card-title">Bootstrap Duallistbox</h3>

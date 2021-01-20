@@ -4,6 +4,7 @@
         padding: 0;
         background-color: #FAFAFA;
         font: 10pt "Tohoma";
+        margin: 15mm 15mm 15mm 15mm;
     }
 
     * {
@@ -30,7 +31,7 @@
 
     @media print {
         @page {
-            margin: 0;
+            /* margin: 0; */
             border: initial;
             border-radius: initial;
             width: initial;
@@ -38,7 +39,7 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
-            margin: 15mm 0mm 15mm 0mm;
+            margin: 15mm 15mm 15mm 15mm;
         }
     }
 

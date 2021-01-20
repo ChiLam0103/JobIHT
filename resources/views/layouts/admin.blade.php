@@ -25,8 +25,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="public/admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- Bootstrap4 Duallistbox -->
     <link rel="stylesheet" href="public/admin/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
-      <!-- Theme style -->
-  <link rel="stylesheet" href="public/admin/dist/css/adminlte.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="public/admin/dist/css/adminlte.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="public/admin/plugins/daterangepicker/daterangepicker.css">
 </head>
 
 <body class="hold-transition layout-top-nav">
@@ -83,12 +85,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="public/admin/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="public/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- date-range-picker -->
+    <script src="public/admin/plugins/moment/moment.min.js"></script>
+    <script src="public/admin/plugins/daterangepicker/daterangepicker.js"></script>
     <!-- AdminLTE App -->
     <script src="public/admin/dist/js/adminlte.min.js"></script>
     <!-- Select2 -->
     <script src="public/admin/plugins/select2/js/select2.full.min.js"></script>
     <!-- Bootstrap4 Duallistbox -->
     <script src="public/admin/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+
     <!-- admin-->
     <script src="public/admin/dist/js/script.js"></script>
     <script>
@@ -102,6 +108,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         //Bootstrap Duallistbox
         $('.duallistbox').bootstrapDualListbox();
+
+
+        //Date range picker
+        $('#reservation').daterangepicker()
 
     </script>
 </body>

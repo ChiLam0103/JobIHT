@@ -11,7 +11,7 @@ class Customer extends Model
     public static function query()
     {
         $query = DB::table('CUSTOMER as c')
-            ->join('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
+            ->leftJoin('CKICO_BRANCH as b', 'c.BRANCH_ID', '=', 'b.BRANCH_ID')
             ->where('c.BRANCH_ID', 'IHTVN1');
         return $query;
     }
@@ -39,6 +39,30 @@ class Customer extends Model
         $data =  $query->take($take)->select('c.*', 'b.BRANCH_NAME')->where('c.CUST_TYPE', $type)->get();
 
         return ['list' => $data, 'type_name' => $type_name];
+    }
+    public static function listTake($type, $take)
+    {
+        $type_name = "";
+        switch ($type) {
+            case 1:
+                $type_name = "Khách hàng";
+                break;
+            case 2:
+                $type_name = "Hãng tàu";
+                break;
+            case 3:
+                $type_name = "Đại lý";
+                break;
+            case 4:
+                $type_name = "Nhà xe";
+                break;
+            default:
+                break;
+        }
+        $query =  Customer::query();
+        $data =  $query->take($take)->select('c.CUST_NO','c.CUST_NAME')->where('c.CUST_TYPE', $type)->get();
+
+        return $data;
     }
     public static function listPage($type, $page)
     {
@@ -92,10 +116,10 @@ class Customer extends Model
         $take = 10;
         $skip = ($page - 1) * $take;
         $query =  Customer::query();
-        if ($type== 1 || $type =='no') {
-                $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
-        }elseif ($type== 2 || $type =='name')   {
-                $query->where('c.CUST_NAME', 'LIKE', '%' .trim($value) . '%');
+        if ($type == 1 || $type == 'no') {
+            $query->where('c.CUST_NO', 'LIKE', '%' . $value . '%');
+        } elseif ($type == 2 || $type == 'name') {
+            $query->where('c.CUST_NAME', 'LIKE', '%' . trim($value) . '%');
         }
         $count = $query->where('c.CUST_TYPE', $cust_type)->count();
         $data =  $query->skip($skip)->take($take)->select('c.*', 'b.BRANCH_NAME')->where('c.CUST_TYPE', $cust_type)->get();
@@ -224,7 +248,7 @@ class Customer extends Model
     public static function postCustomer($custno)
     {
         $query =  Customer::query();
-        $data = $query->whereIn('c.CUST_NO',$custno)->select('c.CUST_NO','c.CUST_NAME','c.CUST_BOSS','c.CUST_ADDRESS','c.CUST_TEL1','c.CUST_FAX')->first();
+        $data = $query->whereIn('c.CUST_NO', $custno)->select('c.CUST_NO', 'c.CUST_NAME', 'c.CUST_BOSS', 'c.CUST_ADDRESS', 'c.CUST_TEL1', 'c.CUST_FAX')->first();
         return $data;
     }
 }
