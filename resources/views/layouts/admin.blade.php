@@ -105,11 +105,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
-
         //Bootstrap Duallistbox
         $('.duallistbox').bootstrapDualListbox();
-
-
         //Date range picker
         $('#reservation').daterangepicker()
 

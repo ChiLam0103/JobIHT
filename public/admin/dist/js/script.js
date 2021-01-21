@@ -31,6 +31,7 @@ $("#job-order #content-customer-tab  [name='custno']").on('change', function () 
             $.each(result.job_m, function (key, value) {
                 $("#job-order #content-customer-tab  [name='jobno_helper1']").append('<option value=' + key + '>' + value.JOB_NO + '</option>');
             });
+            $("#duallistbox2").bootstrapDualListbox('refresh', true);
         }
     });
 });

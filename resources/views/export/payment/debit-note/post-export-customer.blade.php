@@ -39,12 +39,28 @@
                     <td>{{ $item->CUSTOMS_NO }}</td>
                     <td>{{ $item->CUSTOMS_DATE }}</td>
                     <td>{{ $item->GW }}</td>
-                    <td colspan="8"></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+
                 </tr>
                 <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}}</span>
                     @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
                     <tr>
-                    <td colspan="9"> </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
+                    <td > </td>
                             <td>{{ $item_d->SER_NO}}</td>
                             <td>{{ $item_d->INV_NO}}</td>
                             <td>{{ $item_d->DESCRIPTION}}</td>
@@ -57,26 +73,49 @@
                     </tr>
                     @endforeach
                 <tr class="text-right; font-weight-bold">
-                    <td colspan="15"></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
                     <td>{{ $total_tax }}</td>
                     <td>
                         {{ $total_amt}}
                     </td>
+                    <span style="display: none;">{{ $total_vat_tax += $total_tax }} {{ $total_sum_amt += $total_amt }}</span>
                 </tr>
-                <span style="display: none;">
-                    {{ $total_vat_tax += $total_tax }}
-                    {{ $total_sum_amt += $total_amt }}
-                </span>
             @endforeach
         </tbody>
     </table>
     <table >
         <tr>
-            <th colspan="15" style="text-align: right">TOTAL AMT</th>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <th style="text-align: right">TOTAL AMT</th>
             <th>{{ $total_vat_tax }}</th>
-            <th>
-                {{ $total_sum_amt }}
-            </th>
+            <th>                {{ $total_sum_amt }}            </th>
         </tr>
     </table>
 </body>
