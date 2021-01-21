@@ -14,6 +14,7 @@
                 <th>Customs No</th>
                 <th>Customs Date</th>
                 <th>GW</th>
+                <th>Invoice No</th>
                 <th>Ser No</th>
                 <th>Red Invoice No</th>
                 <th>Description</th>
@@ -39,6 +40,7 @@
                     <td>{{ $item->CUSTOMS_NO }}</td>
                     <td>{{ $item->CUSTOMS_DATE }}</td>
                     <td>{{ $item->GW }}</td>
+                    <td>{{ $item->INVOICE_NO }}</td>
                     <td ></td>
                     <td ></td>
                     <td ></td>
@@ -52,6 +54,7 @@
                 <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}}</span>
                     @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
                     <tr>
+                    <td > </td>
                     <td > </td>
                     <td > </td>
                     <td > </td>
@@ -88,6 +91,7 @@
                     <td ></td>
                     <td ></td>
                     <td ></td>
+                    <td ></td>
                     <td>{{ $total_tax }}</td>
                     <td>
                         {{ $total_amt}}
@@ -99,6 +103,7 @@
     </table>
     <table >
         <tr>
+            <td ></td>
             <td ></td>
             <td ></td>
             <td ></td>
