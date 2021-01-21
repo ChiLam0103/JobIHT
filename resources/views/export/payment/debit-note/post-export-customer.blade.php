@@ -9,6 +9,7 @@
                 <th>Consignee </th>
                 <th>From</th>
                 <th>To</th>
+                <th>Note</th>
                 <th>ETD/ETA</th>
                 <th>Customs No</th>
                 <th>Customs Date</th>
@@ -21,7 +22,7 @@
                 <th>Price</th>
                 <th>Tax Amt</th>
                 <th>Total Amt</th>
-                <th>Note</th>
+
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@
                     <td>{{ $item->CONSIGNEE }}</td>
                     <td>{{ $item->TRANS_FROM }}</td>
                     <td>{{ $item->TRANS_TO }}</td>
+                    <td>{{ $item->NOTE}}</td>
                     <td>{{ $item->ETD_ETA }}</td>
                     <td>{{ $item->CUSTOMS_NO }}</td>
                     <td>{{ $item->CUSTOMS_DATE }}</td>
@@ -42,7 +44,7 @@
                 <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}}</span>
                     @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
                     <tr>
-                    <td colspan="8"> </td>
+                    <td colspan="9"> </td>
                             <td>{{ $item_d->SER_NO}}</td>
                             <td>{{ $item_d->INV_NO}}</td>
                             <td>{{ $item_d->DESCRIPTION}}</td>
@@ -51,12 +53,11 @@
                             <td>{{ $item_d->PRICE}}</td>
                             <td>{{$item_d->TAX_AMT}}</td>
                             <td>{{ $item_d->TOTAL_AMT}}</td>
-                            <td>{{ $item_d->NOTE}}</td>
                             <span style="display: none;">{{ $total_tax += $item_d->TAX_AMT}} {{ $total_amt += $item_d->TOTAL_AMT}} </span>
-                        </tr>
+                    </tr>
                     @endforeach
                 <tr class="text-right; font-weight-bold">
-                    <td colspan="14"></td>
+                    <td colspan="15"></td>
                     <td>{{ $total_tax }}</td>
                     <td>
                         {{ $total_amt}}
@@ -71,7 +72,7 @@
     </table>
     <table >
         <tr>
-            <th colspan="14" style="text-align: right">TOTAL AMT</th>
+            <th colspan="15" style="text-align: right">TOTAL AMT</th>
             <th>{{ $total_vat_tax }}</th>
             <th>
                 {{ $total_sum_amt }}

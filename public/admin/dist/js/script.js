@@ -18,9 +18,8 @@ $("#job-start .btnPrint").click(function () {
 });
 // 2. in phếu job order
 $("#job-order #content-customer-tab  [name='custno']").on('change', function () {
-
     var custno = $("#job-order #content-customer-tab  [name='custno']").val();
-    $("#job-order #content-customer-tab  [name='jobno'] option").remove();
+    $("#job-order #content-customer-tab  [name='jobno_helper1'] option").remove();
     var url = "api/v1/print/file/job-order/custno=" + custno;
     $.ajax({
         url: url, // gửi ajax đến file result.php
@@ -30,7 +29,7 @@ $("#job-order #content-customer-tab  [name='custno']").on('change', function () 
             // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
             console.log(result.job_m);
             $.each(result.job_m, function (key, value) {
-                $("#job-order #content-customer-tab  [name='jobno']").append('<option value=' + key + '>' + value.JOB_NO + '</option>');
+                $("#job-order #content-customer-tab  [name='jobno_helper1']").append('<option value=' + key + '>' + value.JOB_NO + '</option>');
             });
         }
     });

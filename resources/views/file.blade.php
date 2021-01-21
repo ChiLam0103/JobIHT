@@ -85,20 +85,18 @@
                             <div class="card-body">
                                 <ul class="nav nav-tabs" id="job-order-custom-content-below-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="job-tab" data-toggle="pill"
-                                            href="#content-job-tab" role="tab"
-                                            aria-controls="content-job-tab" aria-selected="true">Job Order</a>
+                                        <a class="nav-link active" id="job-tab" data-toggle="pill" href="#content-job-tab"
+                                            role="tab" aria-controls="content-job-tab" aria-selected="true">Job Order</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="customer-tab" data-toggle="pill"
-                                            href="#content-customer-tab" role="tab"
-                                            aria-controls="content-customer-tab" aria-selected="false">Khách
+                                            href="#content-customer-tab" role="tab" aria-controls="content-customer-tab"
+                                            aria-selected="false">Khách
                                             Hàng</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="date-tab" data-toggle="pill"
-                                            href="#content-date-tab" role="tab"
-                                            aria-controls="content-date-tab" aria-selected="false">Ngày Job</a>
+                                        <a class="nav-link" id="date-tab" data-toggle="pill" href="#content-date-tab"
+                                            role="tab" aria-controls="content-date-tab" aria-selected="false">Ngày Job</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="job-order-custom-content-below-tabContent">
@@ -136,8 +134,10 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Chọn Job Order: </label>
-                                                    <select class="form-control select2" style="width: 100%;" name="jobno">
+                                                    <label>Chọn Job Order:</label>
+                                                    <select class="duallistbox" multiple="multiple" id="duallistbox2"
+                                                        name="jobno">
+                                                        <option value="0">Option 2</option>
                                                     </select>
                                                 </div>
                                             </div>

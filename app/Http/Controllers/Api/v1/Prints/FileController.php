@@ -128,13 +128,13 @@ class FileController extends Controller
     }
     public function jobOrder_Date($fromdate, $todate)
     {
-        $job_m = StatisticFile::jobOrder_Date($fromdate, $todate);
-        // dd($job_m);
+        $data = StatisticFile::jobOrder_Date($fromdate, $todate);
+        // dd($data);
         // $job_d = StatisticFile::getJobOrder_D2($fromdate, $todate);
-        if ($job_m) {
+        if ($data) {
             return view('print\file\job-order\date', [
-                'job_m' => $job_m,
-                // 'job_d' => $job_d
+                'job_m' => $data['job_m'],
+                'job_d' => $data['job_d']
             ]);
         } else {
             return response()->json(
