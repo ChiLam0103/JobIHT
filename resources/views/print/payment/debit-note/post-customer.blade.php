@@ -372,9 +372,10 @@
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
-                <td style="width:6.2em">{{!$bank->SWIFT_CODE ? $total_vat_tax : number_format($total_vat_tax, 0, ',', '.') }}</td>
                 <td style="width:6.2em">
-                    {{ !$bank->SWIFT_CODE ? $total_sum_amt : number_format($total_sum_amt, 0, ',', '.') }}
+                    {{ !$bank->SWIFT_CODE ? number_format($total_vat_tax, 0, ',', '.') : $total_vat_tax }}</td>
+                <td style="width:6.2em">
+                    {{ !$bank->SWIFT_CODE ? number_format($total_sum_amt, 0, ',', '.') : $total_sum_amt }}
                 </td>
             </tr>
         </table>
