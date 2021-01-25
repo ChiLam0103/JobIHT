@@ -12,7 +12,7 @@ class DebitNoteD extends Model
         $data = DB::table('DEBIT_NOTE_D as dnd')
             ->where('dnd.JOB_NO', $id)
             ->select('dnd.*')
-            ->selectRaw("(CASE WHEN (dnd.TAX_NOTE = '0%') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TOTAL_AMT")
+            // ->selectRaw("(CASE WHEN (dnd.TAX_NOTE = '0%') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TOTAL_AMT")
             ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->get();
         return $data;

@@ -11,6 +11,7 @@ class DebitNoteM extends Model
     {
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
+            ->where('dnm.DEBIT_DATE', '>=','20190101')
             ->orderBy('dnm.JOB_NO', 'desc')
             ->where(function ($query) {
                 $query->where('dnm.DEL', 'N')
@@ -27,6 +28,7 @@ class DebitNoteM extends Model
         $query = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
             ->whereNull('dnm.JOB_NO')
+            ->where('dnm.DEBIT_DATE', '>=','20190101')
             ->select('jom.JOB_NO')
             ->where(function ($query) {
                 $query->where('dnm.DEL', 'N')
@@ -43,6 +45,7 @@ class DebitNoteM extends Model
             ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1')
+            ->where('dnm.DEBIT_DATE', '>=','20190101')
             ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->where(function ($query) {
                 $query->where('dnm.DEL', 'N')
