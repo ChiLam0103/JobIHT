@@ -53,7 +53,6 @@
                 </tr>
                 <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}} {{$sum_total_amt=0}}</span>
                     @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
-                    {{dd($item_d)}}
                     <tr>
                     <td > </td>
                     <td > </td>
