@@ -131,13 +131,7 @@
                 <td colspan="4"></td>
             </tr>
         </table>
-        {{-- <table>
-            <tr>
-                <th colspan="9">
-                    <h3>We would like to make the Debit Note as follows:</h3>
-                </th>>
-            </tr>
-        </table> --}}
+
         <table class="table">
             <tr>
                 <th>STT</th>

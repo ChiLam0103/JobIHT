@@ -17,7 +17,8 @@ class JobM extends Model
                     ->orWhere('jm.DEL', null);
             })
             ->where('jm.BRANCH_ID', 'IHTVN1')
-            ->where('c.BRANCH_ID', 'IHTVN1');
+            ->where('c.BRANCH_ID', 'IHTVN1')
+            ->where('jm.ORDER_DATE','>=','20190101');
         return $query;
     }
     public static function list()

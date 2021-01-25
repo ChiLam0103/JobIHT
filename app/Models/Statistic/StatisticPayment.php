@@ -374,7 +374,7 @@ class StatisticPayment extends Model
             foreach ($data as $item) {
                 $query_d = DB::table('DEBIT_NOTE_D as dd')
                     ->where('dd.JOB_NO', $item->JOB_NO)
-                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END)) as TOTAL_AMT")->first();
+                    ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') OR (dd.TAX_NOTE = '10%') OR (dd.TAX_NOTE = '') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END)) as TOTAL_AMT")->first();
                 // dd($query_d->TOTAL_AMT);
                 $item->TOTAL_AMT = $query_d->TOTAL_AMT;
             }

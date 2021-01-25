@@ -78,7 +78,7 @@
                                 <ul class="nav nav-tabs" id="job-order-custom-content-below-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="job-tab" data-toggle="pill" href="#content-job-tab"
-                                            role="tab" aria-controls="content-job-tab" aria-selected="true">Job Order</a> <label class="waiting text-warning"></label>
+                                            role="tab" aria-controls="content-job-tab" aria-selected="true">Job Order</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="customer-tab" data-toggle="pill"

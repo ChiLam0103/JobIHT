@@ -4,8 +4,8 @@ $(document).ready(function () {
     var list_job_order_take = "api/v1/file/job-order/take=5000";
     var list_customer_take = "api/v1/data-basic/customer/list-take/type=1&take=5000";
     $("#job-start .waiting").html("Vui lòng đợi");
-    $("#job-order #job-tab .waiting").html("Vui lòng đợi");
-    $("#job-order #customer-tab .waiting").html("Vui lòng đợi");
+    $("#job-order #content-job-tab .waiting").html("Vui lòng đợi");
+    $("#job-order #content-customer-tab .waiting").html("Vui lòng đợi");
     $.ajax({
         url: list_job_start_take,
         type: "get", // chọn phương thức gửi là get
@@ -28,7 +28,7 @@ $(document).ready(function () {
             $.each(result.data, function (key, value) {
                 $("#job-order #content-job-tab [name='jobno']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + '</option>');
             });
-            $("#job-order #job-tab .waiting").html("");
+            $("#job-order #content-job-tab .waiting").html("");
         }
     });
     $.ajax({
@@ -40,7 +40,7 @@ $(document).ready(function () {
             $.each(result.data, function (key, value) {
                 $("#job-order #content-customer-tab [name='custno']").append('<option value=' + value.CUST_NO + '>' + value.CUST_NO + '|' + value.CUST_NAME + '</option>');
             });
-            $("#job-order #customer-tab .waiting").html("");
+            $("#job-order #content-customer-tab .waiting").html("");
         }
     });
 
@@ -57,8 +57,8 @@ $("#job-start .btnPrint").click(function () {
 //-----2.1 load danh sách job khi chọn khách hàng
 $("#job-order #content-customer-tab  [name='custno']").on('change', function () {
     var custno = $("#job-order #content-customer-tab  [name='custno']").val();
-    $(".waiting").html("Vui lòng đợi");
-    $("#job-order #content-customer-tab  [name='jobno_helper1']").empty();
+    $("#job-order #content-customer-tab .waiting").html("Vui lòng đợi");
+    // $("#job-order #content-customer-tab  [name='jobno_helper1']").empty();
     // $("#job-order #content-customer-tab  [name='jobno_helper1']").bootstrapDualListbox('refresh', true);
     var url = "api/v1/print/file/job-order/custno=" + custno;
     $.ajax({
@@ -75,7 +75,7 @@ $("#job-order #content-customer-tab  [name='custno']").on('change', function () 
                 $("#job-order #content-customer-tab  [name='jobno_helper1']").append('<option value=' + key + '>' + value.JOB_NO + '</option>');
             });
             $(".waiting").html("");
-            // $("#job-order #content-customer-tab  [name='jobno_helper1']").bootstrapDualListbox('refresh', true);
+            $("#job-order #content-customer-tab  [name='jobno_helper1']").bootstrapDualListbox('refresh', true);
             // $('.duallistbox').bootstrapDualListbox('refresh', true);
         }
     });

@@ -107,6 +107,7 @@ class StatisticFile extends Model
                 ->where('c.CUST_NO', $custno)
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
+                ->where('jom.ORDER_DATE','>','20180101')
                 ->select('jom.JOB_NO')
                 ->get();
             return $data;
