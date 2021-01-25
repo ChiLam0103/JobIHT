@@ -215,7 +215,7 @@
                         <td>{{ $item_d->INV_NO }} </td>
                         <td>{{ $item_d->DESCRIPTION }} </td>
                         <td>{{ $item_d->UNIT }} </td>
-                        <td>{{ number_format($item_d->DOR_AMT, 0, ',', '.') }} </td>
+                        <td>{{ $item_d->DOR_AMT }} </td>
                         <td>{{ number_format($item_d->DOR_RATE, 0, ',', '.') }} </td>
                         <td>{{ number_format($item_d->PRICE, 0, ',', '.') }} </td>
                         <td>{{ $item_d->QUANTITY }} </td>
