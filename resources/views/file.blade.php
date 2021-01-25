@@ -24,7 +24,7 @@
                         <!--1. in phếu theo dõi -->
                         <div class="card card-default" id="job-start">
                             <div class="card-header">
-                                <h3 class="card-title">1. In Phiếu Theo Dõi</h3>
+                                <h3 class="card-title">1. Phiếu Theo Dõi (JOB)</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
                                             class="fas fa-minus"></i></button>
@@ -37,25 +37,17 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>From:</label>
+                                            <label>From:</label> <label class="waiting text-warning"></label>
                                             <select class="form-control select2" style="width: 100%;" name="fromjob">
-                                                @foreach ($list_job_start as $item)
-                                                    <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
-                                                        {{ $item->CUST_NAME }}
-                                                    </option>
-                                                @endforeach
+
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>To: </label>
+                                            <label>To: </label> <label class="waiting text-warning"></label>
                                             <select class="form-control select2" style="width: 100%;" name="tojob">
-                                                @foreach ($list_job_start as $item)
-                                                    <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
-                                                        {{ $item->CUST_NAME }}
-                                                    </option>
-                                                @endforeach
+
                                             </select>
                                         </div>
                                     </div>
@@ -73,7 +65,7 @@
                         <!--2. in job order -->
                         <div class="card card-default" id="job-order">
                             <div class="card-header">
-                                <h3 class="card-title">2. In Job Order</h3>
+                                <h3 class="card-title">2. Job Order</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
                                             class="fas fa-minus"></i></button>
@@ -86,7 +78,7 @@
                                 <ul class="nav nav-tabs" id="job-order-custom-content-below-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="job-tab" data-toggle="pill" href="#content-job-tab"
-                                            role="tab" aria-controls="content-job-tab" aria-selected="true">Job Order</a>
+                                            role="tab" aria-controls="content-job-tab" aria-selected="true">Job Order</a> <label class="waiting text-warning"></label>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="customer-tab" data-toggle="pill"
@@ -105,13 +97,8 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Chọn Job Order: </label>
+                                                    <label>Chọn Job Order: </label> <label class="waiting text-warning"></label>
                                                     <select class="form-control select2" style="width: 100%;" name="jobno">
-                                                        @foreach ($list_job_order as $item)
-                                                            <option value="{{ $item->JOB_NO }}">{{ $item->JOB_NO }} -
-                                                                {{ $item->CUST_NAME }}
-                                                            </option>
-                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -124,20 +111,15 @@
                                                 <div class="form-group">
                                                     <label>Mã Khách Hàng: </label>
                                                     <select class="form-control select2" style="width: 100%;" name="custno">
-                                                        @foreach ($list_customer as $item)
-                                                            <option value="{{ $item->CUST_NO }}">{{ $item->CUST_NO }} -
-                                                                {{ $item->CUST_NAME }}
-                                                            </option>
-                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Chọn Job Order:</label>
+                                                    <label>Chọn Job Order:</label> <label class="waiting text-warning"></label>
                                                     <select class="duallistbox" multiple="multiple" id="duallistbox2"
                                                         name="jobno">
-                                                        <option value="0">Option 2</option>
+                                                        {{-- <option value="0">Option 2</option> --}}
                                                     </select>
                                                 </div>
                                             </div>
@@ -192,7 +174,7 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Multiple</label>
-                                            <select class="duallistbox" multiple="multiple" id="duallistbox"
+                                            {{-- <select class="duallistbox" multiple="multiple" id="duallistbox"
                                                 name="duallistbox_demo1">
                                                 <option value="option2">Option 2</option>
                                                 <option value="option3" selected="selected">Option 3</option>
@@ -203,7 +185,7 @@
                                                 <option value="option8">Option 8</option>
                                                 <option value="option9">Option 9</option>
                                                 <option value="option0">Option 10</option>
-                                            </select>
+                                            </select> --}}
                                         </div>
                                         <!-- /.form-group -->
                                     </div>

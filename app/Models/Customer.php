@@ -37,7 +37,6 @@ class Customer extends Model
         $take = 9000;
         $query =  Customer::query();
         $data =  $query->take($take)->select('c.*', 'b.BRANCH_NAME')->where('c.CUST_TYPE', $type)->get();
-
         return ['list' => $data, 'type_name' => $type_name];
     }
     public static function listTake($type, $take)

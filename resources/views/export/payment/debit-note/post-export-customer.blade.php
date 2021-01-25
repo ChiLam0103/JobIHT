@@ -72,7 +72,7 @@
                             <td>{{ $item_d->PRICE}}</td>
                             <td>{{$item_d->TAX_AMT}}</td>
                             <td>{{ $item_d->TOTAL_AMT}}</td>
-                            <span style="display: none;">{{ $total_tax += $item_d->TAX_AMT}} {{ $total_amt += $item_d->TOTAL_AMT}} </span>
+                            <span style="display: none;">{{ $total_tax += $item_d->TAX_AMT}} {{ $total_amt += ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY }} </span>
                     </tr>
                     @endforeach
                 <tr class="text-right; font-weight-bold">
@@ -120,7 +120,7 @@
             <td ></td>
             <th style="text-align: right">TOTAL AMT</th>
             <th>{{ $total_vat_tax }}</th>
-            <th>                {{ $total_sum_amt }}            </th>
+            <th>  {{ $total_sum_amt }}  </th>
         </tr>
     </table>
 </body>

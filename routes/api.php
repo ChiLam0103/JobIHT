@@ -38,6 +38,7 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'customer'], function () {
                 Route::get('/type={type}', 'CustomerController@list');
                 Route::get('/type={type}/page={page}', 'CustomerController@listPage');
+                Route::get('list-take/type={type}&take={take}', 'CustomerController@listTake');
                 Route::get('des/id={id}/type={type}', 'CustomerController@des');
                 Route::get('search/group={group}&type={type}&value={value}&page={page}', 'CustomerController@search');
                 Route::post('add', 'CustomerController@add');

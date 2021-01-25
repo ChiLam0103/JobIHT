@@ -106,7 +106,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             theme: 'bootstrap4'
         })
         //Bootstrap Duallistbox
-        $('.duallistbox').bootstrapDualListbox();
+       $('.duallistbox').bootstrapDualListbox();
         //Date range picker
         $('#reservation').daterangepicker()
 

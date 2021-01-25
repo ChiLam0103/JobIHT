@@ -29,6 +29,24 @@ class CustomerController extends Controller
             );
         }
     }
+    public function listTake($type, $take)
+    {
+        $data = Customer::listTake($type, $take);
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     public function listPage($type, $page)
     {
         $data = Customer::listPage($type, $page);
