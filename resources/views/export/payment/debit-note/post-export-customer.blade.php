@@ -51,7 +51,7 @@
                     <td ></td>
 
                 </tr>
-                <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}} {{$sum_total_amt=0}}</span>
+                <span style="display: none;"> {{$total_tax=0}}{{$total_amt=0}} </span>
                     @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
                     <tr>
                     <td > </td>
@@ -71,10 +71,10 @@
                             <td>{{ $item_d->QUANTITY}}</td>
                             <td>{{ $item_d->PRICE}}</td>
                             <td>{{$item_d->TAX_AMT}}</td>
-                            <td>{{$total_amt= ($item_d->TAX_NOTE ='0%') || ($item_d->TAX_NOTE ='10%') || ($item_d->TAX_NOTE ='') ?  ($item_d->QUANTITY * $item_d->PRICE) : ($item_d->QUANTITY * $item_d->PRICE) +  ($item_d->QUANTITY * $item_d->PRICE)*$item_d->TAX_NOTE/100}}</td>
+                            <td>{{ $item_d->TOTAL_AMT }}</td>
                             <span style="display: none;">
                                 {{ $total_tax += $item_d->TAX_AMT}}
-                                {{ $sum_total_amt += $total_amt }} </span>
+                                {{ $total_amt +=  $item_d->TOTAL_AMT }} </span>
                     </tr>
                     @endforeach
                 <tr class="text-right; font-weight-bold">

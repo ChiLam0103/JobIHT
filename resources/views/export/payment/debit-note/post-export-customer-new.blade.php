@@ -162,7 +162,7 @@
                         {{ trim($bank->BANK_NO) == 'ACB' ? ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY : $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </td>
                     <span style="display: none;">
-                        {{ $total_amt += ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY }}
+                        {{ $total_amt += $item_d->TOTAL_AMT}}
                         {{ $total_vat += $item_d->TAX_AMT }}
                         {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </span>
