@@ -28,12 +28,8 @@ class DebitNoteM extends Model
         $query = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
             ->whereNull('dnm.JOB_NO')
-            ->where('dnm.DEBIT_DATE', '>=','20190101')
+            ->where('jom.ORDER_DATE', '>=','20190101')
             ->select('jom.JOB_NO')
-            ->where(function ($query) {
-                $query->where('dnm.DEL', 'N')
-                    ->orWhere('dnm.DEL', null);
-            })
             ->where('jom.BRANCH_ID', 'IHTVN1')
             ->orderBy('jom.JOB_NO', 'desc');
         return $query;
@@ -47,10 +43,6 @@ class DebitNoteM extends Model
             ->where('c.BRANCH_ID', 'IHTVN1')
             ->where('dnm.DEBIT_DATE', '>=','20190101')
             ->where('dnd.BRANCH_ID', 'IHTVN1')
-            ->where(function ($query) {
-                $query->where('dnm.DEL', 'N')
-                    ->orWhere('dnm.DEL', null);
-            })
             ->orderBy('dnm.JOB_NO', 'desc')
             ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE')
             ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
@@ -61,10 +53,6 @@ class DebitNoteM extends Model
     {
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
-            ->where(function ($query) {
-                $query->where('dnm.DEL', 'N')
-                    ->orWhere('dnm.DEL', null);
-            })
             ->select('dnm.JOB_NO', 'dnm.CUST_NO', 'c.CUST_NAME', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_CHK', 'dnm.PAYMENT_DATE');
         return $query;
     }
