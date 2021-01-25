@@ -154,7 +154,7 @@
                 <td>{{ $item_d->DESCRIPTION }}</td>
                 <td>{{ $item_d->INV_NO }}</td>
                 <td class="text-center">{{ $item_d->UNIT }}</td>
-                <td class="text-center">{{ number_format($item_d->QUANTITY) }}</td>
+                <td class="text-center">{{ $item_d->QUANTITY }}</td>
                 <td class="text-right">
                     {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE) : number_format($item_d->DOR_AMT) }}
                 </td>
