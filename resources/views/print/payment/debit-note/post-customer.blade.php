@@ -338,14 +338,15 @@
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
-                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
+                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td>
+                        --}}
                         <td class="text-center">{{ $item_d->QUANTITY }}</td>
                         <td class="text-right">
-                            {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT}}
+                            {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
                         </td>
                         <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
                         <td class="text-right">
-                            {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : ($item_d->DOR_AMT * $item_d->QUANTITY) }}
+                            {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : $item_d->DOR_AMT * $item_d->QUANTITY }}
                         </td>
                         <span style="display: none;">
                             {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -371,9 +372,9 @@
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
-                <td style="width:6.2em">{{ number_format($total_vat_tax, 0, ',', '.') }}</td>
+                <td style="width:6.2em">{{!$bank->SWIFT_CODE ? $total_vat_tax : number_format($total_vat_tax, 0, ',', '.') }}</td>
                 <td style="width:6.2em">
-                    {{ number_format($total_sum_amt, 0, ',', '.') }}
+                    {{ !$bank->SWIFT_CODE ? $total_sum_amt : number_format($total_sum_amt, 0, ',', '.') }}
                 </td>
             </tr>
         </table>

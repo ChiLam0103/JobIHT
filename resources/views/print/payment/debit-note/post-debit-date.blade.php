@@ -208,7 +208,6 @@
                 </tr>
                 @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('debit_date', $fromdate, $todate, $item->JOB_NO, $debittype) as $item_d)
                     <tr>
-                        {{-- {{ dd($item_d) }} --}}
                         <td colspan="3"></td>
                         <td>{{ $item_d->DEB_TYPE }} </td>
                         <td>{{ $item_d->SER_NO }} </td>
