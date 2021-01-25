@@ -230,7 +230,7 @@
                 <table style="width:100%">
                     <tr>
                         <td>Date:</td>
-                        <td>{{$debit->DEBIT_DATE == null ? '' : date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
+                        <td>{{ $debit->DEBIT_DATE == null ? '' : date('Y/m/d', strtotime($debit->DEBIT_DATE)) }}</td>
                     </tr>
                     <tr>
                         <td>Debit Note No:</td>
@@ -290,7 +290,8 @@
                     </tr>
                     <tr>
                         <td>Custom date:</td>
-                        <td>{{$debit->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}</td>
+                        <td>{{ $debit->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($debit->CUSTOMS_DATE)) }}
+                        </td>
                     </tr>
                     <tr>
                         <td>GW:</td>
@@ -333,11 +334,11 @@
                     <td class="text-center">{{ $item_d->DOR_NO }}</td>
                     <td class="text-center">{{ $item_d->QUANTITY }}</td>
                     <td class="text-right">
-                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 0, ',', '.') }}
+                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
                     </td>
                     <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
                     <td class="text-right">
-                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 0, ',', '.') }}
+                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </td>
                     <span style="display: none;">
                         {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -351,7 +352,7 @@
             <tr class="text-right font-weight-bold">
                 <td colspan="7">JOB AMT</td>
                 <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
-                <td> {{ number_format($curency == 'VND' ? $total_amt : $total_amt_do, 0, ',', '.') }}</td>
+                <td> {{ $curency == 'VND' ? number_format($total_amt, 0, ',', '.') : $total_amt_do }}</td>
             </tr>
         </table>
 
