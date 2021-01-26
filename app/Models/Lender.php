@@ -14,6 +14,7 @@ class Lender extends Model
         $query = DB::table('LENDER as l')
             ->leftJoin('LENDER_TYPE as lt', 'l.LENDER_TYPE', 'lt.LENDER_TYPE')
             ->where('l.BRANCH_ID', 'IHTVN1')
+            ->where('l.LENDER_DATE','>=','20190101')
             ->orderBy('l.LENDER_NO', 'desc');
         return $query;
     }
