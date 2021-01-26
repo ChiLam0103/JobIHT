@@ -17,8 +17,8 @@ class JobStart extends Model
                     ->orWhere('js.DEL', null);
             })
             ->where('js.BRANCH_ID', 'IHTVN1')
-            ->where('c.BRANCH_ID', 'IHTVN1')
-            ->where('js.JOB_DATE','>=','20190101');
+            ->where('c.BRANCH_ID', 'IHTVN1');
+            // ->where('js.JOB_DATE','>=','20190101');
         return $query;
     }
     public static function listPage($page)
