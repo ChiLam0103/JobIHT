@@ -40,10 +40,10 @@ class JobStart extends Model
     public static function list()
     {
         try {
-            $take = 9000;
+            // $take = 9000;
             $query = JobStart::query();
             $data =  $query
-                ->take($take)
+                // ->take($take)
                 ->select('c.CUST_NAME', 'js.*')
                 ->get();
             return $data;
