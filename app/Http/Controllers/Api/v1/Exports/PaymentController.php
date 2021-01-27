@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use App\Models\Statistic\StatisticPayment;
 use Maatwebsite\Excel\Facades\Excel;
-
 use App\Models\Company;
 use App\Models\Bank;
 use App\Models\Customer;
@@ -43,6 +42,12 @@ class PaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+    }
+    //1.2.2 import excel thống kê phiếu bù/trả và export thống kê phiếu bù/trả
+    public function importPayment(Request $request){
+        // $rows = Excel::toArray(new SalesOrderImport, $request->file('sampledata'));
+        // return response()->json(["rows"=>$rows]);
+
     }
     //2.1 export-phiếu yêu cầu thanh toán
     public function postExportDebitNote(Request $request)

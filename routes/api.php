@@ -276,8 +276,8 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('advance/replenishment-withdrawal-payment', 'PaymentController@postExportReplenishmentWithdrawalPayment');
                 //2. phiếu yêu cầu thanh toán
                 Route::post('debit-note', 'PaymentController@postExportDebitNote');
-                 //4. báo biểu lợi nhuận
-                 Route::post('profit', 'PaymentController@profit');
+                //4. báo biểu lợi nhuận
+                Route::post('profit', 'PaymentController@profit');
                 //5. thống kê số job trong tháng
                 Route::post('job-monthly', 'PaymentController@postExportJobMonthly');
                 //6. thong ke thanh toan cua khach hang
@@ -286,11 +286,14 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('job-order', 'PaymentController@postExportjobOrder');
             });
         });
+        //import
+        Route::group(['prefix' => 'import', 'namespace' => 'Exports'], function () {
+            //1. payment manager(quan ly thu chi)
+            Route::post('payment', 'PaymentController@importPayment');
+        });
         //test
         Route::group(['prefix' => 'test', 'namespace' => 'Statistic'], function () {
             Route::post('/', 'PaymentController@test')->name('showView');
         });
     });
 });
-
-

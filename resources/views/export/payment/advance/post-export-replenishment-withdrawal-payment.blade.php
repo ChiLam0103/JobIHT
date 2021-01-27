@@ -15,10 +15,10 @@
                 <th>STT</th>
                 <th>Tên</th>
                 <th>Số Phiếu</th>
+                <th>Nội dung</th>
                 <th>Số Job</th>
                 <th>Loại phiếu</th>
                 <th>Mã K.H</th>
-                <th>Nội dung</th>
                 <th>Tạm Ứng</th>
                 <th>Chi Trực Tiếp</th>
                 <th>Tiền Job</th>
@@ -31,10 +31,10 @@
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $item->INPUT_USER }}</td>
                     <td>{{ $item->LENDER_NO }}</td>
+                    <td>{{ $item->LEND_REASON }}</td>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ $item->LENDER_TYPE == 'U' ? 'PTU' : ($item->LENDER_TYPE == 'C' ? 'CTT' : 'CTU') }}</td>
                     <td>{{ $item->CUST_NO }}</td>
-                    <td>{{ $item->LEND_REASON }}</td>
                     <td>{{ $item->SUM_LENDER_AMT }}</td>
                     <td>{{ $item->SUM_DIRECT }}</td>
                     <td>{{ $item->SUM_JOB_ORDER }}</td>
