@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use App\Models\Statistic\StatisticPayment;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Input;
 use App\Models\Company;
 use App\Models\Bank;
 use App\Models\Customer;
 use App\Models\Personal;
 use Illuminate\Http\Request;
-
 
 class PaymentController extends Controller
 {
@@ -44,10 +44,36 @@ class PaymentController extends Controller
         }
     }
     //1.2.2 import excel thống kê phiếu bù/trả và export thống kê phiếu bù/trả
-    public function importPayment(Request $request){
-        if($request->hasFile('file')){
-            dd(1);
+    public function importPayment()
+    {
+        Excel::load(Input::file('file'), function ($reader) {
+            // foreach ($reader->toArray() as $row) {
+            // }
+            $data = PaymentController::function_Payment($reader->toArray());
+            $this->errormessage = $data;
+        });
+        return $this->errorMessage;
+    }
+    protected $errorMessage;
+    public static function function_Payment($advanceno)
+    {
+        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($advanceno);
+        if ($lender) {
+            $filename = 'thong-ke-bu-tra' . '(' . date('YmdHis') . ')';
 
+            Excel::create($filename, function ($excel) use ($lender) {
+                $excel->sheet('Thong ke Bu-Tra', function ($sheet) use ($lender) {
+                    $sheet->loadView('export\payment\advance\post-export-replenishment-withdrawal-payment', [
+                        'lender' => $lender,
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->store('xlsx');
+            $url = 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx';
+            return $url;
+        } else {
+            $err = 'Vui lòng chọn số phiếu';
+            return $err;
         }
     }
     //2.1 export-phiếu yêu cầu thanh toán
