@@ -18,6 +18,8 @@ class StatisticFile extends Model
                 ->whereBetween('js.JOB_NO', [$fromjob, $tojob])
                 ->where('p1.BRANCH_ID', 'IHTVN1')
                 ->where('p2.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->where('js.BRANCH_ID', 'IHTVN1')
                 ->select('c.CUST_NAME', 'c.CUST_TAX', 'c.CUST_ADDRESS', 'p1.PNL_NAME as NV_CHUNGTU_1', 'p2.PNL_NAME as NV_GIAONHAN_2', 'js.*')
                 ->orderBy('js.JOB_NO')
                 ->get();
