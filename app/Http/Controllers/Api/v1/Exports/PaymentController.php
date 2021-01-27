@@ -50,11 +50,13 @@ class PaymentController extends Controller
             // foreach ($reader->toArray() as $row) {
             // }
             $data = PaymentController::function_Payment($reader->toArray());
-            $this->errormessage = $data;
+            $this->url = $data;
         });
-        return $this->errorMessage;
+        return response()->json([
+            'url' => $this->url,
+        ]);
     }
-    protected $errorMessage;
+    protected $url;
     public static function function_Payment($advanceno)
     {
         $lender = StatisticPayment::postReplenishmentWithdrawalPayment($advanceno);
