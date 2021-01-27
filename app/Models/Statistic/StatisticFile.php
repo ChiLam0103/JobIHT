@@ -156,7 +156,7 @@ class StatisticFile extends Model
     public static function refund($type, $custno, $jobno, $fromdate, $todate)
     {
         try {
-            dd($type, $custno, $jobno, $fromdate, $todate);
+            // dd($type, $custno, $jobno, $fromdate, $todate);
             //ORDER_TYPE: 1.hang tau 2.khach hang 3.dai ly
             //CUST_TYPE: 1.customer(khach hang), 2.carriers(hang tau), 3.agent(dai ly), 4.garage(nha xe)
             $query = DB::table('JOB_ORDER_M as jom')
