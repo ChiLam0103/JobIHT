@@ -219,6 +219,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::group(['prefix' => 'refund'], function () {
                     //1.hang tau, 2.khach hang, 3.dai ly
                     Route::get('type={type}&custno={custno}&jobno={jobno}&fromdate={fromdate}&todate={todate}', 'FileController@refund');
+                    Route::get('/', 'FileController@getRefund');
                     Route::get('post-export', 'FileController@postExportRefund');
                 });
                 //4.thong ke job order

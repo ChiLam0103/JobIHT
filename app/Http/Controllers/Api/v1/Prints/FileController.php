@@ -186,7 +186,44 @@ class FileController extends Controller
             );
         }
     }
+    public function getRefund(Request $request)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
+        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
 
+        switch (true) {
+            case ($request->type == 'carriers') || ($request->type == "1"):
+                $type_name = "HÃNG TÀU";
+                break;
+            case ($request->type == 'customer') || ($request->type == "2"):
+                $type_name = "KHÁCH HÀNG";
+                break;
+            case ($request->type == 'agency') || ($request->type == "3"):
+                $type_name = "ĐẠI LÝ";
+                break;
+            default:
+                break;
+        }
+        $data = StatisticFile::refund($request->type, $request->custno, $request->jobno, $from_date, $to_date);
+        if ($data) {
+            return view('print\file\refund\index', [
+                'data' => $data,
+                'type_name' => $type_name,
+                'todate' => $to_date,
+                'fromdate' => $from_date,
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //4.thong ke
     public function statisticCreatedJob($cust, $user, $fromdate, $todate)
     {
