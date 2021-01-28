@@ -31,10 +31,6 @@ class HomeController extends Controller
     }
     public function file()
     {
-        // $list_job_start = JobStart::listTake(10000);
-        // $list_job_order = JobM::listTake(10000);
-        // $list_customer = Customer::listTake(1, 5000);
-        // dd($list_customer);
         return view('file');
     }
 }
