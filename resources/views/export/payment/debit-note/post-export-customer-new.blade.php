@@ -159,7 +159,7 @@
                     </td>
                     <td class="text-right">{{ $item_d->TAX_AMT }}</td>
                     <td class="text-right">
-                        {{ trim($bank->BANK_NO) == 'ACB' ? ($item_d->TAX_AMT + $item_d->PRICE) * $item_d->QUANTITY : $item_d->DOR_AMT * $item_d->QUANTITY }}
+                        {{ trim($bank->BANK_NO) == 'ACB' ? $item_d->TOTAL_AMT : $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </td>
                     <span style="display: none;">
                         {{ $total_amt += $item_d->TOTAL_AMT}}
