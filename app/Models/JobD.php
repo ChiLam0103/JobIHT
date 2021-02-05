@@ -164,11 +164,6 @@ class JobD extends Model
                         "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'] == 'undefined' ? '' : $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
-                        //book tau
-                        "QTY" => ($request['QTY'] == 'undefined' || $request['QTY'] == 'null' || $request['QTY'] == null)  ? 0 : $request['QTY'],
-                        "PRICE" => ($request['PRICE'] == 'undefined' || $request['PRICE'] == 'null' || $request['PRICE'] == null)  ? 0 : $request['PRICE'],
-                        "TAX_NOTE" => ($request['TAX_NOTE'] == 'undefined' || $request['TAX_NOTE'] == 'null' || $request['TAX_NOTE'] == null) ? 0 : $request['TAX_NOTE'],
-                        "TAX_AMT" => ($request['TAX_AMT'] == 'undefined' || $request['TAX_AMT'] == 'null' || $request['TAX_AMT'] == null)  ? 0 : $request['TAX_AMT'],
                     ]
                 );
             } elseif ($request->TYPE == 'JOB_ORDER_BOAT') {
@@ -184,9 +179,6 @@ class JobD extends Model
                         "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'] == 'undefined' ? '' : $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
-                        //job order
-                        "PORT_AMT" => ($request['PORT_AMT'] == 'undefined' || $request['PORT_AMT'] == 'null' || $request['PORT_AMT'] == null)  ? 0 : $request['PORT_AMT'],
-                        "INDUSTRY_ZONE_AMT" => ($request['INDUSTRY_ZONE_AMT'] == 'undefined' || $request['INDUSTRY_ZONE_AMT'] == 'null' || $request['INDUSTRY_ZONE_AMT'] == null)  ? 0 : $request['INDUSTRY_ZONE_AMT'],
                     ]
                 );
             }
