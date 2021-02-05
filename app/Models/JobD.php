@@ -107,7 +107,12 @@ class JobD extends Model
                             "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                             "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null)  ? 'IHTVN1' : $request['BRANCH_ID'],
                             "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null)  ? '' : $request['INPUT_USER'],
-                            "INPUT_DT" => date("YmdHis")
+                            "INPUT_DT" => date("YmdHis"),
+                            "UNIT" => '',//book tau
+                            "QTY" => 0,
+                            "PRICE" =>0,
+                            "TAX_NOTE" => 0,
+                            "TAX_AMT" => 0,//end book tau
                         ]
                     );
             } elseif ($request->TYPE == 'JOB_ORDER_BOAT') {
@@ -127,7 +132,9 @@ class JobD extends Model
                             "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                             "BRANCH_ID" => ($request['BRANCH_ID'] == 'undefined' || $request['BRANCH_ID'] == 'null' || $request['BRANCH_ID'] == null)  ? 'IHTVN1' : $request['BRANCH_ID'],
                             "INPUT_USER" => ($request['INPUT_USER'] == 'undefined' || $request['INPUT_USER'] == 'null' || $request['INPUT_USER'] == null)  ? '' : $request['INPUT_USER'],
-                            "INPUT_DT" => date("YmdHis")
+                            "INPUT_DT" => date("YmdHis"),
+                            "PORT_AMT" => 0,//job order
+                            "INDUSTRY_ZONE_AMT" => 0,//end job order
                         ]
                     );
             }
@@ -156,6 +163,11 @@ class JobD extends Model
                         "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'] == 'undefined' ? '' : $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
+                        "UNIT" => '',//book tau
+                        "QTY" => 0,
+                        "PRICE" =>0,
+                        "TAX_NOTE" => 0,
+                        "TAX_AMT" => 0,//end book tau
                     ]
                 );
             } elseif ($request->TYPE == 'JOB_ORDER_BOAT') {
@@ -171,6 +183,8 @@ class JobD extends Model
                         "THANH_TOAN_MK" => ($request['THANH_TOAN_MK'] == 'undefined' || $request['THANH_TOAN_MK'] == 'null' || $request['THANH_TOAN_MK'] == null)  ? 'N' : $request['THANH_TOAN_MK'],
                         'MODIFY_USER' =>  $request['MODIFY_USER'] == 'undefined' ? '' : $request['MODIFY_USER'],
                         'MODIFY_DT' =>  date("YmdHis"),
+                        "PORT_AMT" => 0,//job order
+                        "INDUSTRY_ZONE_AMT" => 0,//end job order
                     ]
                 );
             }
