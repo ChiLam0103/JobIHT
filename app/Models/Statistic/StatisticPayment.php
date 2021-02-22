@@ -82,17 +82,12 @@ class StatisticPayment extends Model
     public static function getReplenishmentWithdrawalPayment($advanceno)
     {
         try {
-            // dd($advanceno);
             $str = json_decode($advanceno);
-            // dd($str);
-            // dd($str);
-            // $no="[201128001,201128002]";
             $data =  DB::table('LENDER as l')
                 ->where('l.LENDER_DATE', '>=', '20190101')
                 ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereIn('L.LENDER_NO', $str)
                 ->select('l.*')->get();
-                // dd($data);
             foreach ($data as $item) {
                 $SUM_LENDER_AMT = 0; //tien ung
                 $SUM_JOB_ORDER = 0; //tien job order

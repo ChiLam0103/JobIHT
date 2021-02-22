@@ -88,7 +88,6 @@ class PaymentController extends Controller
     //1.2 thống kê phiếu bù/trả
     public function postReplenishmentWithdrawalPayment(Request $request)
     {
-        // dd($request->advanceno);
         $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
 
         if ($lender) {
@@ -107,7 +106,6 @@ class PaymentController extends Controller
     }
     public function getReplenishmentWithdrawalPayment(Request $request)
     {
-        // dd($request->advanceno);
         $lender = StatisticPayment::getReplenishmentWithdrawalPayment($request->advanceno);
 
         if ($lender) {
