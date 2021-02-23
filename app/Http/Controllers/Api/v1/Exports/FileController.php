@@ -68,7 +68,6 @@ class FileController extends Controller
         }
         $data = StatisticFile::refund($request->type, $request->custno, $request->jobno, $request->fromdate, $request->todate);
         if ($data) {
-
             $filename = 'refund' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($data, $type_name, $fromdate, $todate, $sum_price, $sum_money_after) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data, $type_name, $fromdate, $todate, $sum_price, $sum_money_after) {
@@ -96,7 +95,37 @@ class FileController extends Controller
             );
         }
     }
-
+    //4.thong ke tạo job
+    public function statisticCreatedJob(Request $request)
+    {
+        $fromdate = $request->fromdate;
+        $todate = $request->todate;
+        $data = StatisticFile::statisticCreatedJob($request->cust, $request->user, $fromdate, $todate);
+        if ($data) {
+            $filename = 'create-job' . '(' . date('YmdHis') . ')';
+            Excel::create($filename, function ($excel) use ($data, $fromdate, $todate) {
+                $excel->sheet('Debit Note', function ($sheet) use ($data, $fromdate, $todate) {
+                    $sheet->loadView('export\file\job-order\create-job', [
+                        'data' => $data,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //5 thống kê nâng hạ (export)
     public function lifting($fromdate, $todate)
     {

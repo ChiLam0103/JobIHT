@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\ExcelService;
-use App\Models\JobStart;
-use App\Models\JobM;
-use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
 
 class HomeController extends Controller
 {

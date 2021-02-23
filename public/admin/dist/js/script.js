@@ -1,51 +1,63 @@
 //load trang
-$(document).ready(function () {
-    var list_job_start_take = "api/v1/file/job-start/take=5000";
-    var list_job_order_take = "api/v1/file/job-order/take=5000";
-    var list_customer_take = "api/v1/data-basic/customer/list-take/type=1&take=5000";
-    $("#job-start .waiting").html("Vui lòng đợi");
-    $("#job-order #content-job-tab .waiting").html("Vui lòng đợi");
-    $("#job-order #content-customer-tab .waiting").html("Vui lòng đợi");
-    $.ajax({
-        url: list_job_start_take,
-        type: "get", // chọn phương thức gửi là get
-        dateType: "json", // dữ liệu trả về dạng text
-        success: function (result) {
-            // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
-            $.each(result.data, function (key, value) {
-                $("#job-start [name='fromjob']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + '</option>');
-                $("#job-start [name='tojob']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + '</option>');
-            });
-            $("#job-start .waiting").html("");
-        }
-    });
-    $.ajax({
-        url: list_job_order_take,
-        type: "get", // chọn phương thức gửi là get
-        dateType: "json", // dữ liệu trả về dạng text
-        success: function (result) {
-            // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
-            $.each(result.data, function (key, value) {
-                $("#job-order #content-job-tab [name='jobno']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + '</option>');
-            });
-            $("#job-order #content-job-tab .waiting").html("");
-        }
-    });
-    $.ajax({
-        url: list_customer_take,
-        type: "get", // chọn phương thức gửi là get
-        dateType: "json", // dữ liệu trả về dạng text
-        success: function (result) {
-            // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
-            $.each(result.data, function (key, value) {
-                $("#job-order #content-customer-tab [name='custno']").append('<option value=' + value.CUST_NO + '>' + value.CUST_NO + '|' + value.CUST_NAME + '</option>');
-            });
-            $("#job-order #content-customer-tab .waiting").html("");
-        }
-    });
+// $(document).ready(function () {
 
-});
+
+//     var list_job_order_take = "api/v1/file/job-order/take=5000";
+//     var list_customer_take = "api/v1/data-basic/customer/list-take/type=1&take=5000";
+
+//     $("#job-order #content-job-tab .waiting").html("Vui lòng đợi");
+//     $("#job-order #content-customer-tab .waiting").html("Vui lòng đợi");
+
+//     $.ajax({
+//         url: list_job_order_take,
+//         type: "get", // chọn phương thức gửi là get
+//         dateType: "json", // dữ liệu trả về dạng text
+//         success: function (result) {
+//             // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
+//             $.each(result.data, function (key, value) {
+//                 $("#job-order #content-job-tab [name='jobno']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + '</option>');
+//             });
+//             $("#job-order #content-job-tab .waiting").html("");
+//         }
+//     });
+//     $.ajax({
+//         url: list_customer_take,
+//         type: "get", // chọn phương thức gửi là get
+//         dateType: "json", // dữ liệu trả về dạng text
+//         success: function (result) {
+//             // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
+//             $.each(result.data, function (key, value) {
+//                 $("#job-order #content-customer-tab [name='custno']").append('<option value=' + value.CUST_NO + '>' + value.CUST_NO + '|' + value.CUST_NAME + '</option>');
+//             });
+//             $("#job-order #content-customer-tab .waiting").html("");
+//         }
+//     });
+
+// });
 // 1. in phếu theo dõi
+$("#job-start").click(function () {
+    var fromjob = $("#job-start [name='fromjob']").val();
+    if (fromjob == null) {
+        $("#job-start .waiting").html("Vui lòng đợi");
+        var list_job_start_take = "api/v1/file/job-start/take=9000";
+        $.ajax({
+            url: list_job_start_take,
+            type: "get", // chọn phương thức gửi là get
+            dateType: "json", // dữ liệu trả về dạng text
+            success: function (result) {
+                // Sau khi gửi và kết quả trả về thành công thì gán nội dung trả về
+                $.each(result.data, function (key, value) {
+                    $("#job-start [name='fromjob']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + ' | ' + value.CUST_NAME + '</option>');
+                    $("#job-start [name='tojob']").append('<option value=' + value.JOB_NO + '>' + value.JOB_NO + ' | ' + value.CUST_NAME + '</option>');
+                });
+                $("#job-start .waiting").html("");
+            },
+            error: function (x, e) {
+                $("#job-start .waiting").html("Đã có lỗi xảy ra");
+            }
+        });
+    }
+});
 $("#job-start .btnPrint").click(function () {
     // alert("The paragraph was clicked.");
     var fromjob = $("#job-start [name='fromjob']").val();
@@ -54,6 +66,7 @@ $("#job-start .btnPrint").click(function () {
     window.open(url);
 });
 // 2. in phếu job order
+
 //-----2.1 load danh sách job khi chọn khách hàng
 $("#job-order #content-customer-tab  [name='custno']").on('change', function () {
     var custno = $("#job-order #content-customer-tab  [name='custno']").val();

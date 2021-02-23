@@ -268,6 +268,8 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('job-order', 'FileController@exportJobOrder_Date');
                 //3. báo biểu refund
                 Route::post('refund', 'FileController@postExportRefund');
+                //4.thong ke job order--tạo job
+                Route::post('created-job', 'FileController@statisticCreatedJob');
                 //5. thống kê nâng hạ
                 Route::get('lifting/fromdate={fromdate}&todate={todate}', 'FileController@lifting');
             });

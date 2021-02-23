@@ -38,8 +38,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>From:</label> <label class="waiting text-warning"></label>
-                                            <select class="form-control select2" style="width: 100%;" name="fromjob">
-
+                                            <select class="form-control select2 " style="width: 100%;" name="fromjob">
                                             </select>
                                         </div>
                                     </div>
