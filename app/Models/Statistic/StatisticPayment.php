@@ -261,10 +261,6 @@ class StatisticPayment extends Model
         try {
             $check_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
             $check_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
-            if ($check_date == 0) {
-                $data = 'error-date';
-                return $data;
-            }
             $query = DB::table('DEBIT_NOTE_M as dm')
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')

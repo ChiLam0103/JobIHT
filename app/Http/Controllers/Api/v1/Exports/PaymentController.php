@@ -229,28 +229,17 @@ class PaymentController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
-        $todate = $request->todate != 'null' ? $request->todate : $today;
+        $fromdate = $request->fromdate != 'undefined' ? $request->fromdate : '19000101';
+        $todate = $request->todate != 'undefined' ? $request->todate : $today;
         $data = StatisticPayment::profit($request->type, $request->jobno, $request->custno, $fromdate, $todate);
 
-        if ($data == 'error-date') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn lại ngày!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
         if ($data) {
             $filename = 'profit' . '(' . date('YmdHis') . ')';
-            // $thanh_toan = $data['thanh_toan'];
-            // $chi_phi = $data['chi_phi'];
+
             Excel::create($filename, function ($excel) use ($data, $fromdate, $todate) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data, $fromdate, $todate) {
                     $sheet->loadView('export\payment\profit\index', [
                         'thanh_toan' => $data,
-                        // 'chi_phi' => $chi_phi,
                         'fromdate' => $fromdate,
                         'todate' => $todate,
                     ]);

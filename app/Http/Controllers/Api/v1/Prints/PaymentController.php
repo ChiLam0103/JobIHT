@@ -222,22 +222,11 @@ class PaymentController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
+        $fromdate = $fromdate != 'undefined' ? $fromdate : '19000101';
+        $todate = $todate != 'undefined' ? $todate : $today;
         $data = StatisticPayment::profit($type, $jobno, $custno, $fromdate, $todate);
-        if ($data == 'error-date') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn lại ngày!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
         if ($data) {
             return view('print\payment\profit\index', [
-                // 'thanh_toan' => $data['thanh_toan'],
-                // 'chi_phi' => $data['chi_phi'],
                 'thanh_toan' => $data,
                 'fromdate' => $fromdate,
                 'todate' => $todate,
