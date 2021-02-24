@@ -235,7 +235,6 @@ class PaymentController extends Controller
 
         if ($data) {
             $filename = 'profit' . '(' . date('YmdHis') . ')';
-
             Excel::create($filename, function ($excel) use ($data, $fromdate, $todate) {
                 $excel->sheet('Debit Note', function ($sheet) use ($data, $fromdate, $todate) {
                     $sheet->loadView('export\payment\profit\index', [

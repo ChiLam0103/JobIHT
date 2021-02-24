@@ -23,34 +23,31 @@
             <th>Chi Phí</th>
             <th>Lợi Nhuận</th>
         </tr>
+        <span style="display: none">{{ $sum_chi_phi = 0 }}{{ $sum_loi_nhuan = 0 }}</span>
         @foreach ($thanh_toan as $key => $item)
             <tr>
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $item->JOB_NO }}</td>
                 <td>{{ $item->CUST_NO }}</td>
                 <td>{{ $item->CUST_NAME }}</td>
-                <td> {{ number_format($item->TIEN_THANH_TOAN, 0, ',', '.') }} </td>
-                <span
-                    style="display: none">{{ $chi_phi = \App\Models\Statistic\StatisticPayment::profitJobOrderD($item->JOB_NO) }}</span>
-                @foreach ($chi_phi as $item_2)
-                    {{-- @if ($item->JOB_NO == $item_2->JOB_NO) --}}
-                        <td> {{ number_format($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT, 0, ',', '.') }}
-                        </td>
-                        <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT), 0, ',', '.') }}
-                        </td>
-                        {{--
-                    @endif --}}
+                <td> {{ $item->TIEN_THANH_TOAN }} </td>
+                @foreach ($item->job_d as $item_2)
+                    <td> {{ $item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT }}
+                    </td>
+                    <td> {{ $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT) }}
+                    </td>
+                    <span
+                        style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT }}
+                        {{ $sum_loi_nhuan = $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT) }}</span>
                 @endforeach
                 </td>
             </tr>
         @endforeach
         <tr>
             <th colspan="4" style="text-align: right">TOTAL AMT</th>
-            <th>{{ number_format($thanh_toan->sum('TIEN_THANH_TOAN'), 0, ',', '.') }} </th>
-            <th>{{ number_format($chi_phi->sum('CHI_PHI') + $chi_phi->sum('SUM_PORT_AMT') + $chi_phi->sum('SUM_INDUSTRY_ZONE_AMT') - $chi_phi->sum('SUM_TAX_AMT'), 0, ',', '.') }}
-            </th>
-            <th>{{ number_format($thanh_toan->sum('TIEN_THANH_TOAN') - ($chi_phi->sum('CHI_PHI') + $chi_phi->sum('SUM_PORT_AMT') + $chi_phi->sum('SUM_INDUSTRY_ZONE_AMT') - $chi_phi->sum('SUM_TAX_AMT')), 0, ',', '.') }}
-            </th>
+            <th>{{ $thanh_toan->sum('TIEN_THANH_TOAN') }} </th>
+            <th>{{ $sum_chi_phi }} </th>
+            <th>{{ $sum_loi_nhuan }}</th>
         </tr>
 
     </table>

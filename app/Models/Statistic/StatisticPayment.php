@@ -287,6 +287,10 @@ class StatisticPayment extends Model
             $data = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
                 ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
                 ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
+            foreach($data as $item){
+                $item->job_d= StatisticPayment::profitJobOrderD($item->JOB_NO);
+            }
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
