@@ -4,7 +4,7 @@
         padding: 0;
         background-color: #FAFAFA;
         font: 10pt "Tohoma";
-        margin: 15mm 15mm 15mm 15mm;
+        margin: 5mm 5mm 5mm 5mm;
     }
 
     * {
@@ -16,7 +16,7 @@
         width: 21cm;
         overflow: hidden;
         min-height: 297mm;
-        padding: 0.5cm;
+        /* padding: 0.5cm; */
         margin-left: auto;
         margin-right: auto;
         background: white;
@@ -39,7 +39,7 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
-            margin: 15mm 15mm 15mm 15mm;
+            margin: 5mm 5mm 5mm 5mm;
         }
     }
 
