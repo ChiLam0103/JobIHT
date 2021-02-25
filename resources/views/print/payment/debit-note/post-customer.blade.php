@@ -332,19 +332,18 @@
                     {{ $total_amt_do = 0 }}
                     {{ $total_vat = 0 }}
                 </span>
-                @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null) as $item_d)
+                @foreach ($item->debit_d as $item_d)
                     <tr>
                         <td class="text-center">{{ $item_d->SER_NO }}</td>
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
-                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td>
-                        --}}
+                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
                         <td class="text-center">{{ $item_d->QUANTITY }}</td>
                         <td class="text-right">
                             {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
                         </td>
-                        <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
+                        <td class="text-right">{{trim($bank->BANK_NO) == 'ACB' ?  number_format($item_d->TAX_AMT, 0, ',', '.') : 0}}</td>
                         <td class="text-right">
                             {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : $item_d->DOR_AMT * $item_d->QUANTITY }}
                         </td>

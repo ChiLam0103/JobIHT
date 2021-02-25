@@ -34,10 +34,12 @@
                 <th colspan="9" style="text-align: center">Add: {{ $company->COMP_ADDRESS1 }}</th>
             </tr>
             <tr>
-                <th colspan="9" style="text-align: center">Tel: {{ $company->COMP_TEL1 }}/{{ $company->COMP_TEL2 }}</th>
+                <th colspan="9" style="text-align: center">Tel: {{ $company->COMP_TEL1 }}/{{ $company->COMP_TEL2 }}
+                </th>
             </tr>
             <tr>
-                <th colspan="9" style="text-align: center">Fax: {{ $company->COMP_FAX1 }}/{{ $company->COMP_FAX2 }}</th>
+                <th colspan="9" style="text-align: center">Fax: {{ $company->COMP_FAX1 }}/{{ $company->COMP_FAX2 }}
+                </th>
             </tr>
         </thead>
     </table>
@@ -98,7 +100,8 @@
                 <th colspan="2" class="font-size-small">Customs No:</th>
                 <td colspan="3">{{ $item->CUSTOMS_NO }}</td>
                 <th class="font-size-small">Custom Date:</th>
-                <td colspan="3">{{ $item->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}
+                <td colspan="3">
+                    {{ $item->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}
                 </td>
             </tr>
             <tr>
@@ -148,7 +151,7 @@
                 {{ $total_amt_do = 0 }}
                 {{ $total_vat = 0 }}
             </span>
-            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('customer_new', null, null, $item->JOB_NO, null) as $item_d)
+            @foreach ($item->debit_d as $item_d)
                 <tr>
                     <td class="text-center">{{ $item_d->SER_NO }}</td>
                     <td colspan="2">{{ $item_d->DESCRIPTION }}</td>
@@ -157,12 +160,12 @@
                     <td class="text-center">{{ $item_d->QUANTITY }}</td>
                     <td class="text-center">{{ trim($bank->BANK_NO) == 'ACB' ? $item_d->PRICE : $item_d->DOR_AMT }}
                     </td>
-                    <td class="text-right">{{ $item_d->TAX_AMT }}</td>
+                    <td class="text-right">{{trim($bank->BANK_NO) == 'ACB' ? $item_d->TAX_AMT : 0}}</td>
                     <td class="text-right">
                         {{ trim($bank->BANK_NO) == 'ACB' ? $item_d->TOTAL_AMT : $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </td>
                     <span style="display: none;">
-                        {{ $total_amt += $item_d->TOTAL_AMT}}
+                        {{ $total_amt += $item_d->TOTAL_AMT }}
                         {{ $total_vat += $item_d->TAX_AMT }}
                         {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </span>
