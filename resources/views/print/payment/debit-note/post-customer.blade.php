@@ -339,13 +339,17 @@
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
                         {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
-                        <td class="text-center">{{ $item_d->QUANTITY }}</td>
+                        <td class="text-center">
+                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->QUANTITY, 0, '.', ',') : number_format($item_d->QUANTITY, 2, '.', ',') }}
+                        </td>
                         <td class="text-right">
                             {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
                         </td>
-                        <td class="text-right">{{trim($bank->BANK_NO) == 'ACB' ?  number_format($item_d->TAX_AMT, 0, ',', '.') : 0}}</td>
                         <td class="text-right">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : $item_d->DOR_AMT * $item_d->QUANTITY }}
+                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}
+                        </td>
+                        <td class="text-right">
+                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
                         </td>
                         <span style="display: none;">
                             {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -357,8 +361,9 @@
                 @endforeach
                 <tr class="text-right font-weight-bold">
                     <td colspan="6">JOB AMT</td>
-                    <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
-                    <td> {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_amt, 0, ',', '.') : $total_amt_do }}
+                    <td>{{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_vat, 0, ',', '.') : '' }}
+                    </td>
+                    <td> {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
                     </td>
                 </tr>
             </table>
@@ -372,10 +377,10 @@
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
                 <td style="width:6.2em">
-                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_vat_tax, 0, ',', '.') : $total_vat_tax }}
+                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_vat_tax, 0, ',', '.') : '' }}
                 </td>
                 <td style="width:6.2em">
-                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_sum_amt, 0, ',', '.') : $total_sum_amt }}
+                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_sum_amt, 0, ',', '.') : number_format($total_sum_amt, 2, '.', ',') }}
                 </td>
             </tr>
         </table>
