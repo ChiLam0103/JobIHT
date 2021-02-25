@@ -166,6 +166,7 @@ class PaymentController extends Controller
                         break;
                     case 'customer':
                         $filename = 'debit-note-customer-' . trim($customer->CUST_NO) . '(' . date('YmdHis') . ')';
+
                         Excel::create($filename, function ($excel) use ($debit) {
                             $excel->sheet('Debit Note', function ($sheet) use ($debit) {
                                 $sheet->loadView('export\payment\debit-note\post-export-customer', [

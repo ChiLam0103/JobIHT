@@ -153,7 +153,8 @@ Route::namespace('Api\v1')->group(function () {
                 Route::get('/list-job-has-d', 'DebitNoteController@listJobHasD'); //print 2. list debit có chi phí
                 Route::get('page={page}', 'DebitNoteController@listPage');
                 Route::get('take={take}', 'DebitNoteController@listTake');
-                Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@search');
+                Route::get('search/type={type}&value={value}&page={page}', 'DebitNoteController@searchPage');
+                Route::get('search/type={type}&value={value}', 'DebitNoteController@search');
 
                 Route::get('des/{id}', 'DebitNoteController@des');
                 Route::get('not-created', 'DebitNoteController@listNotCreated');

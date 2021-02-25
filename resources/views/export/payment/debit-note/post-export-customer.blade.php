@@ -38,7 +38,7 @@
                     <td>{{ $item->CONSIGNEE }}</td>
                     <td>{{ $item->TRANS_FROM }}</td>
                     <td>{{ $item->TRANS_TO }}</td>
-                    <td>{{ $item->NOTE}}</td>
+                    <td>{{ $item->NOTE}} </td>
                     <td>{{ $item->BILL_NO}}</td>
                     <td>{{ $item->ETD_ETA }}</td>
                     <td>{{ $item->CUSTOMS_NO }}</td>

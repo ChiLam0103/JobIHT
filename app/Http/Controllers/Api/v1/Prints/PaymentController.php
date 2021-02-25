@@ -222,8 +222,8 @@ class PaymentController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
-        $fromdate = $fromdate != 'undefined' ? $fromdate : '19000101';
-        $todate = $todate != 'undefined' ? $todate : $today;
+        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $todate = $todate != 'null' ? $todate : $today;
         $data = StatisticPayment::profit($type, $jobno, $custno, $fromdate, $todate);
         if ($data) {
             return view('print\payment\profit\index', [

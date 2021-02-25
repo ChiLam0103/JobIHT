@@ -81,7 +81,7 @@ class DebitNoteM extends Model
             ->get();
         return ['total_page' => $count, 'list' => $data];
     }
-    public static function search($type, $value, $page)
+    public static function searchPage($type, $value, $page)
     {
         $take = 10;
         $skip = ($page - 1) * $take;
@@ -108,6 +108,32 @@ class DebitNoteM extends Model
         $count = $query->count();
         $data =  $query->skip($skip)->take($take)->get();
         return ['total_page' => $count, 'list' => $data];
+    }
+    public static function search($type, $value)
+    {
+        $take = 50;
+        $query =  DebitNoteM::query();
+        switch ($type) {
+            case 'job_no':
+                $query->where('dnm.JOB_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case 'cust_no':
+                $query->where('dnm.CUST_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'container_no':
+                $query->where('dnm.CONTAINER_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'customs_no':
+                $query->where('dnm.CUSTOMS_NO', 'LIKE', '%' . $value . '%');
+                break;
+            case  'po_no':
+                $query->where('dm.PO_NO', 'LIKE', '%' . $value . '%');
+                break;
+            default:
+                break;
+        }
+        $data =  $query->take($take)->get();
+        return $data;
     }
     public static function listNotCreated()
     {
