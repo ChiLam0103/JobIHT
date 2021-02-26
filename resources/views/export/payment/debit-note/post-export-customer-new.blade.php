@@ -101,7 +101,7 @@
                 <td colspan="3">{{ $item->CUSTOMS_NO }}</td>
                 <th class="font-size-small">Custom Date:</th>
                 <td colspan="3">
-                    {{ $item->CUSTOMS_DATE == null ? '' : date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}
+                    {{ $item->CUSTOMS_DATE == null ? '' : date('d/m/Y', strtotime($item->CUSTOMS_DATE)) }}
                 </td>
             </tr>
             <tr>
