@@ -318,27 +318,29 @@
                 <th>Descriptions</th>
                 <th>Invoice No</th>
                 <th>Unit</th>
-                <th>Currency</th>
+                {{-- <th>Currency</th> --}}
                 <th>Qty</th>
                 <th>Price</th>
                 <th>VAT Tax</th>
                 <th>Total Amt</th>
             </tr>
-            <span style="display: none;">{{ $total_amt = 0 }} {{ $total_amt_do = 0 }} {{ $total_vat = 0 }}</span>
+            <span style="display: none;">{{ $total_amt = 0 }} {{ $total_amt_do = 0 }}
+                {{ $total_vat = 0 }}</span>
             @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('job', null, null, $debit->JOB_NO, null) as $item_d)
                 <tr>
                     <td class="text-center">{{ $item_d->SER_NO }}</td>
                     <td>{{ $item_d->DESCRIPTION }}</td>
                     <td>{{ $item_d->INV_NO }}</td>
                     <td class="text-center">{{ $item_d->UNIT }}</td>
-                    <td class="text-center">{{ $item_d->DOR_NO }}</td>
+                    {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
                     <td class="text-center">{{ $item_d->QUANTITY }}</td>
                     <td class="text-right">
-                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
+                        {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 2, '.', ',') }}
                     </td>
-                    <td class="text-right">{{ number_format($item_d->TAX_AMT, 0, ',', '.') }}</td>
                     <td class="text-right">
-                        {{ $item_d->DOR_NO == 'VND' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : $item_d->DOR_AMT * $item_d->QUANTITY }}
+                        {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}</td>
+                    <td class="text-right">
+                        {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
                     </td>
                     <span style="display: none;">
                         {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -350,9 +352,10 @@
 
             @endforeach
             <tr class="text-right font-weight-bold">
-                <td colspan="7">JOB AMT</td>
-                <td>{{ number_format($total_vat, 0, ',', '.') }}</td>
-                <td> {{ $curency == 'VND' ? number_format($total_amt, 0, ',', '.') : $total_amt_do }}</td>
+                <td colspan="6">JOB AMT</td>
+                <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }} {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}</td>
+                <td> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}</td>
             </tr>
         </table>
 
@@ -363,7 +366,7 @@
             <span>Banker name: {{ $bank->BANK_NAME }}</span><br>
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
-            @if (!$bank->SWIFT_CODE)
+            @if (trim($bank->SWIFT_CODE) != '')
                 <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
                 <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
                 <span>Adress: {{ $bank->ADDRESS }}</span><br>

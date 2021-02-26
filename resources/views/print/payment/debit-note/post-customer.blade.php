@@ -321,7 +321,6 @@
                     <th>Descriptions</th>
                     <th>Invoice No</th>
                     <th>Unit</th>
-                    {{-- <th>Currency</th> --}}
                     <th>Qty</th>
                     <th>Price</th>
                     <th style="width:5em">VAT Tax</th>
@@ -338,18 +337,17 @@
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
-                        {{-- <td class="text-center">{{ $item_d->DOR_NO }}</td> --}}
                         <td class="text-center">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->QUANTITY, 0, '.', ',') : number_format($item_d->QUANTITY, 2, '.', ',') }}
+                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->QUANTITY, 0, '.', ',') : number_format($item_d->QUANTITY, 2, '.', ',') }}
                         </td>
                         <td class="text-right">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->PRICE, 0, ',', '.') : $item_d->DOR_AMT }}
+                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 2, '.', ',') }}
                         </td>
                         <td class="text-right">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}
+                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}
                         </td>
                         <td class="text-right">
-                            {{ trim($bank->BANK_NO) == 'ACB' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
+                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
                         </td>
                         <span style="display: none;">
                             {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -361,26 +359,30 @@
                 @endforeach
                 <tr class="text-right font-weight-bold">
                     <td colspan="6">JOB AMT</td>
-                    <td>{{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_vat, 0, ',', '.') : '' }}
+                    <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }}
+                        {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}
                     </td>
-                    <td> {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
+                    <td> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
+                        {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}
                     </td>
                 </tr>
+                <span style="display: none;">
+                    {{ $total_vat_tax += $total_vat }}
+                    {{ $total_sum_amt += trim($bank->SWIFT_CODE) == '' ? $total_amt : $total_amt_do }}
+                </span>
             </table>
 
-            <span style="display: none;">
-                {{ $total_vat_tax += $total_vat }}
-                {{ $total_sum_amt += trim($bank->BANK_NO) == 'ACB' ? $total_amt : $total_amt_do }}
-            </span>
         @endforeach
         <table style="width:100%" id="debit_d">
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
                 <td style="width:6.2em">
-                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_vat_tax, 0, ',', '.') : '' }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat_tax, 0, ',', '.') : '' }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}
                 </td>
                 <td style="width:6.2em">
-                    {{ trim($bank->BANK_NO) == 'ACB' ? number_format($total_sum_amt, 0, ',', '.') : number_format($total_sum_amt, 2, '.', ',') }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_sum_amt, 0, ',', '.') : number_format($total_sum_amt, 2, '.', ',') }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}
                 </td>
             </tr>
         </table>
@@ -391,7 +393,7 @@
             <span>Banker name: {{ $bank->BANK_NAME }}</span><br>
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
-            @if (!$bank->SWIFT_CODE)
+            @if (trim($bank->SWIFT_CODE) != '')
                 <span>Swift code: {{ $bank->SWIFT_CODE }}</span>
                 <span>Bank address: {{ $bank->BANK_ADDRESS }}</span>
                 <span>Adress: {{ $bank->ADDRESS }}</span>
