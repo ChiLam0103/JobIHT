@@ -187,7 +187,7 @@
                             <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT), 0, ',', '.') }}
                             </td>
                             <span style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT }}
-                            {{ $sum_loi_nhuan = $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT) }}</span>
+                            {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT) }}</span>
                         @endforeach
                         </td>
                     </tr>
