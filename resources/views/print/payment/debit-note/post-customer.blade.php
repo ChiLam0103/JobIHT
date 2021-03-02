@@ -344,7 +344,7 @@
                             {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 2, '.', ',') }}
                         </td>
                         <td class="text-right">
-                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}
+                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '0' }}
                         </td>
                         <td class="text-right">
                             {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
@@ -359,7 +359,7 @@
                 @endforeach
                 <tr class="text-right font-weight-bold">
                     <td colspan="6">JOB AMT</td>
-                    <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }}
+                    <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '0' }}
                         {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}
                     </td>
                     <td> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
@@ -377,7 +377,7 @@
             <tr class="text-right font-weight-bold">
                 <td>TOTAL AMT</td>
                 <td style="width:6.2em">
-                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat_tax, 0, ',', '.') : '' }}
+                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat_tax, 0, ',', '.') : '0' }}
                     {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}
                 </td>
                 <td style="width:6.2em">
@@ -394,9 +394,9 @@
             <span>Account no: {{ $bank->ACCOUNT_NO }}</span><br>
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
             @if (trim($bank->SWIFT_CODE) != '')
-                <span>Swift code: {{ $bank->SWIFT_CODE }}</span>
-                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span>
-                <span>Adress: {{ $bank->ADDRESS }}</span>
+                <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
+                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
+                <span>Adress: {{ $bank->ADDRESS }}</span><br>
             @endif
 
         </div>
