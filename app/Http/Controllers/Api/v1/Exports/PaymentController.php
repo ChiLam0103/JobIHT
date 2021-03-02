@@ -290,14 +290,6 @@ class PaymentController extends Controller
                 ],
                 Response::HTTP_BAD_REQUEST
             );
-        } elseif ($data == 'error-custno') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn Khách Hàng!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         } else {
             $filename = 'job-monthly' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {

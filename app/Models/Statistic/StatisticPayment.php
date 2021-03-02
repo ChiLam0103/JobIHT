@@ -324,23 +324,21 @@ class StatisticPayment extends Model
             if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
                 $data = 'error-date';
                 return $data;
-            } elseif ($custno == null || $custno == 'undefined' || $custno == 'null') {
-                $data = 'error-custno';
-                return $data;
             }
             $data = '';
             $table_name = '';
             $table_name = $type == 'job_start' ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
             $table_date = $type == 'job_start' ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
-            $data = DB::table($table_name . ' as job')
+            $query = DB::table($table_name . ' as job')
                 ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
                 ->where('job.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('job.CUST_NO', $custno)
                 ->where('job.' . $table_date, '>=', '20190101')
-                ->whereBetween('job.' . $table_date, [$fromdate, $todate])
-                ->orderBy('job.JOB_NO')
-                ->select('c.CUST_NAME', 'job.*')->get();
+                ->whereBetween('job.' . $table_date, [$fromdate, $todate]);
+            if (empty($custno)) {
+                $query->where('job.CUST_NO', $custno);
+            }
+            $data = $query ->orderBy('job.JOB_NO')->select('c.CUST_NAME', 'job.*')->get();
             return $data;
         } catch (\Exception $e) {
             return $e;

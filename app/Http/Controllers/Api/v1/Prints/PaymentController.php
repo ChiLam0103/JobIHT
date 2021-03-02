@@ -271,16 +271,7 @@ class PaymentController extends Controller
                 ],
                 Response::HTTP_BAD_REQUEST
             );
-        } elseif ($data == 'error-custno') {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn Khách Hàng!',
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
         }
-        // dd($data);
         if ($data) {
             return view('print\payment\job-monthly\index', [
                 'data' => $data,
