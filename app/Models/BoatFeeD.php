@@ -26,7 +26,7 @@ class BoatFeeD extends Model
     }
     public static function edit($request)
     {
-        DB::table(config('constants.BOAT_FEE_D_TABLE'))
+        DB::table('BOAT_FEE_D')
             ->where('BOAT_FEE_MONTH', $request->BOAT_FEE_MONTH)
             ->where('JOB_NO', $request->JOB_NO)
             ->update([
@@ -43,7 +43,6 @@ class BoatFeeD extends Model
                 'ORDER_TO' => $request->ORDER_TO,
             ]);
         $data = BoatFeeD::des($request->BOAT_FEE_MONTH, $request->JOB_NO);
-        dd($data);
         return $data;
     }
 }

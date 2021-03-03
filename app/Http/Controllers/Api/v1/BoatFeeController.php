@@ -103,9 +103,9 @@ class BoatFeeController extends Controller
             );
         }
     }
-    public function edit(Request $request)
+    public function edit(Request $req)
     {
-        $data = BoatFeeD::edit($request);
+        $data = BoatFeeD::edit($req);
         if ($data) {
             return response()->json([
                 'success' => true,
