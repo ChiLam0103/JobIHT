@@ -353,9 +353,9 @@
             @endforeach
             <tr class="text-right font-weight-bold">
                 <td colspan="6">JOB AMT</td>
-                <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }} {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '0' }}</td>
+                <td>{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }} {{ trim($bank->SWIFT_CODE) == '' ? '' : '0' }}</td>
                 <td> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
-                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}</td>
+                    {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}</td>
             </tr>
         </table>
 

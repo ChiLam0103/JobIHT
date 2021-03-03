@@ -174,9 +174,8 @@
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
                 <th>{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
-                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}</th>
                 <th> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : $total_amt_do }}
-                    {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}</th>
+                    {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}</th>
             </tr>
         </table>
 
@@ -189,9 +188,8 @@
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
             <th>{{ trim($bank->SWIFT_CODE) == '' ? $total_vat_tax : '' }}
-                {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : '' }}</th>
             <th>
-                {{ $total_sum_amt }} {{ trim($bank->SWIFT_CODE) == '' ? 'VND' : 'USD' }}
+                {{ $total_sum_amt }} {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}
             </th>
         </tr>
 
