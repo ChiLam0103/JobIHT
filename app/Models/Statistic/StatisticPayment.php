@@ -321,9 +321,13 @@ class StatisticPayment extends Model
     public static function jobMonthly($type, $custno, $fromdate, $todate)
     {
         try {
+            $error_customer = 0;
             if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
                 $data = 'error-date';
                 return $data;
+            }
+            if ($custno == null || $custno == 'undefined' || $custno == 'null') {
+                $error_customer = 1;
             }
             $data = '';
             $table_name = '';
@@ -335,10 +339,10 @@ class StatisticPayment extends Model
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('job.' . $table_date, '>=', '20190101')
                 ->whereBetween('job.' . $table_date, [$fromdate, $todate]);
-            if (empty($custno)) {
+            if ($error_customer == 0) {
                 $query->where('job.CUST_NO', $custno);
             }
-            $data = $query ->orderBy('job.JOB_NO')->select('c.CUST_NAME', 'job.*')->get();
+            $data = $query->orderBy('job.JOB_NO')->select('c.CUST_NAME', 'job.*')->get();
             return $data;
         } catch (\Exception $e) {
             return $e;
