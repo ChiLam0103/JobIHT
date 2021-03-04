@@ -69,7 +69,7 @@
             <th>Attn:</th>
             <td colspan="4">{{ $customer->CUST_BOSS }}</td>
             <th colspan="2">Accountting:</th>
-            <td colspan="2">{{ $phone }}</td>
+            <td colspan="2">{{ $phone }} {{""}}</td>
         </tr>
         <tr>
             <th>Add:</th>
@@ -108,7 +108,7 @@
                 <th colspan="2" class="font-size-small">NW:</th>
                 <td colspan="3">{{ $item->NW }}</td>
                 <th class="font-size-small">GW:</th>
-                <td colspan="3">{{ $item->GW }}</td>
+                <td colspan="3">{{ $item->GW }} {{""}}</td>
             </tr>
             <tr>
                 <th colspan="2" class="font-size-small">Job Order:</th>
@@ -137,14 +137,14 @@
 
         <table class="table">
             <tr>
-                <th>STT</th>
-                <th colspan="2">Descriptions</th>
-                <th>Invoice No</th>
-                <th>Unit</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>VAT Tax</th>
-                <th>Total Amt</th>
+                <th style="text-align: center">STT</th>
+                <th style="text-align: center" colspan="2">Descriptions</th>
+                <th style="text-align: center">Invoice No</th>
+                <th style="text-align: center">Unit</th>
+                <th style="text-align: center">Qty</th>
+                <th style="text-align: center">Price</th>
+                <th style="text-align: center">VAT Tax</th>
+                <th style="text-align: center">Total Amt</th>
             </tr>
             <span style="display: none;">
                 {{ $total_amt = 0 }}
@@ -158,10 +158,10 @@
                     <td>{{ $item_d->INV_NO }}</td>
                     <td class="text-center">{{ $item_d->UNIT }}</td>
                     <td class="text-center">{{ $item_d->QUANTITY }}</td>
-                    <td class="text-center">{{ trim($bank->SWIFT_CODE) == '' ? $item_d->PRICE : $item_d->DOR_AMT }}
+                    <td style="text-align: right">{{ trim($bank->SWIFT_CODE) == '' ? $item_d->PRICE : $item_d->DOR_AMT }}
                     </td>
-                    <td class="text-right">{{ trim($bank->SWIFT_CODE) == '' ? $item_d->TAX_AMT : '' }}</td>
-                    <td class="text-right">
+                    <td style="text-align: right">{{ trim($bank->SWIFT_CODE) == '' ? $item_d->TAX_AMT : '' }}</td>
+                    <td style="text-align: right">
                         {{ trim($bank->SWIFT_CODE) == '' ? $item_d->TOTAL_AMT : $item_d->DOR_AMT * $item_d->QUANTITY }}
                     </td>
                     <span style="display: none;">
@@ -173,8 +173,8 @@
             @endforeach
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <th>{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
-                <th> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : $total_amt_do }}
+                <th style="text-align: right">{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
+                <th style="text-align: right"> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : $total_amt_do }}
                     {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}</th>
             </tr>
         </table>
@@ -187,8 +187,8 @@
     <table class="table">
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
-            <th>{{ trim($bank->SWIFT_CODE) == '' ? $total_vat_tax : '' }}
-            <th>
+            <th style="text-align: right">{{ trim($bank->SWIFT_CODE) == '' ? $total_vat_tax : '' }}
+            <th style="text-align: right">
                 {{ $total_sum_amt }} {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}
             </th>
         </tr>

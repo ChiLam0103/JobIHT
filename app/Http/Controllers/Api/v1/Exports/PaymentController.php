@@ -191,7 +191,10 @@ class PaymentController extends Controller
                                     'bank' => $bank,
                                     'customer' => $customer
                                 ]);
-                                $sheet->setOrientation('landscape');
+                                $sheet->setOrientation('landscape')
+                                    ->getStyle('A4')
+                                    ->getAlignment()
+                                    ->setWrapText(true);
                             });
                         })->store('xlsx');
                         return response()->json([
