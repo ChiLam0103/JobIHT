@@ -26,18 +26,18 @@ class BoatFeeD extends Model
     }
     public static function edit($request)
     {
-        DB::table('BOAT_FEE_D')
+        $query =  DB::table('BOAT_FEE_D')
             ->where('BOAT_FEE_MONTH', $request->BOAT_FEE_MONTH)
             ->where('JOB_NO', $request->JOB_NO)
             ->update([
-                'BOAT_LEAVE_DATE' =>$request->BOAT_LEAVE_DATE =="undefined" ? null : date("Ymd", strtotime($request->BOAT_LEAVE_DATE )),
+                'BOAT_LEAVE_DATE' => $request->BOAT_LEAVE_DATE == "1970-01-01" ? null : date("Ymd", strtotime($request->BOAT_LEAVE_DATE)),
                 'PAY_DATE' => date("Ymd", strtotime($request->PAY_DATE)),
                 'PAY_NOTE' => $request->PAY_NOTE,
-                'VND_FEE' => $request->VND_FEE,
-                'USD_FEE' => $request->USD_FEE,
-                'PAID_VND_FEE' => $request->PAID_VND_FEE,
-                'PAID_USD_FEE' => $request->PAID_USD_FEE,
-                'REAL_PAY_DATE' =>$request->REAL_PAY_DATE =="undefined" ? null : date("Ymd", strtotime($request->REAL_PAY_DATE)),
+                'VND_FEE' => $request->VND_FEE == null ? 0 : $request->VND_FEE,
+                'USD_FEE' => $request->USD_FEE == null ? 0.00 :  $request->USD_FEE,
+                'PAID_VND_FEE' => $request->PAID_VND_FEE == null ? 0 :  $request->PAID_VND_FEE,
+                'PAID_USD_FEE' => $request->PAID_USD_FEE == null ? 0 : $request->PAID_USD_FEE,
+                'REAL_PAY_DATE' => $request->REAL_PAY_DATE == "1970-01-01" ? null : date("Ymd", strtotime($request->REAL_PAY_DATE)),
                 'CUST_NO' => $request->CUST_NO,
                 'ORDER_FROM' => $request->ORDER_FROM,
                 'ORDER_TO' => $request->ORDER_TO,
