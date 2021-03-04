@@ -293,11 +293,14 @@ class StatisticPayment extends Model
                     break;
             }
             $data = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
-                ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
+                // ->selectRaw("sum(CASE WHEN (dnd.TAX_NOTE = '0%') OR (dnd.TAX_NOTE = '10%') OR (dnd.TAX_NOTE = '') THEN  (dnd.QUANTITY * dnd.PRICE)  ELSE (dnd.QUANTITY * dnd.PRICE) + (dnd.QUANTITY * dnd.PRICE) * dnd.TAX_NOTE/100 END) as TIEN_THANH_TOAN")
+                ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
                 ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
             foreach ($data as $item) {
                 $item->job_d = StatisticPayment::profitJobOrderD($item->JOB_NO);
+                // dd($item->job_d);
             }
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
@@ -306,14 +309,20 @@ class StatisticPayment extends Model
 
     public static function profitJobOrderD($jobno)
     {
+
         $data = DB::table('JOB_ORDER_D as jd')
             ->where('jd.JOB_NO', $jobno)
-            ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
-            ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
-            ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
-            ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
+            // ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
+            ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  jd.PRICE  ELSE  jd.PRICE*jd.QTY END) as CHI_PHI")
+            // ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
+            // ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
+            // ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
+            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = 'C') THEN jd.PRICE ELSE 0 END)  as SUM_DEPOSIT_FEE")
+            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = '8' ) THEN jd.PRICE ELSE 0 END)  as SUM_DEPOSIT_FIX_FEE")
             ->where('jd.BRANCH_ID', 'IHTVN1')
             ->get();
+        // dd($data);
+
         return $data;
     }
     //5. thống kê số job trong tháng

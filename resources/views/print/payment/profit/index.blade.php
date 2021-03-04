@@ -182,12 +182,12 @@
                         <td>{{ $item->CUST_NAME }}</td>
                         <td> {{ number_format($item->TIEN_THANH_TOAN, 0, ',', '.') }} </td>
                         @foreach ($item->job_d as $item_2)
-                            <td> {{ number_format($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT, 0, ',', '.') }}
+                            <td> {{ number_format($item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE, 0, ',', '.') }}
                             </td>
-                            <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT), 0, ',', '.') }}
+                            <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE), 0, ',', '.') }}
                             </td>
-                            <span style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT }}
-                            {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI + $item_2->SUM_PORT_AMT + $item_2->SUM_INDUSTRY_ZONE_AMT - $item_2->SUM_TAX_AMT) }}</span>
+                            <span style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE}}
+                            {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}</span>
                         @endforeach
                         </td>
                     </tr>
