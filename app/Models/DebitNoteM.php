@@ -65,7 +65,7 @@ class DebitNoteM extends Model
     }
     public static function listTake($take)
     {
-        $take = $take;
+        $take = 100;
         $query =  DebitNoteM::query();
         $data =  $query->take($take)->get();
         return $data;
@@ -111,7 +111,7 @@ class DebitNoteM extends Model
     }
     public static function search($type, $value)
     {
-        $take = 50;
+        $take = 100;
         $query =  DebitNoteM::query();
         switch ($type) {
             case 'job_no':
