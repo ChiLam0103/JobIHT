@@ -99,7 +99,7 @@ class JobStart extends Model
         $count = (int)($query->count());
         $data =  $query->skip($skip)
             ->take($take)
-            ->select('c.CUST_NAME', 'js.JOB_NO')
+            ->select('c.CUST_NAME', 'js.*')
             ->get();
         return ['total_page' => $count, 'list' => $data];
     }
