@@ -346,15 +346,45 @@ class StatisticPayment extends Model
                 ->where('job.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('job.' . $table_date, '>=', '20190101')
-                ->whereBetween('job.' . $table_date, [$fromdate, $todate]);
+                ->whereBetween('job.' . $table_date, [$fromdate, $todate])->select('c.CUST_NAME', 'job.*')->orderBy('job.JOB_NO');
             if ($error_customer == 0) {
                 $query->where('job.CUST_NO', $custno);
             }
-            $data = $query->orderBy('job.JOB_NO')->select('c.CUST_NAME', 'job.*')->get();
+            $data = $query->get();
+            if ($type == 'job_start') {
+                foreach ($data as $item) {
+                    $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
+                    $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
+                    $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
+                    $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
+                    $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
+                }
+            }
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
         }
+    }
+    public static function jobMonthly_jobOrderD($jobno)
+    {
+        $data = DB::table('JOB_ORDER_D as jd')
+            ->where('jd.BRANCH_ID', 'IHTVN1')
+            ->where('jd.JOB_NO', $jobno)
+            ->selectRaw('sum(jd.PORT_AMT) as SUM_PORT_AMT')
+            ->selectRaw('sum(jd.INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT')
+            ->first();
+        return $data;
+    }
+    public static function jobMonthly_lenderD($jobno)
+    {
+        $data = DB::table('LENDER as l')
+            ->leftJoin('LENDER_D as ld', 'l.LENDER_NO', 'ld.LENDER_NO')
+            ->where('l.BRANCH_ID', 'IHTVN1')
+            ->where('l.JOB_NO', $jobno)
+            ->selectRaw('sum(ld.LENDER_AMT) as SUM_LENDER_AMT')
+            ->first();
+        return $data;
     }
     //6. thong ke thanh toan cua khach hang
     public static function paymentCustomers($type, $custno, $fromdate, $todate)

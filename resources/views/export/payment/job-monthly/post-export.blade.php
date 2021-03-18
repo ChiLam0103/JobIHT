@@ -13,6 +13,7 @@
                 NGÀY:{{ date('Y/m/d', strtotime($todate)) }} </td>
         </tr>
     </table>
+    <span style="display: none">{{ $total_lender = 0 }}{{ $total_job_d = 0 }}</span>
     <table>
         <tr>
             <th>STT</th>
@@ -26,6 +27,10 @@
             <th>POD</th>
             <th>ETD/ETA</th>
             <th>Description</th>
+            @if ($type == 'job_start')
+                <th>Số tiền tạm ứng</th>
+                <th>Số tiền job order</th>
+            @endif
         </tr>
         @foreach ($data as $key => $item)
             <tr>
@@ -40,6 +45,19 @@
                 <td>{{ $item->POL }}</td>
                 <td> {{ $type == 'job_start' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
                 <td>{{ $item->NOTE }}</td>
+                @if ($type == 'job_start')
+                    <td>{{ $item->SUM_LENDER_AMT }}</td>
+                    <td>{{ $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}</td>
+                    <span style="display: none">
+                        {{ $total_job_d += $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}
+                        {{ $total_lender += $item->SUM_LENDER_AMT }}
+                    </span>
+                @endif
+            </tr>
+            <tr>
+                <td colspan="11"></td>
+                <td> {{ $total_lender }}</td>
+                <td> {{ $total_job_d }}</td>
             </tr>
         @endforeach
 
