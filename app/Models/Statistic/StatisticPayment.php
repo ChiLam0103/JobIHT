@@ -351,15 +351,15 @@ class StatisticPayment extends Model
                 $query->where('job.CUST_NO', $custno);
             }
             $data = $query->get();
-            if ($type == 'job_start') {
-                foreach ($data as $item) {
-                    $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
-                    $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
-                    $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
-                    $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
-                    $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
-                }
-            }
+            // if ($type == 'job_start') {
+            //     foreach ($data as $item) {
+            //         $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
+            //         $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
+            //         $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
+            //         $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
+            //         $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
+            //     }
+            // }
             // dd($data);
             return $data;
         } catch (\Exception $e) {
