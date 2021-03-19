@@ -194,13 +194,18 @@
                         <td>{{ $item->CONTAINER_QTY }}</td>
                         <td>{{ $item->POD }}</td>
                         <td>{{ $item->POL }}</td>
-                        <td> {{ $type == 'job_start' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
+                        <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}
+                        </td>
                         <td>{{ $item->NOTE }}</td>
                         @if ($type == 'job_pay')
-                            <td>{{ ($lender = \App\Models\Statistic\StatisticPayment::jobMonthly_lenderD($item->JOB_NO)) == null ? 0 : number_format($lender->SUM_LENDER_AMT) }}
+
+                            {{-- cách 1 --}}
+                            {{-- <td>{{ ($lender = \App\Models\Statistic\StatisticPayment::jobMonthly_lenderD($item->JOB_NO)) == null ? 0 : number_format($lender->SUM_LENDER_AMT) }}
                             </td>
                             <td>{{ ($job_d = \App\Models\Statistic\StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO)) == null ? 0 : number_format($job_d->SUM_PORT_AMT + $job_d->SUM_INDUSTRY_ZONE_AMT) }}
-                            </td>
+                            </td> --}}
+
+                            {{-- cách 2 --}}
                             <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
                             <td>{{ number_format($item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT) }}</td>
                             <span style="display: none">
@@ -209,7 +214,7 @@
                             </span>
                         @endif
                         {{-- <span style="display: none">{{ $job_d =\App\Models\Statistic\StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO)}}</span>
-                        {{-- <td>{{ number_format($job_d->SUM_PORT_AMT + $job_d->SUM_INDUSTRY_ZONE_AMT)  }}</td>
+                         <td>{{ number_format($job_d->SUM_PORT_AMT + $job_d->SUM_INDUSTRY_ZONE_AMT)  }}</td> --}}
                         {{-- <td>{{ $item->NOTE }}</td> --}}
                     </tr>
                 @endforeach

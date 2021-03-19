@@ -339,8 +339,8 @@ class StatisticPayment extends Model
             }
             $data = '';
             $table_name = '';
-            $table_name = $type == 'job_start' ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
-            $table_date = $type == 'job_start' ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
+            $table_name = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
+            $table_date = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
             $query = DB::table($table_name . ' as job')
                 ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
                 ->where('job.BRANCH_ID', 'IHTVN1')
@@ -350,17 +350,24 @@ class StatisticPayment extends Model
             if ($error_customer == 0) {
                 $query->where('job.CUST_NO', $custno);
             }
-            $data = $query->get();
-            // if ($type == 'job_start') {
-            //     foreach ($data as $item) {
-            //         $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
-            //         $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
-            //         $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
-            //         $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
-            //         $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
-            //     }
+            // if ($type == 'job_pay') {
+            //   $query->leftJoin('JOB_ORDER_D as jd','jd.JOB_NO','job.JOB_NO')
+            // //   ->where('jd.BRANCH_ID', 'IHTVN1')
+            //   ->selectRaw('sum(jd.PORT_AMT) as SUM_PORT_AMT')
+            //   ->selectRaw('sum(jd.INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT');
             // }
+            $data = $query->get();
             // dd($data);
+            if ($type == 'job_pay') {
+                foreach ($data as $item) {
+                    $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
+                    $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
+                    $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
+                    $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
+                    $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
+                }
+            }
+
             return $data;
         } catch (\Exception $e) {
             return $e;

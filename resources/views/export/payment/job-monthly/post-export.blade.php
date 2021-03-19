@@ -43,7 +43,7 @@
                 <td>{{ $item->CONTAINER_QTY }}</td>
                 <td>{{ $item->POD }}</td>
                 <td>{{ $item->POL }}</td>
-                <td> {{ $type == 'job_start' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
+                <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
                 <td>{{ $item->NOTE }}</td>
                 @if ($type == 'job_pay')
                     <td>{{ $item->SUM_LENDER_AMT }}</td>
