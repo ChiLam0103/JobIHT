@@ -251,8 +251,11 @@ class PaymentController extends Controller
         $todate = $todate != 'null' ? $todate : $today;
         $data = StatisticPayment::jobMonthly($type, $custno, $fromdate, $todate);
         switch ($type) {
-            case 'job_start':
+            case 'job_pay':
                 $title_vn = 'THỐNG KẾ GIẢI CHI JOB';
+                break;
+            case 'job_start':
+                $title_vn = 'THỐNG KẾ JOB';
                 break;
             case 'job_order':
                 $title_vn = 'THỐNG KẾ JOB ORDER';

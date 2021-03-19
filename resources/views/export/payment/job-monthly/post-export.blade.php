@@ -27,7 +27,7 @@
             <th>POD</th>
             <th>ETD/ETA</th>
             <th>Description</th>
-            @if ($type == 'job_start')
+            @if ($type == 'job_pay')
                 <th>Số tiền tạm ứng</th>
                 <th>Số tiền job order</th>
             @endif
@@ -45,7 +45,7 @@
                 <td>{{ $item->POL }}</td>
                 <td> {{ $type == 'job_start' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
                 <td>{{ $item->NOTE }}</td>
-                @if ($type == 'job_start')
+                @if ($type == 'job_pay')
                     <td>{{ $item->SUM_LENDER_AMT }}</td>
                     <td>{{ $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}</td>
                     <span style="display: none">
@@ -54,11 +54,13 @@
                     </span>
                 @endif
             </tr>
-            <tr>
-                <td colspan="11"></td>
-                <td> {{ $total_lender }}</td>
-                <td> {{ $total_job_d }}</td>
-            </tr>
+            @if ($type == 'job_pay')
+                <tr>
+                    <td colspan="11"></td>
+                    <td> {{ $total_lender }}</td>
+                    <td> {{ $total_job_d }}</td>
+                </tr>
+            @endif
         @endforeach
 
     </table>
