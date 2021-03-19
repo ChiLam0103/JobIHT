@@ -338,7 +338,7 @@
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>
                         <td class="text-center">
-                            {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->QUANTITY, 0, '.', ',') : number_format($item_d->QUANTITY, 2, '.', ',') }}
+                            {{$item_d->QUANTITY}}
                         </td>
                         <td class="text-right">
                             {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 2, '.', ',') }}
