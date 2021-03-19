@@ -1,10 +1,12 @@
 <style>
     body {
-        margin: 0;
+        /* margin: 0; */
         padding: 0;
         background-color: #FAFAFA;
         font: 10pt "Tohoma";
-        margin: 5mm 5mm 5mm 5mm;
+        margin-right:20%;
+
+        /* width: 100%; */
     }
 
     * {
@@ -20,7 +22,7 @@
         margin-left: auto;
         margin-right: auto;
         background: white;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
     }
 
     @page {
@@ -39,7 +41,7 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
-            margin: 5mm 5mm 5mm 5mm;
+            /* margin: 0mm 15mm 0mm 0mm; */
         }
     }
 
