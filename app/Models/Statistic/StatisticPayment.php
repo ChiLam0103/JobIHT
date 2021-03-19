@@ -313,7 +313,7 @@ class StatisticPayment extends Model
         $data = DB::table('JOB_ORDER_D as jd')
             ->where('jd.JOB_NO', $jobno)
             // ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  (jd.PRICE + jd.TAX_AMT) ELSE ((jd.PRICE + (jd.TAX_AMT/jd.QTY))*jd.QTY) END) as CHI_PHI")
-            ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN  jd.PRICE  ELSE  jd.PRICE*jd.QTY END) as CHI_PHI")
+            ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN (jd.PRICE +jd.PORT_AMT + jd.INDUSTRY_ZONE_AMT) ELSE  (jd.PRICE*jd.QTY +jd.PORT_AMT + jd.INDUSTRY_ZONE_AMT) END) as CHI_PHI")
             // ->selectRaw("sum(PORT_AMT) as SUM_PORT_AMT")
             // ->selectRaw("sum(INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT")
             // ->selectRaw("sum(TAX_AMT)  as SUM_TAX_AMT")
