@@ -32,13 +32,13 @@
                 <td>{{ $item->CUST_NAME }}</td>
                 <td> {{ $item->TIEN_THANH_TOAN }} </td>
                 @foreach ($item->job_d as $item_2)
-                    <td> {{ $item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE }}
+                    <td> {{ $item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE }}
                     </td>
-                    <td> {{ $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}
+                    <td> {{ $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}
                     </td>
                     <span
-                        style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE }}
-                        {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}</span>
+                        style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE }}
+                        {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}</span>
                 @endforeach
                 </td>
             </tr>
