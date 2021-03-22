@@ -20,13 +20,15 @@
             <th>Job No</th>
             <th>Mã KH</th>
             <th>Tên Khách</th>
-            <th>Order From</th>
-            <th>Order To</th>
-            <th>Container Qty</th>
-            <th>POL</th>
-            <th>POD</th>
-            <th>ETD/ETA</th>
-            <th>Description</th>
+            @if ($type != 'job_pay')
+                <th>Order From</th>
+                <th>Order To</th>
+                <th>Container Qty</th>
+                <th>POL</th>
+                <th>POD</th>
+                <th>ETD/ETA</th>
+                <th>Description</th>
+            @endif
             @if ($type == 'job_pay')
                 <th>Số tiền tạm ứng</th>
                 <th>Số tiền job order</th>
@@ -38,13 +40,15 @@
                 <td>{{ $item->JOB_NO }}</td>
                 <td>{{ $item->CUST_NO }}</td>
                 <td>{{ $item->CUST_NAME }}</td>
-                <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
-                <td>{{ $item->CONTAINER_QTY }}</td>
-                <td>{{ $item->POD }}</td>
-                <td>{{ $item->POL }}</td>
-                <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
-                <td>{{ $item->NOTE }}</td>
+                @if ($type != 'job_pay')
+                    <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
+                    <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
+                    <td>{{ $item->CONTAINER_QTY }}</td>
+                    <td>{{ $item->POD }}</td>
+                    <td>{{ $item->POL }}</td>
+                    <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
+                    <td>{{ $item->NOTE }}</td>
+                @endif
                 @if ($type == 'job_pay')
                     <td>{{ $item->SUM_LENDER_AMT }}</td>
                     <td>{{ $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}</td>

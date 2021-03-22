@@ -382,6 +382,7 @@ class StatisticPayment extends Model
         $data = DB::table('LENDER as l')
             ->leftJoin('LENDER_D as ld', 'l.LENDER_NO', 'ld.LENDER_NO')
             ->where('l.BRANCH_ID', 'IHTVN1')
+            ->where('l.LENDER_TYPE', 'T')
             ->where('l.JOB_NO', $jobno)
             ->selectRaw('sum(ld.LENDER_AMT) as SUM_LENDER_AMT')
             ->first();
