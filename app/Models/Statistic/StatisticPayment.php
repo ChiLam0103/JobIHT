@@ -364,7 +364,7 @@ class StatisticPayment extends Model
                     ORDER BY job.JOB_NO");
                     break;
                 case  'debit_note':
-                    $data = DB::select("select DISTINCT dm.JOB_NO, dm.CUST_NO,dm.DEBIT_DATE ,c.CUST_NAME,SUM(dd.PRICE) as SUM_PRICE,SUM(dd.TAX_AMT) as SUM_TAX_AMT
+                    $data = DB::select("select DISTINCT dm.JOB_NO, dm.CUST_NO,dm.DEBIT_DATE ,c.CUST_NAME,SUM(dd.PRICE * dd.QUANTITY) as SUM_PRICE,SUM(dd.TAX_AMT) as SUM_TAX_AMT
                     FROM DEBIT_NOTE_M dm
                     LEFT JOIN DEBIT_NOTE_D dd
                     ON dm.JOB_NO = dd.JOB_NO

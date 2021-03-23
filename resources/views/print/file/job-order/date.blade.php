@@ -117,8 +117,8 @@
                         <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
                         <td>{{ $item->SHIPPER }}</td>
 
-                        @foreach ($job_d as $item_d)
-                            @if ($item->JOB_NO == $item_d->JOB_NO)
+                        @foreach ($item->job_d as $item_d)
+                            {{-- @if ($item->JOB_NO == $item_d->JOB_NO) --}}
                     <tr>
                         <td colspan="15" style="border: none"></td>
                         <td>{{ $item_d->PAY_NAME }}</td>
@@ -133,7 +133,7 @@
                         <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY) }}
                         </td>
                     </tr>
-                @endif
+                    {{-- @endif --}}
                 @endforeach
                 </tr>
                 @endforeach
