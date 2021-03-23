@@ -96,7 +96,7 @@ class StatisticFile extends Model
             foreach ($job_m as $item){
                 foreach($job_d as $item_d){
                     if ($item->JOB_NO == $item_d->JOB_NO){
-                        $item->job_d[]=[
+                        $item->JOB_D[]=[
                             "PAY_NAME"=>$item_d->PAY_NAME,
                             "SER_NO"=>$item_d->SER_NO,
                             "DESCRIPTION"=>$item_d->DESCRIPTION,

@@ -133,7 +133,6 @@ class FileController extends Controller
         if ($data) {
             return view('print\file\job-order\date', [
                 'job_m' => $data['job_m'],
-                // 'job_d' => $data['job_d']
             ]);
         } else {
             return response()->json(
