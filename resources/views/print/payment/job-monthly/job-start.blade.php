@@ -187,8 +187,8 @@
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
                         <td>{{ $item->CUST_NAME }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
+                        <td>{{ $item->ORDER_FROM }}</td>
+                        <td>{{  $item->ORDER_TO }}</td>
                         <td>{{ $item->CONTAINER_QTY }}</td>
                         <td>{{ $item->POD }}</td>
                         <td>{{ $item->POL }}</td>

@@ -297,19 +297,71 @@ class PaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            $filename = 'job-monthly' . '(' . date('YmdHis') . ')';
-            Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
-                $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
-                    $sheet->loadView('export\payment\job-monthly\post-export', [
-                        'data' => $data,
-                        'title_vn' => $title_vn,
-                        'fromdate' => $fromdate,
-                        'todate' => $todate,
-                        'type' => $type
-                    ]);
-                    $sheet->setOrientation('landscape')->setAutoSize(true);
-                });
-            })->store('xlsx');
+            switch ($type) {
+                case 'job_pay':
+                    $filename = 'job-monthly-job-pay' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                            $sheet->loadView('export\payment\job-monthly\job-pay', [
+                                'data' => $data,
+                                'title_vn' => $title_vn,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate,
+                                'type' => $type
+                            ]);
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
+                        });
+                    })->store('xlsx');
+                    break;
+                case 'job_start':
+                    $filename = 'job-monthly-job-start' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                            $sheet->loadView('export\payment\job-monthly\job-start', [
+                                'data' => $data,
+                                'title_vn' => $title_vn,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate,
+                                'type' => $type
+                            ]);
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
+                        });
+                    })->store('xlsx');
+
+                    break;
+                case 'job_order':
+                    $filename = 'job-monthly-job-order' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                            $sheet->loadView('export\payment\job-monthly\job-order', [
+                                'data' => $data,
+                                'title_vn' => $title_vn,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate,
+                                'type' => $type
+                            ]);
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
+                        });
+                    })->store('xlsx');
+                    break;
+                case  'debit_note':
+                    $filename = 'job-monthly-debit-note' . '(' . date('YmdHis') . ')';
+                    Excel::create($filename, function ($excel) use ($data, $title_vn, $type, $fromdate, $todate) {
+                        $excel->sheet('Debit Note', function ($sheet) use ($data, $title_vn, $type, $fromdate, $todate) {
+                            $sheet->loadView('export\payment\job-monthly\debit-note', [
+                                'data' => $data,
+                                'title_vn' => $title_vn,
+                                'fromdate' => $fromdate,
+                                'todate' => $todate,
+                                'type' => $type
+                            ]);
+                            $sheet->setOrientation('landscape')->setAutoSize(true);
+                        });
+                    })->store('xlsx');
+                    break;
+                default:
+                    break;
+            }
             return response()->json([
                 'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
             ]);
