@@ -276,13 +276,41 @@ class PaymentController extends Controller
             );
         }
         if ($data) {
-            return view('print\payment\job-monthly\index', [
-                'data' => $data,
-                'fromdate' => $fromdate,
-                'todate' => $todate,
-                'type' => $type,
-                'title_vn' => $title_vn,
-            ]);
+
+            switch ($type) {
+                case 'job_pay':
+                    $title_vn = 'THỐNG KẾ GIẢI CHI JOB';
+                    break;
+                case 'job_start':
+                    return view('print\payment\job-monthly\job-start', [
+                        'data' => $data,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type,
+                        'title_vn' => $title_vn,
+                    ]);
+                    break;
+                case 'job_order':
+                    return view('print\payment\job-monthly\job-order', [
+                        'data' => $data,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type,
+                        'title_vn' => $title_vn,
+                    ]);
+                    break;
+                case  'debit_note':
+                    return view('print\payment\job-monthly\debit-note', [
+                        'data' => $data,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type,
+                        'title_vn' => $title_vn,
+                    ]);
+                    break;
+                default:
+                    break;
+            }
         } else {
             return response()->json(
                 [

@@ -326,41 +326,93 @@ class StatisticPayment extends Model
             $error_customer = 0;
             if (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) {
                 $data = 'error-date';
+
                 return $data;
             }
             if ($custno == null || $custno == 'undefined' || $custno == 'null') {
                 $error_customer = 1;
+                $custno = '';
             }
-            $data = '';
-            $table_name = '';
-            $table_name = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
-            $table_date = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
-            $query = DB::table($table_name . ' as job')
-                ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
-                ->where('job.BRANCH_ID', 'IHTVN1')
-                ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('job.' . $table_date, '>=', '20190101')
-                ->whereBetween('job.' . $table_date, [$fromdate, $todate])->select('c.CUST_NAME', 'job.*')->orderBy('job.JOB_NO');
-            if ($error_customer == 0) {
-                $query->where('job.CUST_NO', $custno);
+            switch ($type) {
+                case 'job_pay':
+
+                    break;
+                case 'job_start':
+                    $data =DB::select("select job.*,c.CUST_NAME
+                    FROM JOB_START job
+                    LEFT JOIN CUSTOMER c
+                    ON job.CUST_NO =c.CUST_NO
+                    WHERE job.BRANCH_ID='IHTVN1'
+                    AND  c.BRANCH_ID='IHTVN1'
+                    AND  job.JOB_DATE >='20190101'
+                    AND  job.JOB_DATE >= '".$fromdate."'
+                    AND  job.JOB_DATE <= '".$todate."'
+                    AND job.CUST_NO like '".$custno."%'
+                    ORDER BY job.JOB_NO");
+                    break;
+                case 'job_order':
+                    $data =DB::select("select job.*,c.CUST_NAME
+                    FROM JOB_ORDER_M job
+                    LEFT JOIN CUSTOMER c
+                    ON job.CUST_NO =c.CUST_NO
+                    WHERE job.BRANCH_ID='IHTVN1'
+                    AND  c.BRANCH_ID='IHTVN1'
+                    AND  job.ORDER_DATE >='20190101'
+                    AND  job.ORDER_DATE >= '".$fromdate."'
+                    AND  job.ORDER_DATE <= '".$todate."'
+                    AND job.CUST_NO like '".$custno."%'
+                    ORDER BY job.JOB_NO");
+                    break;
+                case  'debit_note':
+                    $data = DB::select("select DISTINCT dm.JOB_NO, dm.CUST_NO,dm.DEBIT_DATE ,c.CUST_NAME,SUM(dd.PRICE) as SUM_PRICE,SUM(dd.TAX_AMT) as SUM_TAX_AMT
+                    FROM DEBIT_NOTE_M dm
+                    LEFT JOIN DEBIT_NOTE_D dd
+                    ON dm.JOB_NO = dd.JOB_NO
+                    LEFT JOIN CUSTOMER c
+                    ON dm.CUST_NO =c.CUST_NO
+                    WHERE dm.BRANCH_ID = 'IHTVN1'
+                    AND  dd.BRANCH_ID='IHTVN1'
+                    AND  c.BRANCH_ID='IHTVN1'
+                    AND  dm.DEBIT_DATE >='20190101'
+                    AND  dm.DEBIT_DATE >= '".$fromdate."'
+                    AND dm.DEBIT_DATE <= '".$todate."'
+                    AND dm.CUST_NO like '".$custno."%'
+                    GROUP BY dm.JOB_NO, dm.CUST_NO,dm.DEBIT_DATE,c.CUST_NAME
+                    ORDER BY dm.JOB_NO ");
+                default:
+                    break;
             }
-            // if ($type == 'job_pay') {
-            //   $query->leftJoin('JOB_ORDER_D as jd','jd.JOB_NO','job.JOB_NO')
-            // //   ->where('jd.BRANCH_ID', 'IHTVN1')
-            //   ->selectRaw('sum(jd.PORT_AMT) as SUM_PORT_AMT')
-            //   ->selectRaw('sum(jd.INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT');
+            // $table_name = '';
+            // $table_name = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
+            // $table_date = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
+            // $query = DB::table($table_name . ' as job')
+            //     ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
+            //     ->where('job.BRANCH_ID', 'IHTVN1')
+            //     ->where('c.BRANCH_ID', 'IHTVN1')
+            //     ->where('job.' . $table_date, '>=', '20190101')
+            //     ->whereBetween('job.' . $table_date, [$fromdate, $todate])->select('c.CUST_NAME', 'job.*')->orderBy('job.JOB_NO');
+            // if ($error_customer == 0) {
+            //     $query->where('job.CUST_NO', $custno);
             // }
-            $data = $query->get();
-            // dd($data);
-            if ($type == 'job_pay') {
-                foreach ($data as $item) {
-                    $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
-                    $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
-                    $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
-                    $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
-                    $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
-                }
-            }
+            // if ($type == 'debit_note') {
+
+            //   $query->Join('DEBIT_NOTE_D as dd','dd.JOB_NO','job.JOB_NO')
+            // //   ->where('dd.BRANCH_ID', 'IHTVN1')
+            //   ->selectRaw('sum(cast(dd.PRICE as double precision))')
+            // //   ->groupBy('job.JOB_NO');
+            // //   ->selectRaw('sum(dd.TAX_AMT) as SUM_TAX_AMT')
+            //   ->groupBy('c.CUST_NAME', 'job.*');
+            // }
+            // $data = $query->take(10)->distinct()->get();
+            // if ($type == 'job_pay') {
+            //     foreach ($data as $item) {
+            //         $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
+            //         $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
+            //         $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
+            //         $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
+            //         $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
+            //     }
+            // }
 
             return $data;
         } catch (\Exception $e) {
