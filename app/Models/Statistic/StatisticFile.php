@@ -78,7 +78,7 @@ class StatisticFile extends Model
                 AND  job.ORDER_DATE >='20190101'
                 AND  job.ORDER_DATE >= '" . $fromdate . "'
                 AND  job.ORDER_DATE <= '" . $todate . "'
-                ORDER BY job.JOB_NO");
+                ORDER BY job.JOB_NO ");
             $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
                 FROM JOB_ORDER_M job
                 LEFT JOIN CUSTOMER c

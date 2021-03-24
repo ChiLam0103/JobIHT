@@ -18,13 +18,13 @@ class FileController extends Controller
         $today = date("Ymd");
         $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
         $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
-        $job_m = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
-        if ($job_m) {
+        $data = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
+        if ($data) {
             $filename = 'job-order-date' . '(' . date('YmdHis') . ')';
-            Excel::create($filename, function ($excel) use ($job_m, $from_date, $to_date) {
-                $excel->sheet('JOB ORDER', function ($sheet) use ($job_m, $from_date, $to_date) {
+            Excel::create($filename, function ($excel) use ($data, $from_date, $to_date) {
+                $excel->sheet('JOB ORDER', function ($sheet) use ($data, $from_date, $to_date) {
                     $sheet->loadView('export\file\job-order\export-date', [
-                        'job_m' => $job_m,
+                        'job_m' => $data['job_m'],
                         'from_date' => $from_date,
                         'to_date' => $to_date,
                     ]);

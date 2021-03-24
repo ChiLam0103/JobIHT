@@ -51,24 +51,29 @@
                     <td>{{ $item->CONSIGNEE }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
                     <td>{{ $item->SHIPPER }}</td>
-                    @foreach ($item->job_d as $item_d)
-                        {{-- @if ($item->JOB_NO == $item_d->JOB_NO) --}}
+                    <?php try {
+                    ?>
+                    @foreach ($item->JOB_D as $item_d)
                 <tr>
-                    <td colspan="15" style="border: none"></td>
-                    <td>{{ $item_d->PAY_NAME }}</td>
-                    <td>{{ $item_d->SER_NO }}</td>
-                    <td>{{ $item_d->DESCRIPTION }}</td>
-                    <td>{{ number_format($item_d->PORT_AMT) }}</td>
-                    <td>{{ $item_d->NOTE }}</td>
-                    <td>{{ $item_d->UNIT }}</td>
-                    <td>{{ number_format($item_d->QTY) }}</td>
-                    <td>{{ number_format($item_d->PRICE) }}</td>
-                    <td>{{ number_format($item_d->TAX_AMT) }}</td>
-                    <td>{{ number_format(($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY) }}
+                    <td td colspan="15" style="border: none"></td>
+                    <td>{{ $item_d['PAY_NAME'] }}</td>
+                    <td>{{ $item_d['SER_NO'] }}</td>
+                    <td>{{ $item_d['DESCRIPTION'] }}</td>
+                    <td>{{ $item_d['PORT_AMT'] }}</td>
+                    <td>{{ $item_d['NOTE'] }}</td>
+                    <td>{{ $item_d['UNIT'] }}</td>
+                    <td>{{ $item_d['QTY'] }}</td>
+                    <td>{{ $item_d['PRICE'] }}</td>
+                    <td>{{ $item_d['TAX_AMT'] }}</td>
+                    <td>{{ ($item_d['PRICE'] + $item_d['PRICE'] * ($item_d['TAX_NOTE'] / 100)) * $item_d['QTY'] }}
                     </td>
                 </tr>
-                {{-- @endif --}}
             @endforeach
+            <?php
+            } catch (\Exception $e) {
+            ?>
+            <?php
+            } ?>
             </tr>
             @endforeach
         </tbody>
