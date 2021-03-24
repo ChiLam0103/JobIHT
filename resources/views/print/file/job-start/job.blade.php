@@ -199,7 +199,7 @@
                     </nav>
                 </ul>
             </nav>
-            <p>II. PHẦN PHẦN GIAO NHẬN</p>
+            <p>II. PHẦN GIAO NHẬN</p>
             <nav class="padding-left-15">
                 <ul>
                     <li>1. Nhân viên giao nhận: <span class="font-bold">{{ $data->NV_GIAONHAN_2 }}</span></li>
