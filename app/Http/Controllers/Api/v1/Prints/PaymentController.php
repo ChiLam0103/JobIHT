@@ -279,7 +279,13 @@ class PaymentController extends Controller
 
             switch ($type) {
                 case 'job_pay':
-                    $title_vn = 'THỐNG KẾ GIẢI CHI JOB';
+                    return view('print\payment\job-monthly\job-pay', [
+                        'data' => $data,
+                        'fromdate' => $fromdate,
+                        'todate' => $todate,
+                        'type' => $type,
+                        'title_vn' => $title_vn,
+                    ]);
                     break;
                 case 'job_start':
                     return view('print\payment\job-monthly\job-start', [

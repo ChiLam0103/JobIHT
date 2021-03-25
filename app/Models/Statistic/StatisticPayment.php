@@ -335,7 +335,17 @@ class StatisticPayment extends Model
             }
             switch ($type) {
                 case 'job_pay':
-
+                    $data =DB::select("select job.*,c.CUST_NAME, (SELECT sum(jd.PORT_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_PORT_AMT,(SELECT sum(jd.INDUSTRY_ZONE_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_INDUSTRY_ZONE_AMT, (SELECT sum(ld.LENDER_AMT) FROM LENDER l, LENDER_D ld WHERE l.JOB_NO = job.JOB_NO AND ld.LENDER_NO =l.LENDER_NO AND l.LENDER_TYPE='T') as SUM_LENDER_AMT
+                    FROM JOB_START job
+                    LEFT JOIN CUSTOMER c
+                    ON job.CUST_NO =c.CUST_NO
+                    WHERE job.BRANCH_ID='IHTVN1'
+                    AND  c.BRANCH_ID='IHTVN1'
+                    AND  job.JOB_DATE >='20190101'
+                    AND  job.JOB_DATE >= '".$fromdate."'
+                    AND  job.JOB_DATE <= '".$todate."'
+                    AND job.CUST_NO like '".$custno."%'
+                    ORDER BY job.JOB_NO");
                     break;
                 case 'job_start':
                     $data =DB::select("select job.*,c.CUST_NAME

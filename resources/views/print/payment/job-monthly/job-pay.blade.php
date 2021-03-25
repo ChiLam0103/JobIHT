@@ -142,10 +142,13 @@
     td {
         border: 1px solid black;
         border-collapse: collapse;
-        text-align: center;
+        text-align: left;
         font-size: 11px;
     }
 
+    .center th {
+        text-align: center
+    }
 
     #sum-money {
         font-size: 12px;
@@ -165,24 +168,20 @@
             <br>
             <span style="display: none">{{ $total_lender = 0 }}{{ $total_job_d = 0 }}</span>
             <table style="width:100%">
-                <tr>
+                <tr class="center">
                     <th>STT</th>
                     <th>Job No</th>
                     <th>Mã KH</th>
                     <th>Tên Khách</th>
-                    @if ($type != 'job_pay')
-                        <th>Order From</th>
-                        <th>Order To</th>
-                        <th>Container Qty</th>
-                        <th>POL</th>
-                        <th>POD</th>
-                        <th>ETD/ETA</th>
-                        <th>Description</th>
-                    @endif
-                    @if ($type == 'job_pay')
-                        <th>Số tiền tạm ứng</th>
-                        <th>Số tiền job order</th>
-                    @endif
+                    <th>Order From</th>
+                    <th>Order To</th>
+                    <th>Container Qty</th>
+                    <th>POL</th>
+                    <th>POD</th>
+                    <th>ETD/ETA</th>
+                    <th>Description</th>
+                    <th>Số tiền tạm ứng</th>
+                    <th>Số tiền job order</th>
                     {{-- <th>N.Viên nhập job order</th> --}}
                 </tr>
                 @foreach ($data as $key => $item)
@@ -191,44 +190,27 @@
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
                         <td>{{ $item->CUST_NAME }}</td>
-                        @if ($type != 'job_pay')
-                            <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                            <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
-                            <td>{{ $item->CONTAINER_QTY }}</td>
-                            <td>{{ $item->POD }}</td>
-                            <td>{{ $item->POL }}</td>
-                            <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}
-                            </td>
-                            <td>{{ $item->NOTE }}</td>
-                        @endif
-                        @if ($type == 'job_pay')
-
-                            {{-- cách 1 --}}
-                            {{-- <td>{{ ($lender = \App\Models\Statistic\StatisticPayment::jobMonthly_lenderD($item->JOB_NO)) == null ? 0 : number_format($lender->SUM_LENDER_AMT) }}
-                            </td>
-                            <td>{{ ($job_d = \App\Models\Statistic\StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO)) == null ? 0 : number_format($job_d->SUM_PORT_AMT + $job_d->SUM_INDUSTRY_ZONE_AMT) }}
-                            </td> --}}
-
-                            {{-- cách 2 --}}
-                            <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
-                            <td>{{ number_format($item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT) }}</td>
-                            <span style="display: none">
-                                {{ $total_job_d += $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}
-                                {{ $total_lender += $item->SUM_LENDER_AMT }}
-                            </span>
-                        @endif
-                        {{-- <span style="display: none">{{ $job_d =\App\Models\Statistic\StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO)}}</span>
-                         <td>{{ number_format($job_d->SUM_PORT_AMT + $job_d->SUM_INDUSTRY_ZONE_AMT)  }}</td> --}}
-                        {{-- <td>{{ $item->NOTE }}</td> --}}
+                        <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
+                        <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
+                        <td>{{ $item->CONTAINER_QTY }}</td>
+                        <td>{{ $item->POD }}</td>
+                        <td>{{ $item->POL }}</td>
+                        <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}
+                        </td>
+                        <td>{{ $item->NOTE }}</td>
+                        <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
+                        <td>{{ number_format($item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT) }}</td>
+                        <span style="display: none">
+                            {{ $total_job_d += $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}
+                            {{ $total_lender += $item->SUM_LENDER_AMT }}
+                        </span>
                     </tr>
                 @endforeach
-                @if ($type == 'job_pay')
-                    <tr>
-                        <td colspan="11"></td>
-                        <td> {{ number_format($total_lender) }}</td>
-                        <td> {{ number_format($total_job_d) }}</td>
-                    </tr>
-                @endif
+                <tr>
+                    <td colspan="4"></td>
+                    <td> {{ number_format($total_lender) }}</td>
+                    <td> {{ number_format($total_job_d) }}</td>
+                </tr>
             </table>
 
         </div>
