@@ -173,13 +173,6 @@
                     <th>Job No</th>
                     <th>Mã KH</th>
                     <th>Tên Khách</th>
-                    <th>Order From</th>
-                    <th>Order To</th>
-                    <th>Container Qty</th>
-                    <th>POL</th>
-                    <th>POD</th>
-                    <th>ETD/ETA</th>
-                    <th>Description</th>
                     <th>Số tiền tạm ứng</th>
                     <th>Số tiền job order</th>
                     {{-- <th>N.Viên nhập job order</th> --}}
@@ -190,13 +183,6 @@
                         <td>{{ $item->JOB_NO }}</td>
                         <td>{{ $item->CUST_NO }}</td>
                         <td>{{ $item->CUST_NAME }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                        <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
-                        <td>{{ $item->CONTAINER_QTY }}</td>
-                        <td>{{ $item->POD }}</td>
-                        <td>{{ $item->POL }}</td>
-                        <td> {{ $item->ETA_ETD }} </td>
-                        <td>{{ $item->NOTE }}</td>
                         <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
                         <td>{{ number_format($item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT) }}</td>
                         <span style="display: none">
