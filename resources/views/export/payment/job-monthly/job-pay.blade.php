@@ -40,32 +40,26 @@
                 <td>{{ $item->JOB_NO }}</td>
                 <td>{{ $item->CUST_NO }}</td>
                 <td>{{ $item->CUST_NAME }}</td>
-                @if ($type != 'job_pay')
-                    <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
-                    <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
-                    <td>{{ $item->CONTAINER_QTY }}</td>
-                    <td>{{ $item->POD }}</td>
-                    <td>{{ $item->POL }}</td>
-                    <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}</td>
-                    <td>{{ $item->NOTE }}</td>
-                @endif
-                @if ($type == 'job_pay')
-                    <td>{{ $item->SUM_LENDER_AMT }}</td>
-                    <td>{{ $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}</td>
-                    <span style="display: none">
-                        {{ $total_job_d += $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}
-                        {{ $total_lender += $item->SUM_LENDER_AMT }}
-                    </span>
-                @endif
+                <td>{{ $type == 'debit_note' ? $item->TRANS_FROM : $item->ORDER_FROM }}</td>
+                <td>{{ $type == 'debit_note' ? $item->TRANS_TO : $item->ORDER_TO }}</td>
+                <td>{{ $item->CONTAINER_QTY }}</td>
+                <td>{{ $item->POD }}</td>
+                <td>{{ $item->POL }}</td>
+                <td> {{ $item->ETA_ETD }} </td>
+                <td>{{ $item->NOTE }}</td>
+                <td>{{ $item->SUM_LENDER_AMT }}</td>
+                <td>{{ $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}</td>
+                <span style="display: none">
+                    {{ $total_job_d += $item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT }}
+                    {{ $total_lender += $item->SUM_LENDER_AMT }}
+                </span>
             </tr>
-            @if ($type == 'job_pay')
-                <tr>
-                    <td colspan="11"></td>
-                    <td> {{ $total_lender }}</td>
-                    <td> {{ $total_job_d }}</td>
-                </tr>
-            @endif
         @endforeach
+        <tr>
+            <td colspan="4"></td>
+            <td> {{ $total_lender }}</td>
+            <td> {{ $total_job_d }}</td>
+        </tr>
 
     </table>
 </body>

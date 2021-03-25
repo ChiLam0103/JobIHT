@@ -195,8 +195,7 @@
                         <td>{{ $item->CONTAINER_QTY }}</td>
                         <td>{{ $item->POD }}</td>
                         <td>{{ $item->POL }}</td>
-                        <td> {{ $type == 'job_start' || $type == 'job_pay' ? $item->ETA_ETD : $item->ETD_ETA }}
-                        </td>
+                        <td> {{ $item->ETA_ETD }} </td>
                         <td>{{ $item->NOTE }}</td>
                         <td>{{ number_format($item->SUM_LENDER_AMT) }}</td>
                         <td>{{ number_format($item->SUM_PORT_AMT + $item->SUM_INDUSTRY_ZONE_AMT) }}</td>
