@@ -21,7 +21,7 @@ class Lender extends Model
     public static function list()
     {
         try {
-            $take = 5000;
+            $take = 90000;
             $query =  Lender::query();
             $data =  $query
                 ->take($take)
