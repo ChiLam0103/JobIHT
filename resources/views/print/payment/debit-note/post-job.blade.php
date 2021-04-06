@@ -368,8 +368,8 @@
             <span>Account name: {{ $bank->ACCOUNT_NAME }}</span><br>
             @if (trim($bank->SWIFT_CODE) != '')
                 <span>Swift code: {{ $bank->SWIFT_CODE }}</span><br>
-                <p>Bank address: {{ $bank->BANK_ADDRESS }}</p><br>
-                <p>Adress: {{ $bank->ADDRESS }}</p><br>
+                <span>Bank address: {{ $bank->BANK_ADDRESS }}</span><br>
+                <span>Adress: {{ $bank->ADDRESS }}</span><br>
             @endif
         </div>
 
