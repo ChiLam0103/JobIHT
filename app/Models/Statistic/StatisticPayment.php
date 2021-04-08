@@ -269,7 +269,8 @@ class StatisticPayment extends Model
         try {
             $check_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
             $check_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
-            $query = DB::table('DEBIT_NOTE_M as dm')
+            $query = DB::table('JOB_START as job')
+                ->leftJoin('DEBIT_NOTE_M as c', 'dm.JOB_NO', 'job.JOB_NO')
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
@@ -277,11 +278,10 @@ class StatisticPayment extends Model
                 ->orderBy('dm.JOB_NO')
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
             if ($check_date == 1) {
-                $query->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
+                $query->whereBetween('job.JOB_DATE', [$fromdate, $todate]);
             }
             switch ($type) {
                 case 'all':
-
                     break;
                 case 'jobno':
                     $query->where('dm.JOB_NO', $jobno);
