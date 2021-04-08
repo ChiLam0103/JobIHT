@@ -316,7 +316,7 @@ class JobM extends Model
         try {
             $year_from = $year . '0101';
             $year_to = $year . '1231';
-            dd($year_from,$year_to);
+
             $query = DB::table('JOB_ORDER_M as jm')
                 ->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
                 ->orderBy('jm.JOB_NO')
@@ -334,7 +334,7 @@ class JobM extends Model
                 $query->where('jd.THANH_TOAN_MK', 'Y');
             }
 
-            $data =  $query->select('jd.*')->distinct()->get();
+            $data =  $query->select('jd.*')->get();
             return $data;
         } catch (\Exception $ex) {
             return $ex;
