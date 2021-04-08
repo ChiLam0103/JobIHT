@@ -343,7 +343,7 @@ class JobM extends Model
     public static function approvedCont($request)
     {
         try {
-            if ($request->type == 'lending') {
+            if ($request->type == 'pending') {
                 foreach ($request->data as $request) {
                     $query = DB::table('JOB_ORDER_D')
                         ->where('JOB_NO', $request['JOB_NO'])
