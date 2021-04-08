@@ -314,13 +314,15 @@ class JobM extends Model
     public static function listApprovedCont($type, $list, $year)
     {
         try {
-            $year_from = $year . '0000';
+            $year_from = $year . '0101';
             $year_to = $year . '1231';
+            dd($year_from,$year_to);
             $query = DB::table('JOB_ORDER_M as jm')
                 ->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
                 ->orderBy('jm.JOB_NO')
                 ->where('jm.BRANCH_ID', 'IHTVN1')
                 ->where('jd.BRANCH_ID', 'IHTVN1')
+                ->where('jm.ORDER_DATE', '>=', '20190101')
                 ->whereBetween('jm.ORDER_DATE', [$year_from, $year_to])
                 ->where('jd.ORDER_TYPE', $type);
             if ($list == 'pending') {
@@ -332,7 +334,7 @@ class JobM extends Model
                 $query->where('jd.THANH_TOAN_MK', 'Y');
             }
 
-            $data =  $query->select('jd.*')->get();
+            $data =  $query->select('jd.*')->distinct()->get();
             return $data;
         } catch (\Exception $ex) {
             return $ex;
