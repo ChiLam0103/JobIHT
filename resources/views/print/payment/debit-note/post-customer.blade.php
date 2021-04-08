@@ -319,14 +319,14 @@
             </div>
             <table style="width:100%" id="debit_d">
                 <tr>
-                    <th style="width:10%">STT</th>
-                    <th style="width:20%">Descriptions</th>
-                    <th style="width:30%">Invoice No</th>
-                    <th style="width:5%">Unit</th>
-                    <th style="width:5%">Qty</th>
-                    <th style="width:10%">Price</th>
-                    <th style="width:10%">VAT Tax</th>
-                    <th style="width:10%">Total Amt</th>
+                    <th >STT</th>
+                    <th >Descriptions</th>
+                    <th >Invoice No</th>
+                    <th >Unit</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>VAT Tax</th>
+                    <th>Total Amt</th>
                 </tr>
                 <span style="display: none;">
                     {{ $total_amt = 0 }}
