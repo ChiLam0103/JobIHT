@@ -270,11 +270,12 @@ class StatisticPayment extends Model
             $check_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
             $check_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
             $query = DB::table('JOB_START as job')
-                ->leftJoin('DEBIT_NOTE_M as c', 'dm.JOB_NO', 'job.JOB_NO')
+                ->leftJoin('DEBIT_NOTE_M as dm', 'dm.JOB_NO', 'job.JOB_NO')
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('dm.DEBIT_DATE', '>=', '20190101')
+                ->where('job.BRANCH_ID', 'IHTVN1')
+                ->where('job.JOB_DATE', '>=', '20190101')
                 ->orderBy('dm.JOB_NO')
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
             if ($check_date == 1) {
@@ -306,7 +307,6 @@ class StatisticPayment extends Model
 
     public static function profitJobOrderD($jobno)
     {
-
         $data = DB::table('JOB_ORDER_D as jd')
             ->where('jd.JOB_NO', $jobno)
             ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN jd.PRICE ELSE jd.PRICE * jd.QTY  END) as CHI_PHI_BOOK_TAU")
@@ -315,7 +315,6 @@ class StatisticPayment extends Model
             ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = '8' ) THEN jd.PRICE ELSE 0 END)  as SUM_DEPOSIT_FIX_FEE")
             ->where('jd.BRANCH_ID', 'IHTVN1')
             ->get();
-        // dd($data);
 
         return $data;
     }
