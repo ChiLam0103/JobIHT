@@ -16,7 +16,7 @@ class StatisticFile extends Model
                 ->leftJoin('PERSONAL as p1', 'js.NV_CHUNGTU', 'p1.PNL_NO')
                 ->leftJoin('PERSONAL as p2', 'js.NV_GIAONHAN', 'p2.PNL_NO')
                 ->whereBetween('js.JOB_NO', [$fromjob, $tojob])
-                ->where('js.JOB_DATE', '>=', '20190101')
+                ->where('js.INPUT_DT', '>=', '20190101000000')
                 ->where('p1.BRANCH_ID', 'IHTVN1')
                 ->where('p2.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
@@ -30,6 +30,30 @@ class StatisticFile extends Model
         }
     }
     //2.1 in job order theo job
+    public static function getJobOrder($request)
+    {
+        switch ($request->type) {
+            case 'job_no':
+                $data = DB::select("select c.CUST_NAME, l.LENDER_NO, jm.*, (SELECT jd.* FROM JOB_ORDER_D jd WHERE jd.JOB_NO = jm.JOB_NO) as jd
+                FROM JOB_ORDER_M jm
+                LEFT JOIN LENDER l
+                ON jm.JOB_NO = l.JOB_NO
+                LEFT JOIN CUSTOMER c
+                ON jm.CUST_NO = c.CUST_NO
+                WHERE jm.BRANCH_ID='IHTVN1'
+                AND c.BRANCH_ID ='IHTVN1'
+                AND jm.INPUT_DT >='20190101000000'
+                AND jm.JOB_NO = '".$request->job_no."'");
+                break;
+            case 'customer_no':
+                break;
+            case 'job_date':
+                break;
+
+        }
+        dd($data);
+        return $data;
+    }
     public static function jobOrder($jobno)
     {
         try {
@@ -37,7 +61,7 @@ class StatisticFile extends Model
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                 ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
                 ->where('jom.JOB_NO', $jobno)
-                ->where('jom.ORDER_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
                 ->select('c.CUST_NAME', 'l.LENDER_NO', 'jom.*')
                 ->first();
             return $data;
@@ -50,7 +74,7 @@ class StatisticFile extends Model
         try {
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
                 ->where('jom.JOB_NO', $jobno)
                 ->select('jod.*')
                 ->get();
@@ -75,7 +99,7 @@ class StatisticFile extends Model
                 ON job.CUST_NO =c.CUST_NO
                 WHERE job.BRANCH_ID='IHTVN1'
                 AND  c.BRANCH_ID='IHTVN1'
-                AND  job.ORDER_DATE >='20190101'
+                AND  job.INPUT_DT >='20190101000000'
                 AND  job.ORDER_DATE >= '" . $fromdate . "'
                 AND  job.ORDER_DATE <= '" . $todate . "'
                 ORDER BY job.JOB_NO ");
@@ -89,24 +113,24 @@ class StatisticFile extends Model
                 ON job_d.ORDER_TYPE = pt.PAY_NO
                 WHERE job.BRANCH_ID='IHTVN1'
                 AND  c.BRANCH_ID='IHTVN1'
-                AND  job.ORDER_DATE >='20190101'
+                AND  job.INPUT_DT >='20190101000000'
                 AND  job.ORDER_DATE >= '" . $fromdate . "'
                 AND  job.ORDER_DATE <= '" . $todate . "'
                 ORDER BY job_d.JOB_NO");
-            foreach ($job_m as $item){
-                foreach($job_d as $item_d){
-                    if ($item->JOB_NO == $item_d->JOB_NO){
-                        $item->JOB_D[]=[
-                            "PAY_NAME"=>$item_d->PAY_NAME,
-                            "SER_NO"=>$item_d->SER_NO,
-                            "DESCRIPTION"=>$item_d->DESCRIPTION,
-                            "PORT_AMT"=>$item_d->PORT_AMT,
-                            "NOTE"=>$item_d->NOTE,
-                            "UNIT"=>$item_d->UNIT,
-                            "QTY"=>$item_d->QTY,
-                            "PRICE"=>$item_d->PRICE,
-                            "TAX_AMT"=>$item_d->TAX_AMT,
-                            "TAX_NOTE"=>$item_d->TAX_NOTE,
+            foreach ($job_m as $item) {
+                foreach ($job_d as $item_d) {
+                    if ($item->JOB_NO == $item_d->JOB_NO) {
+                        $item->JOB_D[] = [
+                            "PAY_NAME" => $item_d->PAY_NAME,
+                            "SER_NO" => $item_d->SER_NO,
+                            "DESCRIPTION" => $item_d->DESCRIPTION,
+                            "PORT_AMT" => $item_d->PORT_AMT,
+                            "NOTE" => $item_d->NOTE,
+                            "UNIT" => $item_d->UNIT,
+                            "QTY" => $item_d->QTY,
+                            "PRICE" => $item_d->PRICE,
+                            "TAX_AMT" => $item_d->TAX_AMT,
+                            "TAX_NOTE" => $item_d->TAX_NOTE,
                         ];
                     }
                 }
@@ -146,8 +170,8 @@ class StatisticFile extends Model
                 ->where('c.CUST_NO', $custno)
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('jom.ORDER_DATE', '>', '20180101')
-                ->select('jom.JOB_NO')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
+                ->select('jom.JOB_NO','jom.ORDER_DATE')
                 ->get();
             return $data;
         } catch (\Exception $e) {
@@ -160,7 +184,7 @@ class StatisticFile extends Model
             $array_jobno = explode(",", $jobno);
             $data =  DB::table('JOB_ORDER_M as jom')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
                 ->where('c.CUST_NO', $custno)
                 ->whereIn('jom.JOB_NO', $array_jobno)
                 ->select('c.CUST_NAME', 'jom.*')
@@ -181,7 +205,7 @@ class StatisticFile extends Model
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                 ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
                 ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
                 ->where('c.CUST_NO', $custno)
                 ->whereIn('jom.JOB_NO', $array_jobno)
                 ->select('pt.PAY_NAME', 'jod.*')
@@ -202,8 +226,8 @@ class StatisticFile extends Model
                 ->join('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
                 ->join('JOB_START as js', 'jom.JOB_NO', 'js.JOB_NO')
                 ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
-                ->where('js.JOB_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
+                ->where('js.INPUT_DT', '>=', '20190101000000')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->whereBetween('js.JOB_DATE', [$fromdate, $todate])
                 ->where(function ($query) {
@@ -255,7 +279,7 @@ class StatisticFile extends Model
                 ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
                 ->rightJoin('PERSONAL as p', 'js.NV_CHUNGTU', 'p.PNL_NO')
                 ->leftJoin('USERM as u', 'js.INPUT_USER', 'u.USER_NO')
-                ->where('js.JOB_DATE', '>=', '20190101')
+                ->where('js.INPUT_DT', '>=', '20190101000000')
                 ->where('js.BRANCH_ID', 'IHTVN1');
             if ($cust != 'undefined') {
                 $a->where('js.CUST_NO', $cust);
@@ -287,8 +311,8 @@ class StatisticFile extends Model
                 ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
                 ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
                 ->rightJoin('PERSONAL as p', 'js.NV_CHUNGTU', 'p.PNL_NO')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
-                ->where('js.JOB_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
+                ->where('js.INPUT_DT', '>=', '20190101000000')
                 ->whereBetween('jom.INPUT_DT', [$from_date, $to_date]);
             if ($cust != 'undefined') {
                 $a->where('jom.CUST_NO', $cust);
@@ -316,7 +340,7 @@ class StatisticFile extends Model
                 ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
                 ->leftJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
                 ->rightJoin('USERM as u', 'u.USER_NO', 'jod.INPUT_USER')
-                ->where('jom.ORDER_DATE', '>=', '20190101')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
                 ->whereBetween('jom.INPUT_DT', [$from_date, $to_date]);
             if ($cust != 'undefined') {
                 $a->where('jom.CUST_NO', $cust);
@@ -338,7 +362,7 @@ class StatisticFile extends Model
         try {
             $query =  DB::table('JOB_START as js')
                 ->leftJoin('CUSTOMER as c', 'js.CUST_NO', 'c.CUST_NO')
-                ->where('js.JOB_DATE', '>=', '20190101')
+                ->where('js.INPUT_DT', '>=', '20190101000000')
                 ->whereBetween('js.JOB_DATE', [$fromdate, $todate]);
             $data = $query->select('c.CUST_NAME', 'c.CUST_TAX', 'js.*')
                 ->where('js.BRANCH_ID', 'IHTVN1')

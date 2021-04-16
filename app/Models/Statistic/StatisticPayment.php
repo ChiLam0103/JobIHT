@@ -18,7 +18,7 @@ class StatisticPayment extends Model
                 ->leftJoin('CUSTOMER as c', 'l.CUST_NO', 'c.CUST_NO')
                 ->leftJoin('LENDER_TYPE as lt', 'lt.LENDER_TYPE', 'l.LENDER_TYPE')
                 ->leftJoin('PERSONAL as p', 'p.PNL_NO', 'l.PNL_NO')
-                ->where('l.LENDER_DATE', '>=', '20190101')
+                ->where('l.INPUT_DT', '>=', '20190101000000')
                 ->where('l.LENDER_NO', $advance)
                 ->where('p.BRANCH_ID', 'IHTVN1')
                 ->select('c.CUST_NAME', 'p.PNL_NAME as PNAME', 'lt.LENDER_NAME', 'l.*')
@@ -45,7 +45,7 @@ class StatisticPayment extends Model
     {
         try {
             $data =  DB::table('LENDER as l')
-                ->where('l.LENDER_DATE', '>=', '20190101')
+                ->where('l.INPUT_DT', '>=', '20190101000000')
                 ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereIn('L.LENDER_NO', $advanceno)
                 ->select('l.*')->get();
@@ -84,7 +84,7 @@ class StatisticPayment extends Model
         try {
             $str = json_decode($advanceno);
             $data =  DB::table('LENDER as l')
-                ->where('l.LENDER_DATE', '>=', '20190101')
+            ->where('l.INPUT_DT', '>=', '20190101000000')
                 ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereIn('L.LENDER_NO', $str)
                 ->select('l.*')->get();
@@ -224,7 +224,7 @@ class StatisticPayment extends Model
                         //  $debittype= our_company_pay, pay_in_advance, all
                         $query = DB::table('DEBIT_NOTE_M as dnm')
                             ->leftJoin('DEBIT_NOTE_D as dnd', 'dnm.JOB_NO', 'dnd.JOB_NO')
-                            ->where('dnm.DEBIT_DATE', '>=', '20190101')
+                            ->where('dnm.INPUT_DT', '>=', '20190101000000')
                             ->whereBetween('dnm.DEBIT_DATE', [$fromdate, $todate])
                             ->where('dnm.BRANCH_ID', 'IHTVN1')
                             ->whereNotNull('dnm.JOB_NO');
@@ -252,7 +252,7 @@ class StatisticPayment extends Model
             ->where('dnd.JOB_NO', $jobno);
         if ($type == 'debit_date') {
             $query->leftJoin('DEBIT_NOTE_M as dnm', 'dnm.JOB_NO', 'dnd.JOB_NO')
-                ->where('dnm.DEBIT_DATE', '>=', '20190101')
+                ->where('dnm.INPUT_DT', '>=', '20190101000000')
                 ->whereBetween('dnm.DEBIT_DATE', [$fromdate, $todate]);
             if ($debittype == "our_company_pay") {
                 $query->where('dnd.DEB_TYPE', 'Our Company Pay');
@@ -275,7 +275,7 @@ class StatisticPayment extends Model
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('job.BRANCH_ID', 'IHTVN1')
-                ->where('job.JOB_DATE', '>=', '20190101')
+                ->where('job.INPUT_DT', '>=', '20190101000000')
                 ->orderBy('dm.JOB_NO')
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
             if ($check_date == 1) {
@@ -340,7 +340,7 @@ class StatisticPayment extends Model
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
-                    AND  job.JOB_DATE >='20190101'
+                    AND  job.INPUT_DT >='20190101000000'
                     AND  job.JOB_DATE >= '".$fromdate."'
                     AND  job.JOB_DATE <= '".$todate."'
                     AND job.CUST_NO like '".$custno."%'
@@ -353,7 +353,7 @@ class StatisticPayment extends Model
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
-                    AND  job.JOB_DATE >='20190101'
+                    AND  job.INPUT_DT >='20190101000000'
                     AND  job.JOB_DATE >= '".$fromdate."'
                     AND  job.JOB_DATE <= '".$todate."'
                     AND job.CUST_NO like '".$custno."%'
@@ -366,7 +366,7 @@ class StatisticPayment extends Model
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
-                    AND  job.ORDER_DATE >='20190101'
+                    AND  job.INPUT_DT >='20190101000000'
                     AND  job.ORDER_DATE >= '".$fromdate."'
                     AND  job.ORDER_DATE <= '".$todate."'
                     AND job.CUST_NO like '".$custno."%'
@@ -382,7 +382,7 @@ class StatisticPayment extends Model
                     WHERE dm.BRANCH_ID = 'IHTVN1'
                     AND  dd.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
-                    AND  dm.DEBIT_DATE >='20190101'
+                    AND  dm.INPUT_DT >='20190101000000'
                     AND  dm.DEBIT_DATE >= '".$fromdate."'
                     AND dm.DEBIT_DATE <= '".$todate."'
                     AND dm.CUST_NO like '".$custno."%'
@@ -464,7 +464,7 @@ class StatisticPayment extends Model
                 ->leftJoin('CUSTOMER as c', 'dm.CUST_NO', 'c.CUST_NO')
                 ->where('dm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('dm.DEBIT_DATE', '>=', '20190101')
+                ->where('dm.INPUT_DT', '>=', '20190101000000')
                 ->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate])
                 ->orderBy('dm.JOB_NO');
 
@@ -512,7 +512,7 @@ class StatisticPayment extends Model
                 ->leftJoin('CUSTOMER as c', 'jm.CUST_NO', 'c.CUST_NO')
                 ->where('jm.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('jm.ORDER_DATE', '>=', '20190101')
+                ->where('jm.INPUT_DT', '>=', '20190101000000')
                 ->orderBy('jm.JOB_NO');
             if ($flag_custno == 1) {
                 $query->where('jm.CUST_NO', $custno);
@@ -532,7 +532,7 @@ class StatisticPayment extends Model
                 case  'have_not_debit_note':
                     $query->leftJoin('DEBIT_NOTE_M as dm', 'jm.JOB_NO', 'dm.JOB_NO')
                         ->whereNull('dm.JOB_NO')
-                        ->where('dm.DEBIT_DATE', '>=', '20190101')
+                        ->where('dm.INPUT_DT', '>=', '20190101000000')
                         ->select('c.CUST_NAME', 'jm.*');
                     break;
                 case  'unpaid_cont':
@@ -584,7 +584,7 @@ class StatisticPayment extends Model
             ->leftJoin('CUSTOMER as c', 'dnm.CUST_NO', 'c.CUST_NO')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1')
-            ->where('dnm.DEBIT_DATE', '>=', '20190101')
+            ->where('dnm.INPUT_DT', '>=', '20190101000000')
             ->orderBy('dnm.JOB_NO');
         return $data;
     }
@@ -593,7 +593,7 @@ class StatisticPayment extends Model
         $data =  DB::table('LENDER as l')
             ->whereIn('L.LENDER_NO', $advanceno)
             ->where('l.BRANCH_ID', 'IHTVN1')
-            ->where('l.LENDER_DATE', '>=', '20190101')
+            ->where('l.INPUT_DT', '>=', '20190101000000')
             ->select('l.*')->take(10)->get();
         $data_d = DB::table('LENDER_D as ld')
             ->where('ld.BRANCH_ID', 'IHTVN1')
