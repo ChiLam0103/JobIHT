@@ -279,7 +279,8 @@ class StatisticPayment extends Model
                 ->orderBy('dm.JOB_NO')
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO');
             if ($check_date == 1) {
-                $query->whereBetween('job.JOB_DATE', [$fromdate, $todate]);
+                //Linh & Phi yêu cầu đổi từ JOB_DATE -> DEBIT_DATE
+                $query->whereBetween('dm.DEBIT_DATE', [$fromdate, $todate]);
             }
             switch ($type) {
                 case 'all':
