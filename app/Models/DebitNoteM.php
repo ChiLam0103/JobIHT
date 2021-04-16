@@ -16,11 +16,11 @@ class DebitNoteM extends Model
             ->where(function ($query) {
                 $query->where('dnm.DEL', 'N')
                     ->orWhere('dnm.DEL', null);
-            })
-            ->where(function ($query) {
-                $query->where('dnm.PAYMENT_CHK', 'N')
-                    ->orWhere('dnm.PAYMENT_CHK', null);
             });
+            // ->where(function ($query) {
+            //     $query->where('dnm.PAYMENT_CHK', 'N')
+            //         ->orWhere('dnm.PAYMENT_CHK', null);
+            // });
         return $query;
     }
     public static function queryNotCreated()
@@ -38,15 +38,15 @@ class DebitNoteM extends Model
     {
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')
-            ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
+            // ->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dnm.JOB_NO')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1')
-            ->where('dnm.DEBIT_DATE', '>=','20190101')
-            ->where('dnd.BRANCH_ID', 'IHTVN1')
+            // ->where('dnm.DEBIT_DATE', '>=','20190101')
+            // ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->orderBy('dnm.JOB_NO', 'desc')
-            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE')
-            ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
-            ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
+            ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
+            // ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
+            // ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
         return $query;
     }
     public static function queryCheckData()

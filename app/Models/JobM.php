@@ -147,8 +147,7 @@ class JobM extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '') {
-
+            if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '' || $request['CUST_NO']) {
                 DB::table(config('constants.JOB_M_TABLE'))
                     ->insert(
                         [
