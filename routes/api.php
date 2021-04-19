@@ -209,6 +209,7 @@ Route::namespace('Api\v1')->group(function () {
                 });
                 //2.in job order
                 Route::group(['prefix' => 'job-order'], function () {
+                    Route::get('/', 'FileController@getJobOrder');
                     Route::get('jobno={jobno}', 'FileController@jobOrder');
                     Route::get('boat/jobno={jobno}', 'FileController@jobOrderBoat');
                     Route::get('custno={id}&jobno={jobno}', 'FileController@jobOrderCustomer');
@@ -267,6 +268,8 @@ Route::namespace('Api\v1')->group(function () {
             Route::group(['prefix' => 'file'], function () {
                 //2.job order
                 Route::post('job-order', 'FileController@exportJobOrder_Date');
+                Route::post('job-order-new', 'FileController@exportJobOrder');
+                //3. báo biểu refund
                 //3. báo biểu refund
                 Route::post('refund', 'FileController@postExportRefund');
                 //4.thong ke job order--tạo job
