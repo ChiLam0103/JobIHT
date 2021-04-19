@@ -152,7 +152,7 @@ class DebitNoteM extends Model
     public static function postListCustomerJob($request)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->select('dnm.JOB_NO', 'c.CUST_NAME')->take(5000)->get();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->where('c.BRANCH_ID','IHTVN1')->select('dnm.JOB_NO', 'c.CUST_NAME','c.BRANCH_ID')->get();
         // dd($data);
         return $data;
     }
