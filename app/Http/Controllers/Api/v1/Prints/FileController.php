@@ -34,10 +34,11 @@ class FileController extends Controller
         }
     }
     //2 in job order
-    public function getJobOrder(Request $request)
+    public function getJobOrder(Request $request)//print new
     {
-        $data = StatisticFile::getJobOrder($request);
+        $data = StatisticFile::JobOrderNew($request);
         $total_port = 0;
+
         if ($data) {
             return view('print\file\job-order\job', [
                 'data' => $data,

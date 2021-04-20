@@ -33,7 +33,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @foreach ($job_m as $item)
                 <tr>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>

@@ -30,11 +30,12 @@ class StatisticFile extends Model
         }
     }
     //2.1 in job order theo job
-    public static function getJobOrder($request)
+    public static function JobOrderNew($request)
     {
+
         switch ($request->type) {
-            case 'job_no':
-                $data = DB::select("select c.CUST_NAME, l.LENDER_NO, jm.*, (SELECT jd.* FROM JOB_ORDER_D jd WHERE jd.JOB_NO = jm.JOB_NO) as jd
+            case 'job':
+                $data = DB::select("select c.CUST_NAME, l.LENDER_NO, jm.*
                 FROM JOB_ORDER_M jm
                 LEFT JOIN LENDER l
                 ON jm.JOB_NO = l.JOB_NO
@@ -43,13 +44,18 @@ class StatisticFile extends Model
                 WHERE jm.BRANCH_ID='IHTVN1'
                 AND c.BRANCH_ID ='IHTVN1'
                 AND jm.INPUT_DT >='20190101000000'
-                AND jm.JOB_NO = '".$request->job_no."'");
-                break;
-            case 'customer_no':
-                break;
-            case 'job_date':
+                AND jm.JOB_NO = '" . $request->job_no . "'");
+                $data_d = DB::select("select *
+                FROM JOB_ORDER_D
+                WHERE BRANCH_ID ='IHTVN1'
+                AND JOB_NO = '" . $request->job_no . "'");
+                dd($data);
                 break;
 
+            case 'customer':
+                break;
+            case 'date':
+                break;
         }
         dd($data);
         return $data;
@@ -87,12 +93,6 @@ class StatisticFile extends Model
     public static function jobOrder_Date($fromdate, $todate)
     {
         try {
-            // $query =  DB::table('JOB_ORDER_M as jom')
-            //     ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-            //     ->where('jom.BRANCH_ID', 'IHTVN1')
-            //     ->where('jom.ORDER_DATE', '>=', '20190101')
-            //     ->where('c.BRANCH_ID', 'IHTVN1')
-            //     ->whereBetween('jom.ORDER_DATE', [$fromdate, $todate]);
             $job_m = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
                 FROM JOB_ORDER_M job
                 LEFT JOIN CUSTOMER c
@@ -135,15 +135,8 @@ class StatisticFile extends Model
                     }
                 }
             }
-            // dd($job_m);
-            // $query_2 =   $query->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-            //     ->leftJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-            //     ->select('pt.PAY_NAME', 'jod.JOB_NO', 'jod.SER_NO', 'jod.DESCRIPTION', 'jod.PORT_AMT', 'jod.NOTE', 'jod.UNIT', 'jod.QTY', 'jod.PRICE', 'jod.TAX_AMT', 'jod.TAX_NOTE');
-            // $job_m = $query->select('c.CUST_NAME', 'jom.JOB_NO', 'jom.ORDER_DATE', 'jom.CUST_NO', 'jom.ORDER_FROM', 'jom.ORDER_TO', 'jom.NW', 'jom.GW', 'jom.POL', 'jom.POL', 'jom.POD', 'jom.ETD_ETA', 'jom.PO_NO', 'jom.CONTAINER_QTY', 'jom.CONSIGNEE', 'jom.CUSTOMS_DATE', 'jom.SHIPPER')
-            //     ->get();
-            // $job_d = $query_2->select('pt.PAY_NAME', 'jod.JOB_NO', 'jod.SER_NO', 'jod.DESCRIPTION', 'jod.PORT_AMT', 'jod.NOTE', 'jod.UNIT', 'jod.QTY', 'jod.PRICE', 'jod.TAX_AMT', 'jod.TAX_NOTE')->get();
 
-            return ['job_m' => $job_m];
+            return  $job_m;
         } catch (\Exception $e) {
             return $e;
         }
@@ -171,7 +164,7 @@ class StatisticFile extends Model
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('jom.INPUT_DT', '>=', '20190101000000')
-                ->select('jom.JOB_NO','jom.ORDER_DATE')
+                ->select('jom.JOB_NO', 'jom.ORDER_DATE')
                 ->get();
             return $data;
         } catch (\Exception $e) {
