@@ -32,32 +32,72 @@ class StatisticFile extends Model
     //2.1 in job order theo job
     public static function JobOrderNew($request)
     {
-
+        $data = '';
         switch ($request->type) {
             case 'job':
-                $data = DB::select("select c.CUST_NAME, l.LENDER_NO, jm.*
-                FROM JOB_ORDER_M jm
-                LEFT JOIN LENDER l
-                ON jm.JOB_NO = l.JOB_NO
-                LEFT JOIN CUSTOMER c
-                ON jm.CUST_NO = c.CUST_NO
-                WHERE jm.BRANCH_ID='IHTVN1'
-                AND c.BRANCH_ID ='IHTVN1'
-                AND jm.INPUT_DT >='20190101000000'
-                AND jm.JOB_NO = '" . $request->job_no . "'");
+                $data =  DB::table('JOB_ORDER_M as jom')
+                    ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+                    ->leftJoin('LENDER as l', 'jom.JOB_NO', 'l.JOB_NO')
+                    ->where('jom.JOB_NO', $request->job_no)
+                    ->where('c.BRANCH_ID', 'IHTVN1')
+                    ->where('jom.BRANCH_ID', 'IHTVN1')
+                    ->where('jom.INPUT_DT', '>=', '20190101000000')
+                    ->select('c.CUST_NAME', 'l.LENDER_NO', 'jom.*')
+                    ->first();
                 $data_d = DB::select("select *
                 FROM JOB_ORDER_D
                 WHERE BRANCH_ID ='IHTVN1'
                 AND JOB_NO = '" . $request->job_no . "'");
-                dd($data);
+                $data->job_d = $data_d;
                 break;
 
             case 'customer':
+                $data = DB::select("select c.CUST_NAME, job.*
+                FROM JOB_ORDER_M job
+                LEFT JOIN CUSTOMER c
+                ON job.CUST_NO = c.CUST_NO
+                WHERE job.BRANCH_ID='IHTVN1'
+                AND  c.BRANCH_ID='IHTVN1'
+                AND  job.INPUT_DT >='20190101000000'
+                AND  job.CUST_NO = '" . $request->cust_no . "'
+                AND  job.JOB_NO IN (" . $request->array_job_no . ")
+                ORDER BY job.JOB_NO ");
+                foreach ($data as $item) {
+                    $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
+                    FROM JOB_ORDER_D job_d
+                    LEFT JOIN PAY_TYPE pt
+                    ON job_d.ORDER_TYPE = pt.PAY_NO
+                    WHERE job_d.BRANCH_ID='IHTVN1'
+                    AND  job_d.INPUT_DT >='20190101000000'
+                    AND  job_d.JOB_NO = '" . $item->JOB_NO . "'
+                    ORDER BY job_d.JOB_NO");
+                    $item->job_d = $job_d;
+                }
                 break;
             case 'date':
+                $data = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
+                FROM JOB_ORDER_M job
+                LEFT JOIN CUSTOMER c
+                ON job.CUST_NO =c.CUST_NO
+                WHERE job.BRANCH_ID='IHTVN1'
+                AND  c.BRANCH_ID='IHTVN1'
+                AND  job.INPUT_DT >='20190101000000'
+                AND  job.ORDER_DATE >= '" . $request->fromdate . "'
+                AND  job.ORDER_DATE <= '" . $request->todate . "'
+                ORDER BY job.JOB_NO ");
+                foreach ($data as $item) {
+                    $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
+                    FROM JOB_ORDER_D job_d
+                    LEFT JOIN PAY_TYPE pt
+                    ON job_d.ORDER_TYPE = pt.PAY_NO
+                    WHERE job_d.BRANCH_ID='IHTVN1'
+                    AND  job_d.INPUT_DT >='20190101000000'
+                    AND  job_d.JOB_NO = '" . $item->JOB_NO . "'
+                    ORDER BY job_d.JOB_NO");
+                    $item->job_d = $job_d;
+                }
                 break;
         }
-        dd($data);
         return $data;
     }
     public static function jobOrder($jobno)

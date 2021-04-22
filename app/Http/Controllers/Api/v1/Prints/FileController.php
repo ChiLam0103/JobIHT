@@ -34,21 +34,36 @@ class FileController extends Controller
         }
     }
     //2 in job order
-    public function getJobOrder(Request $request)//print new
+    public function getJobOrder(Request $request) //print new
     {
-        $data = StatisticFile::JobOrderNew($request);
-        $total_port = 0;
-
-        if ($data) {
-            return view('print\file\job-order\job', [
-                'data' => $data,
-                'total_port' => $total_port
-            ]);
-        } else {
+        try {
+            $data = StatisticFile::JobOrderNew($request);
+            $total_port = 0;
+            switch ($request->type) {
+                case 'job':
+                    $pay_type = PayType::listPayType_JobNo($request->job_no);
+                    return view('print\file\job-order-new\job', [
+                        'data' => $data,
+                        'pay_type' => $pay_type,
+                        'total_port' => $total_port,
+                    ]);
+                    break;
+                case 'customer':
+                    return view('print\file\job-order-new\customer', [
+                        'data' => $data,
+                    ]);
+                    break;
+                case 'date':
+                    return view('print\file\job-order-new\date', [
+                        'data' => $data,
+                    ]);
+                    break;
+            }
+        } catch (\Exception $e) {
             return response()->json(
                 [
                     'success' => false,
-                    'message' => 'null'
+                    'message' => $e
                 ],
                 Response::HTTP_BAD_REQUEST
             );
