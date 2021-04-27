@@ -52,6 +52,12 @@ class StatisticFile extends Model
                 break;
 
             case 'customer':
+                $array= '';
+                if($request->array_job_no){
+                    $array='and  job.JOB_NO IN (" . $request->array_job_no . ")';
+                }else{
+                    $array='and  job.ID IN ( '. $request->array_id .' )';
+                }
                 $data = DB::select("select c.CUST_NAME, job.*
                 FROM JOB_ORDER_M job
                 LEFT JOIN CUSTOMER c
@@ -60,7 +66,7 @@ class StatisticFile extends Model
                 AND  c.BRANCH_ID='IHTVN1'
                 AND  job.INPUT_DT >='20190101000000'
                 AND  job.CUST_NO = '" . $request->cust_no . "'
-                AND  job.JOB_NO IN (" . $request->array_job_no . ")
+                ". $array ."
                 ORDER BY job.JOB_NO ");
                 foreach ($data as $item) {
                     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
