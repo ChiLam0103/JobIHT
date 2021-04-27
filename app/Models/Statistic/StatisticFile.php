@@ -210,7 +210,7 @@ class StatisticFile extends Model
                 ->where('jom.BRANCH_ID', 'IHTVN1')
                 ->where('c.BRANCH_ID', 'IHTVN1')
                 ->where('jom.INPUT_DT', '>=', '20190101000000')
-                ->select('jom.JOB_NO', 'jom.ORDER_DATE')
+                ->select('jom.ID','jom.JOB_NO', 'jom.ORDER_DATE')
                 ->get();
             return $data;
         } catch (\Exception $e) {
