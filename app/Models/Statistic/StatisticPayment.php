@@ -312,11 +312,10 @@ class StatisticPayment extends Model
             ->where('jd.JOB_NO', $jobno)
             ->selectRaw("sum(CASE WHEN (jd.QTY = 0) THEN jd.PRICE ELSE jd.PRICE * jd.QTY  END) as CHI_PHI_BOOK_TAU")
             ->selectRaw("sum(jd.PORT_AMT + jd.INDUSTRY_ZONE_AMT)  as CHI_PHI_JOB")
-            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = 'C') THEN jd.PRICE ELSE 0 END)  as SUM_DEPOSIT_FEE")
-            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = '8' ) THEN jd.PRICE ELSE 0 END)  as SUM_DEPOSIT_FIX_FEE")
+            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = 'C') THEN (jd.PORT_AMT + jd.PRICE* jd.QTY) ELSE 0 END)  as SUM_DEPOSIT_FEE")
+            ->selectRaw("sum(CASE WHEN (jd.ORDER_TYPE = '8' ) THEN (jd.PORT_AMT + jd.PRICE* jd.QTY) ELSE 0 END)  as SUM_DEPOSIT_FIX_FEE")
             ->where('jd.BRANCH_ID', 'IHTVN1')
             ->get();
-
         return $data;
     }
     //5. thống kê số job trong tháng

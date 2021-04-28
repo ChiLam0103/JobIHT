@@ -355,7 +355,6 @@
                             {{ $total_amt += $item_d->TOTAL_AMT }}
                             {{ $total_vat += $item_d->TAX_AMT }}
                             {{ $total_amt_do += $item_d->DOR_AMT * $item_d->QUANTITY }}
-                            {{ $curency = $item_d->DOR_NO }}
                         </span>
                     </tr>
                 @endforeach

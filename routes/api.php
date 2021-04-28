@@ -210,6 +210,7 @@ Route::namespace('Api\v1')->group(function () {
                 //2.in job order
                 Route::group(['prefix' => 'job-order'], function () {
                     Route::get('/', 'FileController@getJobOrder');
+                    Route::post('/', 'FileController@getJobOrder');
                     Route::get('jobno={jobno}', 'FileController@jobOrder');
                     Route::get('boat/jobno={jobno}', 'FileController@jobOrderBoat');
                     Route::get('custno={id}&jobno={jobno}', 'FileController@jobOrderCustomer');

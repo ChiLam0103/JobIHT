@@ -186,6 +186,7 @@
                             </td>
                             <td> {{ number_format($item->TIEN_THANH_TOAN - ($item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE), 0, ',', '.') }}
                             </td>
+
                             <span style="display: none">{{ $sum_chi_phi += $item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE}}
                             {{ $sum_loi_nhuan += $item->TIEN_THANH_TOAN - ($item_2->CHI_PHI_BOOK_TAU + $item_2->CHI_PHI_JOB - $item_2->SUM_DEPOSIT_FEE - $item_2->SUM_DEPOSIT_FIX_FEE) }}</span>
                         @endforeach
