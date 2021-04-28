@@ -178,11 +178,11 @@
             @endforeach
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <td style="text-align: right" data-format="0,0">{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
-                </td>
-                <td style="text-align: right" data-format="0,0"> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : number_format($total_amt_do, 2, '.', ',') }}
+                <th style="text-align: right" data-format="0,0">{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
+                </th>
+                <th style="text-align: right" data-format="0,0"> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : number_format($total_amt_do, 2, '.', ',') }}
                     {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}
-                </td>
+                </th>
             </tr>
         </table>
 
