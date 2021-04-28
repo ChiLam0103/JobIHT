@@ -117,9 +117,9 @@
                 <td colspan="3">{{ $item->NOTE }}</td>
             </tr>
             <tr>
-                <td colspan="2" class="font-size-small">QTY:</td>
+                <th colspan="2" class="font-size-small">QTY:</th>
                 <td colspan="3">{{ $item->CONTAINER_QTY }}</td>
-                <td>Invoices No:</td>
+                <th>Invoices No:</th>
                 <td colspan="3">{{ $item->INVOICE_NO }}</td>
             </tr>
             <tr>
