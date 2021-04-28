@@ -160,14 +160,14 @@
                 <td style="text-align: center">
                     {{$item_d->QUANTITY}}
                 </td>
-                <td style="text-align: right">
-                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->PRICE, 0, ',', '.') : number_format($item_d->DOR_AMT, 2, '.', ',') }}
+                <td style="text-align: right" data-format="0,0">
+                    {{ trim($bank->SWIFT_CODE) == '' ? $item_d->PRICE : number_format($item_d->DOR_AMT, 2, '.', ',') }}
                 </td>
-                <td style="text-align: right">
-                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TAX_AMT, 0, ',', '.') : '' }}
+                <td style="text-align: right" data-format="0,0">
+                    {{ trim($bank->SWIFT_CODE) == '' ? ($item_d->TAX_AMT == 00 ? '-' : $item_d->TAX_AMT) : '' }}
                 </td>
-                <td style="text-align: right">
-                    {{ trim($bank->SWIFT_CODE) == '' ? number_format($item_d->TOTAL_AMT, 0, ',', '.') : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
+                <td style="text-align: right" data-format="0,0">
+                    {{ trim($bank->SWIFT_CODE) == '' ? $item_d->TOTAL_AMT : number_format($item_d->DOR_AMT * $item_d->QUANTITY, 2, '.', ',') }}
                 </td>
                 <span style="display: none;">
                     {{ $total_amt += $item_d->TOTAL_AMT }}
@@ -178,15 +178,15 @@
             @endforeach
             <tr>
                 <th colspan="7" style="text-align: right">JOB AMT</th>
-                <td style="text-align: right">{{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat, 0, ',', '.') : '' }}
+                <td style="text-align: right" data-format="0,0">{{ trim($bank->SWIFT_CODE) == '' ? $total_vat : '' }}
                 </td>
-                <td style="text-align: right"> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_amt, 0, ',', '.') : number_format($total_amt_do, 2, '.', ',') }}
+                <td style="text-align: right" data-format="0,0"> {{ trim($bank->SWIFT_CODE) == '' ? $total_amt : number_format($total_amt_do, 2, '.', ',') }}
                     {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}
                 </td>
             </tr>
         </table>
 
-        <span style="display: none;">
+        <span style="display: none;" data-format="0,0">
             {{ $total_vat_tax += $total_vat }}
             {{ $total_sum_amt += trim($bank->SWIFT_CODE) == '' ? $total_amt : $total_amt_do }}
         </span>
@@ -194,9 +194,9 @@
     <table class="table">
         <tr>
             <th colspan="7" style="text-align: right">TOTAL AMT</th>
-            <th style="text-align: right"> {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_vat_tax, 0, ',', '.') : '' }}</th>
-            <th style="text-align: right">
-                {{ trim($bank->SWIFT_CODE) == '' ? number_format($total_sum_amt, 0, ',', '.') : number_format($total_sum_amt, 2, '.', ',') }}
+            <th style="text-align: right" data-format="0,0"> {{ trim($bank->SWIFT_CODE) == '' ? $total_vat_tax : '' }}</th>
+            <th style="text-align: right" data-format="0,0">
+                {{ trim($bank->SWIFT_CODE) == '' ? $total_sum_amt : number_format($total_sum_amt, 2, '.', ',') }}
                 {{ trim($bank->SWIFT_CODE) == '' ? '' : 'USD' }}
             </th>
         </tr>
@@ -243,6 +243,8 @@
             <th colspan="3">APPROVAL</th>
         </tr>
     </table>
+            {{-- {{dd(1)}} --}}
+
 </body>
 
 </html>
