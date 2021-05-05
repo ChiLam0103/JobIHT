@@ -54,13 +54,13 @@ class StatisticFile extends Model
             case 'customer':
                 $array = '';
                 $date = '';
-                if ($request->array_job_no) {
+                if ($request->array_job_no != null) {
                     $array = 'and  job.JOB_NO IN (" . $request->array_job_no . ")';
                 }
-                if ($request->array_id) {
+                if ($request->array_id != null) {
                     $array = 'and  job.ID IN ( ' . $request->array_id . ' )';
                 }
-                if ($request->fromdate &&  $request->todate) {
+                if ($request->fromdate !=null &&  $request->todate != null) {
                     $date = "and  job.ORDER_DATE >= '" . $request->fromdate . "' and  job.ORDER_DATE <= '" . $request->todate . "'";
                 }
                 $data = DB::select("select c.CUST_NAME, job.*
