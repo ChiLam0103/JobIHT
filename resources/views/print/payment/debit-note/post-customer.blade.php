@@ -231,14 +231,17 @@
             </div>
             <div class="col-4 border" id="info-debit">
                 <table style="width:100%">
-                    {{-- <tr>
+                    @foreach ($debit as $item)
+                    <tr>
                         <td>Date:</td>
-                        <td>{{ date('Y/m/d', strtotime($item->DEBIT_DATE)) }}</td>
+                        <td>{{$item->DEBIT_DATE}}</td>
                     </tr>
                     <tr>
                         <td>Debit Note No:</td>
                         <td>{{ $item->JOB_NO }}</td>
-                    </tr> --}}
+                    </tr>
+                    @break
+                    @endforeach
                     <tr>
                         <td>Please Contact With:</td>
                         <td>{{ $person->PNL_NAME }}</td>
