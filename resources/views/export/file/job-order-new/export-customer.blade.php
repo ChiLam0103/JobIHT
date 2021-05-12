@@ -25,6 +25,7 @@
                 <th>STT</th>
                 <th>Mô Tả</th>
                 <th>Port AMT</th>
+                <th>Industry</th>
                 <th>Note</th>
                 <th>Đơn Vị Tính</th>
                 <th>Số Lượng</th>
@@ -59,6 +60,7 @@
                         <td>{{ $item_d->SER_NO }}</td>
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->PORT_AMT }}</td>
+                        <td>{{ $item_d->INDUSTRY_ZONE_AMT }}</td>
                         <td>{{ $item_d->NOTE }}</td>
                         <td>{{ $item_d->UNIT }}</td>
                         <td>{{ $item_d->QTY }}</td>
