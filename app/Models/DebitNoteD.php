@@ -33,6 +33,43 @@ class DebitNoteD extends Model
         $data = sprintf("%'.02d", $count);
         return $data;
     }
+    public static function importDebitNoteD($array)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            foreach ($array as $request) {
+                DB::table('DEBIT_NOTE_D')->where('JOB_NO', $request['job_no'])->delete();
+            }
+            foreach ($array as $request) {
+                DB::table('DEBIT_NOTE_D')
+                    ->insert(
+                        [
+                            'JOB_NO' => $request['job_no'],
+                            'SER_NO' => $request['ser_no'],
+                            'INV_YN' => 'N',
+                            "INV_NO" =>  $request['inv_no'],
+                            "DESCRIPTION" =>  $request['description'],
+                            "UNIT" =>  $request['unit'],
+                            "QUANTITY" => ($request['quantity'] == 'undefined' || $request['quantity'] == 'null' || $request['quantity'] == null) ? 0 : $request['quantity'],
+                            "PRICE" => ($request['price'] == 'undefined' || $request['price'] == 'null' || $request['price'] == null) ? 0 :  $request['price'],
+                            "TAX_NOTE" => $request['tax_note'],
+                            "TAX_AMT" => ($request['tax_amt'] == 'undefined' || $request['tax_amt'] == 'null' || $request['tax_amt'] == null) ? 0 : $request['tax_amt'],
+                            "TOTAL_AMT" => ($request['total_amt'] == 'undefined' || $request['total_amt'] == 'null' || $request['total_amt'] == null) ? 0 :   $request['total_amt'],
+                            "DOR_NO" =>   $request['dor_no'],
+                            "DOR_AMT" => ($request['dor_amt'] == 'undefined' || $request['dor_amt'] == 'null' || $request['dor_amt'] == null) ? 0 : $request['dor_amt'],
+                            "DOR_RATE" => ($request['dor_rate'] == 'undefined' || $request['dor_rate'] == 'null' || $request['dor_rate'] == null) ? 0 : $request['dor_rate'],
+                            "DEB_TYPE" => $request['deb_type'],
+                            "BRANCH_ID" => 'IHTVN1',
+                            "INPUT_USER" => $request['input_user'],
+                            "INPUT_DT" => date("YmdHis")
+                        ]
+                    );
+            }
+            return true;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     public static function add($request)
     {
         try {

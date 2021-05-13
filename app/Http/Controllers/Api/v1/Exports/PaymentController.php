@@ -11,7 +11,9 @@ use App\Models\Company;
 use App\Models\Bank;
 use App\Models\Customer;
 use App\Models\Personal;
+use App\Models\DebitNoteD;
 use Illuminate\Http\Request;
+
 
 class PaymentController extends Controller
 {
@@ -228,6 +230,19 @@ class PaymentController extends Controller
                 break;
         }
     }
+    //2.1 import excel thêm or chỉnh sửa chi phí debit_note_d
+    public function importDebitNote()
+    {
+        Excel::load(Input::file('file'), function ($reader) {
+            foreach ($reader->toArray() as $array) {
+                DebitNoteD::importDebitNoteD($array);
+            }
+        });
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
     //4. báo biểu lợi nhuận
     public function profit(Request $request)
     {

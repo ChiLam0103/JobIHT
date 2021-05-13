@@ -298,6 +298,8 @@ Route::namespace('Api\v1')->group(function () {
         Route::group(['prefix' => 'import', 'namespace' => 'Exports'], function () {
             //1. payment manager(quan ly thu chi)
             Route::post('payment', 'PaymentController@importPayment');
+            //1. payment manager(quan ly thu chi)
+            Route::post('debit-note', 'PaymentController@importDebitNote');
         });
         //test
         Route::group(['prefix' => 'test', 'namespace' => 'Statistic'], function () {
