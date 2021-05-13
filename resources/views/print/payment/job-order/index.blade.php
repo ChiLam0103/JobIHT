@@ -253,6 +253,7 @@
                         <th>Description</th>
                         <th>Tiền Cảng</th>
                         <th>Tiền KCN</th>
+                        <th>Tiền Book Tàu</th>
                         <th>Tổng Thành Tiền</th>
                         <th>User Tạo</th>
                     </tr>
@@ -267,14 +268,15 @@
                             <td>{{ $item->DESCRIPTION }}</td>
                             <td>{{ number_format($item->PORT_AMT, 0, ',', '.') }}</td>
                             <td>{{ number_format($item->INDUSTRY_ZONE_AMT, 0, ',', '.') }}</td>
-                            <td>{{ number_format($item->PORT_AMT + $item->INDUSTRY_ZONE_AMT, 0, ',', '.') }}</td>
+                            <td>{{ number_format($item->PRICE * $item->QTY, 0, ',', '.') }}</td>
+                            <td>{{ number_format($item->PORT_AMT + $item->INDUSTRY_ZONE_AMT + ($item->PRICE * $item->QTY), 0, ',', '.') }}</td>
                             <td>{{ $item->INPUT_USER }}</td>
                         </tr>
-                        <span style="display: none">{{ $total_money += $item->PORT_AMT + $item->INDUSTRY_ZONE_AMT }}</span>
+                        <span style="display: none">{{ $total_money += $item->PORT_AMT + $item->INDUSTRY_ZONE_AMT + ($item->PRICE * $item->QTY)}}</span>
                     @endforeach
                     <tr>
-                        <th colspan="8" style="text-align: right">TỔNG SỐ TIỀN:</th>
-                        <th colspan="2">{{ number_format($total_money, 0, ',', '.') }}</th>
+                        <th colspan="9" style="text-align: right">TỔNG SỐ TIỀN:</th>
+                        <th colspan="2" >{{ number_format($total_money, 0, ',', '.') }}</th>
                     </tr>
                     @break
                     @default

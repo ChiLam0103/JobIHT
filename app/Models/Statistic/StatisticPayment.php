@@ -391,37 +391,7 @@ class StatisticPayment extends Model
                 default:
                     break;
             }
-            // $table_name = '';
-            // $table_name = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_START' : ($type == 'job_order' ? 'JOB_ORDER_M' : 'DEBIT_NOTE_M');
-            // $table_date = ($type == 'job_start') || ($type == 'job_pay') ? 'JOB_DATE' : ($type == 'job_order' ? 'ORDER_DATE' : 'DEBIT_DATE');
-            // $query = DB::table($table_name . ' as job')
-            //     ->leftJoin('CUSTOMER as c', 'job.CUST_NO', 'c.CUST_NO')
-            //     ->where('job.BRANCH_ID', 'IHTVN1')
-            //     ->where('c.BRANCH_ID', 'IHTVN1')
-            //     ->where('job.' . $table_date, '>=', '20190101')
-            //     ->whereBetween('job.' . $table_date, [$fromdate, $todate])->select('c.CUST_NAME', 'job.*')->orderBy('job.JOB_NO');
-            // if ($error_customer == 0) {
-            //     $query->where('job.CUST_NO', $custno);
-            // }
-            // if ($type == 'debit_note') {
 
-            //   $query->Join('DEBIT_NOTE_D as dd','dd.JOB_NO','job.JOB_NO')
-            // //   ->where('dd.BRANCH_ID', 'IHTVN1')
-            //   ->selectRaw('sum(cast(dd.PRICE as double precision))')
-            // //   ->groupBy('job.JOB_NO');
-            // //   ->selectRaw('sum(dd.TAX_AMT) as SUM_TAX_AMT')
-            //   ->groupBy('c.CUST_NAME', 'job.*');
-            // }
-            // $data = $query->take(10)->distinct()->get();
-            // if ($type == 'job_pay') {
-            //     foreach ($data as $item) {
-            //         $job_d = StatisticPayment::jobMonthly_jobOrderD($item->JOB_NO);
-            //         $lender_d = StatisticPayment::jobMonthly_lenderD($item->JOB_NO);
-            //         $item->SUM_PORT_AMT = $job_d->SUM_PORT_AMT;
-            //         $item->SUM_INDUSTRY_ZONE_AMT = $job_d->SUM_INDUSTRY_ZONE_AMT;
-            //         $item->SUM_LENDER_AMT = $lender_d->SUM_LENDER_AMT;
-            //     }
-            // }
 
             return $data;
         } catch (\Exception $e) {
@@ -488,14 +458,7 @@ class StatisticPayment extends Model
             $data = $query->distinct()->take(9000)
                 ->select('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO', 'dm.DEBIT_DATE')
                 ->get();
-            // foreach ($data as $item) {
-            //     $query_d = DB::table('DEBIT_NOTE_D as dd')
-            //         ->where('dd.JOB_NO', $item->JOB_NO)
-            //         // ->selectRaw("sum( (CASE WHEN (dd.TAX_NOTE = '0%') OR (dd.TAX_NOTE = '10%') OR (dd.TAX_NOTE = '') THEN  (dd.QUANTITY * dd.PRICE)  ELSE (dd.QUANTITY * dd.PRICE) + (dd.QUANTITY * dd.PRICE) * dd.TAX_NOTE/100 END)) as TOTAL_AMT")
-            //         ->first();
-            //     // dd($query_d->TOTAL_AMT);
-            //     // $item->TOTAL_AMT = $query_d->TOTAL_AMT;
-            // }
+
             return $data;
         } catch (\Exception $e) {
             return $e;
@@ -537,12 +500,15 @@ class StatisticPayment extends Model
                     break;
                 case  'unpaid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
-                        ->where('jd.ORDER_TYPE', 'C')
+                        ->where(function ($query) {
+                        $query->where('jd.ORDER_TYPE', 'C')
+                              ->orWhere('jd.ORDER_TYPE', '8');
+                        })
                         ->where(function ($query) {
                             $query->where('jd.THANH_TOAN_MK', 'N')
                                 ->orWhere('jd.THANH_TOAN_MK', null);
                         })
-                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT');
+                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT', 'jd.PRICE','jd.QTY');
                     break;
                 case  'paid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
@@ -556,7 +522,6 @@ class StatisticPayment extends Model
             $data = $query->take(9000)
                 ->get();
 
-            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
@@ -600,9 +565,6 @@ class StatisticPayment extends Model
             ->whereIn('ld.LENDER_NO', $advanceno)
             ->select('ld.*')->get();
         $array = $data['0']->push($data_d);
-        // dd($data,$advance_d);
-        // $array = $data->merge($data_d);
-        // $array = array_add_multiple($data, array($data_d));
         dd($array);
         return $data;
     }
