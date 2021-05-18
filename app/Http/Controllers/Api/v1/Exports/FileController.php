@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api\v1\Exports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use App\Models\PayType;
+use App\Models\JobD;
 use App\Models\Statistic\StatisticFile;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Illuminate\Support\Facades\Input;
 class FileController extends Controller
 {
     //2.1 export date
@@ -92,6 +93,18 @@ class FileController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+    }
+    //2.1 import excel thêm or chỉnh sửa chi phí debit_note_d
+    public function importJobOrder()
+    {
+        Excel::load(Input::file('file'), function ($reader) {
+            foreach ($reader->toArray() as $array) {
+                JobD::importJobOrder($array);
+            }
+        });
+        return response()->json([
+            'success' => true,
+        ]);
     }
     //3.1 export
     public function postExportRefund(Request $request)

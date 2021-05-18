@@ -22,9 +22,10 @@ class LenderD extends Model
         $count = DB::table('LENDER_D')
             ->where('LENDER_NO', $LENDER_NO)
             ->where('BRANCH_ID', 'IHTVN1')
-            ->count();
-        $count = (int) $count + 1;
-        $data = sprintf("%'.02d", $count);
+            ->orderByDesc('LENDER_NO')
+            ->first();
+        // $count = (int) $count + 1;
+        $data = sprintf("%'.02d", $count->SER_NO + 1);
         return $data;
     }
     public static function add($request)
