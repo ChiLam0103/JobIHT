@@ -19,13 +19,21 @@ class LenderD extends Model
     public static function generateSerNo($LENDER_NO)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $count = DB::table('LENDER_D')
+        $lender = DB::table('LENDER_D')
             ->where('LENDER_NO', $LENDER_NO)
             ->where('BRANCH_ID', 'IHTVN1')
             ->orderByDesc('LENDER_NO')
             ->first();
-        // $count = (int) $count + 1;
-        $data = sprintf("%'.02d", $count->SER_NO + 1);
+        if ($lender) {
+            $data = sprintf("%'.02d", $lender->SER_NO + 1);
+        } else {
+            $count = DB::table('LENDER_D')
+                ->where('LENDER_NO', $LENDER_NO)
+                ->where('BRANCH_ID', 'IHTVN1')
+                ->count();
+            $count = (int) $count + 1;
+            $data = sprintf("%'.02d", $count);
+        }
         return $data;
     }
     public static function add($request)
