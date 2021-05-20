@@ -10,6 +10,7 @@ use App\Models\Statistic\StatisticFile;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Input;
+
 class FileController extends Controller
 {
     //2.1 export date
@@ -94,7 +95,7 @@ class FileController extends Controller
             );
         }
     }
-    //2.1 import excel thêm or chỉnh sửa chi phí debit_note_d
+    //2.1 import excel thêm or chỉnh sửa chi phí job_d
     public function importJobOrder()
     {
         Excel::load(Input::file('file'), function ($reader) {

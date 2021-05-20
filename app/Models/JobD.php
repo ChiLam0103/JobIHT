@@ -212,4 +212,51 @@ class JobD extends Model
             return $e;
         }
     }
+    // import chi phí --chị Huệ
+    public static function importJobOrder($request)
+    {
+        try {
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            foreach ($request as $item) {
+                $so_cont = $item['so_cont'];
+                $job_d = DB::table('JOB_ORDER_D')->where('JOB_NO', $item['job'])->where('ORDER_TYPE', 'T')->where('PRICE', $item['cuoc_vc'])->first();
+                if ($job_d) {
+                    DB::table(config('constants.JOB_D_TABLE'))
+                        ->where('JOB_NO', $job_d->JOB_NO)->where('ORDER_TYPE', 'T')->where('SER_NO', $job_d->SER_NO)
+                        ->update(
+                            [
+                                "DESCRIPTION" => "$job_d->DESCRIPTION-$so_cont",
+                                "QTY" => $job_d->QTY + 1,
+                                "MODIFY_USER" => 'HUE',
+                                "MODIFY_DT" => date("YmdHis"),
+                            ]
+                        );
+                } else {
+                    $ser_no = JobD::generateSerNo($item['job'], 'T');
+                    DB::table(config('constants.JOB_D_TABLE'))
+                        ->insert(
+                            [
+                                "JOB_NO" => $item['job'],
+                                "ORDER_TYPE" => 'T',
+                                "SER_NO" => $ser_no,
+                                "DESCRIPTION" => "PHÍ KÉO -$so_cont",
+                                "QTY" => 1,
+                                "PRICE" =>  $item['cuoc_vc'],
+                                "TAX_NOTE" => 0,
+                                "TAX_AMT" => 0,
+                                "THANH_TOAN_MK" => 'N',
+                                "BRANCH_ID" => 'IHTVN1',
+                                "INPUT_USER" => 'HUE',
+                                "INPUT_DT" => date("YmdHis"),
+                                "PORT_AMT" => 0,
+                                "INDUSTRY_ZONE_AMT" => 0,
+                            ]
+                        );
+                }
+            }
+            return true;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }
