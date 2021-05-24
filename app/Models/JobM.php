@@ -18,7 +18,7 @@ class JobM extends Model
             })
             ->where('jm.BRANCH_ID', 'IHTVN1')
             ->where('c.BRANCH_ID', 'IHTVN1')
-            ->where('jm.ORDER_DATE','>=','20190101');
+            ->where('jm.ORDER_DATE', '>=', '20190101');
         return $query;
     }
     public static function list()
@@ -345,17 +345,23 @@ class JobM extends Model
             if ($request->type == 'pending') {
                 foreach ($request->data as $request) {
                     $query = DB::table('JOB_ORDER_D')
-                        ->where('JOB_NO', $request['JOB_NO'])
-                        ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-                        ->where('SER_NO', $request['SER_NO'])
+                        ->where('ID', $request['ID'])
+                        // ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                        // ->where('SER_NO', $request['SER_NO'])
                         ->update(['THANH_TOAN_MK' => 'N']);
+                    // $query = DB::table('JOB_ORDER_D')
+                    //     ->where('JOB_NO', $request['JOB_NO'])
+                    //     ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                    //     ->where('SER_NO', $request['SER_NO'])
+                    //     ->update(['THANH_TOAN_MK' => 'N']);
                 }
             } else {
                 foreach ($request->data as $request) {
                     $query = DB::table('JOB_ORDER_D')
-                        ->where('JOB_NO', $request['JOB_NO'])
-                        ->where('ORDER_TYPE', $request['ORDER_TYPE'])
-                        ->where('SER_NO', $request['SER_NO'])
+                        // ->where('JOB_NO', $request['JOB_NO'])
+                        // ->where('ORDER_TYPE', $request['ORDER_TYPE'])
+                        // ->where('SER_NO', $request['SER_NO'])
+                        ->where('ID', $request['ID'])
                         ->update(['THANH_TOAN_MK' => 'Y']);
                 }
             }
