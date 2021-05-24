@@ -217,9 +217,8 @@ class JobD extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            foreach ($request as $item) {
-                $so_cont = $item['so_cont'];
-                $job_d = DB::table('JOB_ORDER_D')->where('JOB_NO', $item['job'])->where('ORDER_TYPE', 'T')->where('PRICE', $item['cuoc_vc'])->first();
+                $so_cont = $request['so_cont'];
+                $job_d = DB::table('JOB_ORDER_D')->where('JOB_NO', $request['job'])->where('ORDER_TYPE', 'T')->where('PRICE', $request['cuoc_vc'])->first();
                 if ($job_d) {
                     DB::table(config('constants.JOB_D_TABLE'))
                         ->where('JOB_NO', $job_d->JOB_NO)->where('ORDER_TYPE', 'T')->where('SER_NO', $job_d->SER_NO)
@@ -232,16 +231,16 @@ class JobD extends Model
                             ]
                         );
                 } else {
-                    $ser_no = JobD::generateSerNo($item['job'], 'T');
+                    $ser_no = JobD::generateSerNo($request['job'], 'T');
                     DB::table(config('constants.JOB_D_TABLE'))
                         ->insert(
                             [
-                                "JOB_NO" => $item['job'],
+                                "JOB_NO" => $request['job'],
                                 "ORDER_TYPE" => 'T',
                                 "SER_NO" => $ser_no,
                                 "DESCRIPTION" => "PHÍ KÉO -$so_cont",
                                 "QTY" => 1,
-                                "PRICE" =>  $item['cuoc_vc'],
+                                "PRICE" =>  $request['cuoc_vc'],
                                 "TAX_NOTE" => 0,
                                 "TAX_AMT" => 0,
                                 "THANH_TOAN_MK" => 'N',
@@ -253,7 +252,6 @@ class JobD extends Model
                             ]
                         );
                 }
-            }
             return true;
         } catch (\Exception $e) {
             return $e;
