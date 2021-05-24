@@ -343,9 +343,9 @@ class JobM extends Model
     {
         try {
             if ($request->type == 'pending') {
-                foreach ($request->data as $request) {
+                foreach ($request->data as $item){
                     $query = DB::table('JOB_ORDER_D')
-                        ->where('ID', $request['ID'])
+                        ->where('ID', $item['ID'])
                         // ->where('ORDER_TYPE', $request['ORDER_TYPE'])
                         // ->where('SER_NO', $request['SER_NO'])
                         ->update(['THANH_TOAN_MK' => 'N']);
@@ -356,12 +356,12 @@ class JobM extends Model
                     //     ->update(['THANH_TOAN_MK' => 'N']);
                 }
             } else {
-                foreach ($request->data as $request) {
+                foreach ($request->data as $item) {
                     $query = DB::table('JOB_ORDER_D')
                         // ->where('JOB_NO', $request['JOB_NO'])
                         // ->where('ORDER_TYPE', $request['ORDER_TYPE'])
                         // ->where('SER_NO', $request['SER_NO'])
-                        ->where('ID', $request['ID'])
+                        ->where('ID', $item['ID'])
                         ->update(['THANH_TOAN_MK' => 'Y']);
                 }
             }
