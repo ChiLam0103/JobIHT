@@ -18,7 +18,6 @@ class FileController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = StatisticFile::jobOrderNew($request);
-
         switch ($request->type) {
             case 'job':
                 $pay_type = PayType::listPayType_JobNo($request->job_no);
