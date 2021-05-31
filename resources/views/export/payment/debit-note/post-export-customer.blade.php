@@ -58,7 +58,7 @@
 
                 </tr>
                 <span style="display: none;"> {{ $total_tax = 0 }}{{ $total_amt = 0 }} </span>
-                @foreach ($item->debit_d as $item_d)
+                @foreach ($item->debit_d as $key => $item_d)
                     <tr>
                         <td> </td>
                         <td> </td>
@@ -73,7 +73,7 @@
                         <td> </td>
                         <td> </td>
                         <td> </td>
-                        <td>{{ $item_d->SER_NO }}</td>
+                        <td>{{ $key + 1 }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->UNIT }}</td>

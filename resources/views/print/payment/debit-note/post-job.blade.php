@@ -326,9 +326,9 @@
             </tr>
             <span style="display: none;">{{ $total_amt = 0 }} {{ $total_amt_do = 0 }}
                 {{ $total_vat = 0 }}</span>
-            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('job', null, null, $debit->JOB_NO, null) as $item_d)
+            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('job', null, null, $debit->JOB_NO, null) as $key => $item_d)
                 <tr>
-                    <td class="text-center">{{ $item_d->SER_NO }}</td>
+                    <td class="text-center">{{  $key + 1}}</td>
                     <td>{{ $item_d->DESCRIPTION }}</td>
                     <td>{{ $item_d->INV_NO }}</td>
                     <td class="text-center">{{ $item_d->UNIT }}</td>

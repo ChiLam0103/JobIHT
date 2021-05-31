@@ -336,9 +336,9 @@
                     {{ $total_amt_do = 0 }}
                     {{ $total_vat = 0 }}
                 </span>
-                @foreach ($item->debit_d as $item_d)
+                @foreach ($item->debit_d as $key => $item_d)
                     <tr>
-                        <td class="text-center">{{ $item_d->SER_NO }}</td>
+                        <td class="text-center">{{ $key + 1 }}</td>
                         <td>{{ $item_d->DESCRIPTION }}</td>
                         <td>{{ $item_d->INV_NO }}</td>
                         <td class="text-center">{{ $item_d->UNIT }}</td>

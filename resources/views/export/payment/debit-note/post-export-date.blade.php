@@ -35,11 +35,11 @@
                 <td>{{ $item->DEBIT_DATE_M }}</td>
                 <td colspan="12"></td>
             </tr>
-            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('debit_date', $fromdate, $todate, $item->JOB_NO, $debittype) as $item_d)
+            @foreach (\App\Models\Statistic\StatisticPayment::postDebitNote_D('debit_date', $fromdate, $todate, $item->JOB_NO, $debittype) as $key => $item_d)
                 <tr>
                     <td colspan="3"></td>
                     <td>{{ $item_d->DEB_TYPE }} </td>
-                    <td>{{ $item_d->SER_NO }} </td>
+                    <td>{{ $key + 1 }} </td>
                     <td>{{ $item_d->INV_NO }} </td>
                     <td>{{ $item_d->DESCRIPTION }} </td>
                     <td>{{ $item_d->UNIT }} </td>
