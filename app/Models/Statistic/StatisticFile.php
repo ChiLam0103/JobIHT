@@ -99,7 +99,8 @@ class StatisticFile extends Model
                 ORDER BY job.JOB_NO ");
                 foreach ($data as $item) {
                     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
-                    LEFT JOIN PAY_TYPE pt
+                    FROM JOB_ORDER_D job_d
+                    RIGHT JOIN PAY_TYPE pt
                     ON job_d.ORDER_TYPE = pt.PAY_NO
                     WHERE job_d.BRANCH_ID='IHTVN1'
                     AND  job_d.INPUT_DT >='20190101000000'
