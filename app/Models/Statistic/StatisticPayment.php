@@ -48,7 +48,7 @@ class StatisticPayment extends Model
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
                 ->whereIn('JOB_NO', $advanceno)
-                ->orWhereInwhereIn('LENDER_NO', $advanceno)
+                ->orWhereIn('LENDER_NO', $advanceno)
                 ->get();
             foreach ($data as $item) {
                 $SUM_LENDER_AMT = 0; //tien ung
