@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\JobStart;
 
 class DebitNoteM extends Model
 {
@@ -11,16 +12,16 @@ class DebitNoteM extends Model
     {
         $query = DB::table('DEBIT_NOTE_M as dnm')
             ->where('dnm.BRANCH_ID', 'IHTVN1')
-            ->where('dnm.DEBIT_DATE', '>=','20190101')
+            ->where('dnm.DEBIT_DATE', '>=', '20190101')
             ->orderBy('dnm.JOB_NO', 'desc')
             ->where(function ($query) {
                 $query->where('dnm.DEL', 'N')
                     ->orWhere('dnm.DEL', null);
             });
-            // ->where(function ($query) {
-            //     $query->where('dnm.PAYMENT_CHK', 'N')
-            //         ->orWhere('dnm.PAYMENT_CHK', null);
-            // });
+        // ->where(function ($query) {
+        //     $query->where('dnm.PAYMENT_CHK', 'N')
+        //         ->orWhere('dnm.PAYMENT_CHK', null);
+        // });
         return $query;
     }
     public static function queryNotCreated()
@@ -28,7 +29,7 @@ class DebitNoteM extends Model
         $query = DB::table('JOB_ORDER_M as jom')
             ->leftJoin('DEBIT_NOTE_M as dnm', 'jom.JOB_NO', 'dnm.JOB_NO')
             ->whereNull('dnm.JOB_NO')
-            ->where('jom.ORDER_DATE', '>=','20190101')
+            ->where('jom.ORDER_DATE', '>=', '20190101')
             ->select('jom.JOB_NO')
             ->where('jom.BRANCH_ID', 'IHTVN1')
             ->orderBy('jom.JOB_NO', 'desc');
@@ -45,8 +46,8 @@ class DebitNoteM extends Model
             // ->where('dnd.BRANCH_ID', 'IHTVN1')
             ->orderBy('dnm.JOB_NO', 'desc')
             ->select('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
-            // ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
-            // ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
+        // ->selectRaw('sum(dnd.QUANTITY * dnd.PRICE + CASE WHEN dnd.TAX_AMT = 0 THEN 0 ELSE (dnd.QUANTITY * dnd.PRICE)/dnd.TAX_NOTE END) as sum_AMT')
+        // ->groupBy('c.CUST_NAME', 'dnm.JOB_NO', 'dnm.CUST_NO', 'dnm.DEBIT_DATE', 'dnm.TRANS_FROM', 'dnm.TRANS_TO', 'dnm.PAYMENT_DATE');
         return $query;
     }
     public static function queryCheckData()
@@ -152,7 +153,7 @@ class DebitNoteM extends Model
     public static function postListCustomerJob($request)
     {
         $query =  DebitNoteM::query();
-        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->where('c.BRANCH_ID','IHTVN1')->select('dnm.JOB_NO', 'c.CUST_NAME','c.BRANCH_ID')->get();
+        $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.CUST_NO', $request->custno)->where('c.BRANCH_ID', 'IHTVN1')->select('dnm.JOB_NO', 'c.CUST_NAME', 'c.BRANCH_ID')->get();
         // dd($data);
         return $data;
     }
@@ -212,18 +213,19 @@ class DebitNoteM extends Model
     {
         $query =  DebitNoteM::query();
         $data =  $query->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'dnm.CUST_NO')->where('dnm.JOB_NO', $id)
-        ->select('c.CUST_NAME', 'dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
+            ->select('c.CUST_NAME', 'dnm.TRANS_FROM as ORDER_FROM', 'dnm.TRANS_TO as ORDER_TO', 'dnm.*')->first();
         return $data;
     }
     public static function add($request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $job_start = JobStart::des($request['JOB_NO']);
             DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
                 ->insert(
                     [
                         'JOB_NO' => ($request['JOB_NO'] == 'undefined' || $request['JOB_NO'] == 'null' || $request['JOB_NO'] == null) ? '' : $request['JOB_NO'],
-                        'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                        'CUST_NO' => $job_start->CUST_NO,
                         "CONSIGNEE" => ($request['CONSIGNEE'] == 'undefined' || $request['CONSIGNEE'] == 'null' || $request['CONSIGNEE'] == null) ? '' : $request['CONSIGNEE'],
                         "SHIPPER" => ($request['SHIPPER'] == 'undefined' || $request['SHIPPER'] == 'null' || $request['SHIPPER'] == null) ? '' : $request['SHIPPER'],
                         "TRANS_FROM" => ($request['TRANS_FROM'] == 'undefined' || $request['TRANS_FROM'] == 'null' || $request['TRANS_FROM'] == null) ? '' : $request['TRANS_FROM'],

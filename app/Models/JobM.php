@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\JobStart;
 
 class JobM extends Model
 {
@@ -147,6 +148,7 @@ class JobM extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $job_start=JobStart::des($request['JOB_NO']);
             if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '' || $request['CUST_NO']) {
                 DB::table(config('constants.JOB_M_TABLE'))
                     ->insert(
@@ -154,7 +156,7 @@ class JobM extends Model
                             'JOB_NO' => $request['JOB_NO'],
                             'ORDER_DATE' => date("Ymd"),
                             'CHK_MK' =>  "N",
-                            'CUST_NO' => ($request['CUST_NO'] == 'undefined' || $request['CUST_NO'] == 'null' || $request['CUST_NO'] == null) ? '' : $request['CUST_NO'],
+                            'CUST_NO' => $job_start->CUST_NO,
                             'CUST_NO2' => ($request['CUST_NO2'] == 'undefined' || $request['CUST_NO2'] == 'null' || $request['CUST_NO2'] == null) ? '' : $request['CUST_NO2'],
                             'CUST_NO3' => ($request['CUST_NO3'] == 'undefined' || $request['CUST_NO3'] == 'null' || $request['CUST_NO3'] == null) ? '' : $request['CUST_NO3'],
                             'CONSIGNEE' => ($request['CONSIGNEE'] == 'undefined' || $request['CONSIGNEE'] == 'null' || $request['CONSIGNEE'] == null) ? '' : $request['CONSIGNEE'],
