@@ -44,11 +44,11 @@ class StatisticPayment extends Model
     public static function postReplenishmentWithdrawalPayment($advanceno)
     {
         try {
-            $data =  DB::table('LENDER as l')
-                ->where('l.INPUT_DT', '>=', '20190101000000')
-                ->where('l.BRANCH_ID', 'IHTVN1')
-                ->whereIn('L.LENDER_NO', $advanceno)
-                ->select('l.*')->get();
+            $data =  DB::table('LENDER')
+                ->where('INPUT_DT', '>=', '20190101000000')
+                ->where('BRANCH_ID', 'IHTVN1')
+                ->whereIn('JOB_NO', $advanceno)
+                ->get();
             foreach ($data as $item) {
                 $SUM_LENDER_AMT = 0; //tien ung
                 $SUM_JOB_ORDER = 0; //tien job order
@@ -84,7 +84,7 @@ class StatisticPayment extends Model
         try {
             $str = json_decode($advanceno);
             $data =  DB::table('LENDER as l')
-            ->where('l.INPUT_DT', '>=', '20190101000000')
+                ->where('l.INPUT_DT', '>=', '20190101000000')
                 ->where('l.BRANCH_ID', 'IHTVN1')
                 ->whereIn('L.LENDER_NO', $str)
                 ->select('l.*')->get();
@@ -334,42 +334,42 @@ class StatisticPayment extends Model
             }
             switch ($type) {
                 case 'job_pay':
-                    $data =DB::select("select job.JOB_NO, job.CUST_NO, c.CUST_NAME, (SELECT sum(jd.PORT_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_PORT_AMT,(SELECT sum(jd.INDUSTRY_ZONE_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_INDUSTRY_ZONE_AMT, (SELECT sum(ld.LENDER_AMT) FROM LENDER l, LENDER_D ld WHERE l.JOB_NO = job.JOB_NO AND ld.LENDER_NO =l.LENDER_NO AND l.LENDER_TYPE='T') as SUM_LENDER_AMT
+                    $data = DB::select("select job.JOB_NO, job.CUST_NO, c.CUST_NAME, (SELECT sum(jd.PORT_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_PORT_AMT,(SELECT sum(jd.INDUSTRY_ZONE_AMT) FROM JOB_ORDER_D jd WHERE jd.JOB_NO = job.JOB_NO) as SUM_INDUSTRY_ZONE_AMT, (SELECT sum(ld.LENDER_AMT) FROM LENDER l, LENDER_D ld WHERE l.JOB_NO = job.JOB_NO AND ld.LENDER_NO =l.LENDER_NO AND l.LENDER_TYPE='T') as SUM_LENDER_AMT
                     FROM JOB_START job
                     LEFT JOIN CUSTOMER c
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
                     AND  job.INPUT_DT >='20190101000000'
-                    AND  job.JOB_DATE >= '".$fromdate."'
-                    AND  job.JOB_DATE <= '".$todate."'
-                    AND job.CUST_NO like '".$custno."%'
+                    AND  job.JOB_DATE >= '" . $fromdate . "'
+                    AND  job.JOB_DATE <= '" . $todate . "'
+                    AND job.CUST_NO like '" . $custno . "%'
                     ORDER BY job.JOB_NO");
                     break;
                 case 'job_start':
-                    $data =DB::select("select job.*,c.CUST_NAME
+                    $data = DB::select("select job.*,c.CUST_NAME
                     FROM JOB_START job
                     LEFT JOIN CUSTOMER c
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
                     AND  job.INPUT_DT >='20190101000000'
-                    AND  job.JOB_DATE >= '".$fromdate."'
-                    AND  job.JOB_DATE <= '".$todate."'
-                    AND job.CUST_NO like '".$custno."%'
+                    AND  job.JOB_DATE >= '" . $fromdate . "'
+                    AND  job.JOB_DATE <= '" . $todate . "'
+                    AND job.CUST_NO like '" . $custno . "%'
                     ORDER BY job.JOB_NO");
                     break;
                 case 'job_order':
-                    $data =DB::select("select job.*,c.CUST_NAME
+                    $data = DB::select("select job.*,c.CUST_NAME
                     FROM JOB_ORDER_M job
                     LEFT JOIN CUSTOMER c
                     ON job.CUST_NO =c.CUST_NO
                     WHERE job.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
                     AND  job.INPUT_DT >='20190101000000'
-                    AND  job.ORDER_DATE >= '".$fromdate."'
-                    AND  job.ORDER_DATE <= '".$todate."'
-                    AND job.CUST_NO like '".$custno."%'
+                    AND  job.ORDER_DATE >= '" . $fromdate . "'
+                    AND  job.ORDER_DATE <= '" . $todate . "'
+                    AND job.CUST_NO like '" . $custno . "%'
                     ORDER BY job.JOB_NO");
                     break;
                 case  'debit_note':
@@ -383,9 +383,9 @@ class StatisticPayment extends Model
                     AND  dd.BRANCH_ID='IHTVN1'
                     AND  c.BRANCH_ID='IHTVN1'
                     AND  dm.INPUT_DT >='20190101000000'
-                    AND  dm.DEBIT_DATE >= '".$fromdate."'
-                    AND dm.DEBIT_DATE <= '".$todate."'
-                    AND dm.CUST_NO like '".$custno."%'
+                    AND  dm.DEBIT_DATE >= '" . $fromdate . "'
+                    AND dm.DEBIT_DATE <= '" . $todate . "'
+                    AND dm.CUST_NO like '" . $custno . "%'
                     GROUP BY dm.JOB_NO, dm.CUST_NO,dm.DEBIT_DATE,c.CUST_NAME
                     ORDER BY dm.JOB_NO ");
                 default:
@@ -501,14 +501,14 @@ class StatisticPayment extends Model
                 case  'unpaid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
                         ->where(function ($query) {
-                        $query->where('jd.ORDER_TYPE', 'C')
-                              ->orWhere('jd.ORDER_TYPE', '8');
+                            $query->where('jd.ORDER_TYPE', 'C')
+                                ->orWhere('jd.ORDER_TYPE', '8');
                         })
                         ->where(function ($query) {
                             $query->where('jd.THANH_TOAN_MK', 'N')
                                 ->orWhere('jd.THANH_TOAN_MK', null);
                         })
-                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT', 'jd.PRICE','jd.QTY');
+                        ->select('jm.JOB_NO', 'jm.CUST_NO', 'jm.ORDER_FROM', 'jm.ORDER_TO', 'jm.INPUT_USER', 'jd.DESCRIPTION', 'jd.PORT_AMT', 'jd.INDUSTRY_ZONE_AMT', 'jd.PRICE', 'jd.QTY');
                     break;
                 case  'paid_cont':
                     $query->leftJoin('JOB_ORDER_D as jd', 'jm.JOB_NO', 'jd.JOB_NO')
