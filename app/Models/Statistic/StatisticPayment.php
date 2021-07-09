@@ -44,11 +44,13 @@ class StatisticPayment extends Model
     public static function postReplenishmentWithdrawalPayment($advanceno)
     {
         try {
+            foreach ($advanceno as $item) {
+                $item_array[] = $item['so_job'];
+            }
             $data =  DB::table('LENDER')
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
-                ->whereIn('JOB_NO', $advanceno)
-                ->orWhereIn('LENDER_NO', $advanceno)
+                ->whereIn('JOB_NO', $item_array)
                 ->get();
             foreach ($data as $item) {
                 $SUM_LENDER_AMT = 0; //tien ung
