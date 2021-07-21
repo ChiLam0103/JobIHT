@@ -26,6 +26,7 @@
             <th>POL</th>
             <th>POD</th>
             <th>ETD/ETA</th>
+            <th>Customs No</th>
             <th>Description</th>
         </tr>
         @foreach ($data as $key => $item)
@@ -40,6 +41,7 @@
                 <td>{{ $item->POD }}</td>
                 <td>{{ $item->POL }}</td>
                 <td> {{ date('Y/m/d', strtotime($item->ETA_ETD))  }}</td>
+                <td>{{ $item->CUSTOMS_NO }}</td>
                 <td>{{ $item->NOTE }}</td>
             </tr>
         @endforeach
