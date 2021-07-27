@@ -221,9 +221,12 @@ class PaymentController extends Controller
     public function profit($type, $jobno, $custno, $fromdate, $todate)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
+        // dd($fromdate);
         $today = date("Ymd");
-        $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
-        $todate = $todate != 'null' ? $todate : $today;
+        // $fromdate = $fromdate != 'null' ? $fromdate : '19000101';
+        $fromdate =($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') ? $today : $fromdate;
+        $todate =($todate == null || $todate == 'undefined' || $todate == 'null') ? $today : $todate;
+        // $todate = $todate != 'null' ? $todate : $today;
         $data = StatisticPayment::profit($type, $jobno, $custno, $fromdate, $todate);
         if ($data) {
             return view('print\payment\profit\index', [
