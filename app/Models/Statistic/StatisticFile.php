@@ -70,7 +70,6 @@ class StatisticFile extends Model
                 WHERE job.BRANCH_ID='IHTVN1'
                 AND  c.BRANCH_ID='IHTVN1'
                 AND  job.INPUT_DT >='20190101000000'
-                AND  job.CUST_NO = '" . $request->cust_no . "'
                 " . $array . "
                 " . $date . "
                 ORDER BY job.JOB_NO ");
