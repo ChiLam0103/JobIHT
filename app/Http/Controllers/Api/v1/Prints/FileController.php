@@ -164,10 +164,10 @@ class FileController extends Controller
     public function jobOrder_Date($fromdate, $todate)
     {
         $data = StatisticFile::jobOrder_Date($fromdate, $todate);
-
+        // dd($data);
         if ($data) {
             return view('print\file\job-order\date', [
-                'job_m' => $data['job_m'],
+                'job_m' => $data,
             ]);
         } else {
             return response()->json(
