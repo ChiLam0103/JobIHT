@@ -25,11 +25,8 @@ class DebitNoteD extends Model
             ->where('BRANCH_ID', 'IHTVN1');
         $count = $query->count();
         $job = $query->orderByDesc('JOB_NO')->take(1)->select('SER_NO')->first();
-        if ($count == 0) {
-            $count = (int) $count + 1;
-        } else {
-            $count = (int) $job->SER_NO + 1;
-        }
+        $count = (int) $count + 1;
+
         $data = sprintf("%'.02d", $count);
         return $data;
     }
@@ -41,60 +38,62 @@ class DebitNoteD extends Model
             if (!$debit_note_m) {
                 $job_order = DB::table('JOB_ORDER_M')->where('JOB_NO', $array['job_no'])->first();
                 DB::table(config('constants.DEBIT_NOTE_M_TABLE'))
-                ->insert(
-                    [
-                        'JOB_NO' => $job_order->JOB_NO,
-                        'CUST_NO' => $job_order->CUST_NO,
-                        "CONSIGNEE" =>  $job_order->CONSIGNEE,
-                        "SHIPPER" =>$job_order->SHIPPER,
-                        "TRANS_FROM" =>  $job_order->ORDER_FROM,
-                        "TRANS_TO" =>  $job_order->ORDER_TO,
-                        "CONTAINER_NO" => $job_order->CONTAINER_NO,
-                        "CONTAINER_QTY" => $job_order->CONTAINER_QTY,
-                        "QTY" => $job_order->QTY,
-                        "CUSTOMS_NO" => $job_order->CUSTOMS_NO,
-                        "CUSTOMS_DATE" => $job_order->CUSTOMS_DATE,
-                        "BILL_NO" => $job_order->BILL_NO,
-                        "NW" => $job_order->NW,
-                        "GW" => $job_order->GW,
-                        "POL" => $job_order->POL,
-                        "POD" =>$job_order->POD,
-                        "ETD_ETA" =>  $job_order->ETD_ETA,
-                        "PO_NO" => $job_order->PO_NO,
-                        "INVOICE_NO" =>  $job_order->INVOICE_NO,
-                        "NOTE" => $job_order->NOTE,
-                        "DEBIT_DATE" => date("Ymd"),
-                        "BRANCH_ID" => 'IHTVN1',
-                        "INPUT_USER" => 'JENNY',
-                        "INPUT_DT" => date("YmdHis"),
-                        "PAYMENT_CHK" => 'N',
-                    ]
-                );
+                    ->insert(
+                        [
+                            'JOB_NO' => $job_order->JOB_NO,
+                            'CUST_NO' => $job_order->CUST_NO,
+                            "CONSIGNEE" =>  $job_order->CONSIGNEE,
+                            "SHIPPER" => $job_order->SHIPPER,
+                            "TRANS_FROM" =>  $job_order->ORDER_FROM,
+                            "TRANS_TO" =>  $job_order->ORDER_TO,
+                            "CONTAINER_NO" => $job_order->CONTAINER_NO,
+                            "CONTAINER_QTY" => $job_order->CONTAINER_QTY,
+                            "QTY" => $job_order->QTY,
+                            "CUSTOMS_NO" => $job_order->CUSTOMS_NO,
+                            "CUSTOMS_DATE" => $job_order->CUSTOMS_DATE,
+                            "BILL_NO" => $job_order->BILL_NO,
+                            "NW" => $job_order->NW,
+                            "GW" => $job_order->GW,
+                            "POL" => $job_order->POL,
+                            "POD" => $job_order->POD,
+                            "ETD_ETA" =>  $job_order->ETD_ETA,
+                            "PO_NO" => $job_order->PO_NO,
+                            "INVOICE_NO" =>  $job_order->INVOICE_NO,
+                            "NOTE" => $job_order->NOTE,
+                            "DEBIT_DATE" => date("Ymd"),
+                            "BRANCH_ID" => 'IHTVN1',
+                            "INPUT_USER" => 'JENNY',
+                            "INPUT_DT" => date("YmdHis"),
+                            "PAYMENT_CHK" => 'N',
+                        ]
+                    );
             }
 
             $ser_no = DebitNoteD::generateSerNo($array['job_no']);
+            // dd($ser_no);
             DB::table(config('constants.DEBIT_NOTE_D_TABLE'))
-                    ->insert(
-                        [
-                            'JOB_NO' => $array['job_no'],
-                            'SER_NO' => $ser_no,
-                            'INV_YN' => 'N',
-                            "INV_NO" =>  $array['invoice_no'],
-                            "DESCRIPTION" =>  $array['description'],
-                            "UNIT" =>  $array['unit'],
-                            "QUANTITY" => ($array['qty'] == 'undefined' || $array['qty'] == 'null' || $array['qty'] == null) ? 0 : $array['qty'],
-                            "PRICE" => ($array['price_vnd'] == 'undefined' || $array['price_vnd'] == 'null' || $array['price_vnd'] == null) ? 0 : $array['price_vnd'],
-                            "TAX_NOTE" => ($array['tax'] == 'undefined' || $array['tax'] == 'null' || $array['tax'] == null) ? 0 : $array['tax'],
-                            "TOTAL_AMT" => ($array['total'] == 'undefined' || $array['total'] == 'null' || $array['total'] == null) ? 0 : $array['total'],
-                            "DOR_NO" =>   $array['currency'],
-                            "DOR_AMT" => ($array['price'] == 'undefined' || $array['price'] == 'null' || $array['price'] == null) ? 0 : $array['price'],
-                            "DOR_RATE" => ($array['rate'] == 'undefined' || $array['rate'] == 'null' || $array['rate'] == null) ? 0 : $array['rate'],
-                            "DEB_TYPE" => $array['type'],
-                            "BRANCH_ID" => 'IHTVN1',
-                            "INPUT_USER" => 'JENNY',
-                            "INPUT_DT" => date("YmdHis")
-                        ]
-                    );
+                ->insert(
+                    [
+                        'JOB_NO' => $array['job_no'],
+                        'SER_NO' => $ser_no,
+                        'INV_YN' => 'N',
+                        "INV_NO" =>  $array['invoice_no'],
+                        "DESCRIPTION" =>  $array['description'],
+                        "UNIT" =>  $array['unit'],
+                        "QUANTITY" => ($array['qty'] == 'undefined' || $array['qty'] == 'null' || $array['qty'] == null) ? 0 : $array['qty'],
+                        "PRICE" => ($array['price_vnd'] == 'undefined' || $array['price_vnd'] == 'null' || $array['price_vnd'] == null) ? 0 : $array['price_vnd'],
+                        "TAX_AMT" => ($array['price_vnd'] * $array['tax'])/100,
+                        "TAX_NOTE" => ($array['tax'] == 'undefined' || $array['tax'] == 'null' || $array['tax'] == null) ? 0 : $array['tax'],
+                        "TOTAL_AMT" => ($array['total'] == 'undefined' || $array['total'] == 'null' || $array['total'] == null) ? 0 : $array['total'],
+                        "DOR_NO" =>   $array['currency'],
+                        "DOR_AMT" => ($array['price'] == 'undefined' || $array['price'] == 'null' || $array['price'] == null) ? 0 : $array['price'],
+                        "DOR_RATE" => ($array['rate'] == 'undefined' || $array['rate'] == 'null' || $array['rate'] == null) ? 0 : $array['rate'],
+                        "DEB_TYPE" => $array['type'],
+                        "BRANCH_ID" => 'IHTVN1',
+                        "INPUT_USER" => 'JENNY',
+                        "INPUT_DT" => date("YmdHis")
+                    ]
+                );
             return true;
         } catch (\Exception $e) {
             return $e;

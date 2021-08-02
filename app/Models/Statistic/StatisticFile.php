@@ -29,6 +29,33 @@ class StatisticFile extends Model
             return $e;
         }
     }
+    //1.1 function update statistic = 2
+    public static function jobStartNew($request)
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? $today :  $request->fromdate;
+        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
+
+        $query = DB::table('JOB_START')->whereBetween('JOB_DATE', [$from_date, $to_date]);
+        if ($request->custno) {
+            $query->where('CUST_NO', $request->custno);
+        }
+        $data =  $query->get();
+        return $data;
+    }
+    //filter job_start with cust_no & date (1.1)
+    public static function filterJobStart($request)
+    {
+        $data = DB::table('JOB_START')
+            ->where('CUST_NO', $request->custno)
+            ->whereBetween('JOB_DATE', [$request->fromdate, $request->todate])
+            ->select('JOB_NO', 'CUST_NO')
+            ->get();
+        return $data;
+    }
+
+    //--------------------------------//--------------------------------------
     //2.1 in job order theo job
     public static function JobOrderNew($request)
     {
@@ -260,6 +287,8 @@ class StatisticFile extends Model
             return $e;
         }
     }
+    //--------------------------------//--------------------------------------
+
     //3 bao bieu refund
     public static function refund($type, $custno, $jobno, $fromdate, $todate)
     {

@@ -44,13 +44,10 @@ class StatisticPayment extends Model
     public static function postReplenishmentWithdrawalPayment($advanceno)
     {
         try {
-            foreach ($advanceno as $item) {
-                $item_array[] = $item['so_job'];
-            }
             $data =  DB::table('LENDER')
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
-                ->whereIn('JOB_NO', $item_array)
+                ->whereIn('LENDER_NO', $advanceno)
                 ->get();
             foreach ($data as $item) {
                 $SUM_LENDER_AMT = 0; //tien ung
@@ -78,49 +75,50 @@ class StatisticPayment extends Model
                 }
             }
             return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function getReplenishmentWithdrawalPayment($advanceno)
-    {
-        try {
-            $str = json_decode($advanceno);
-            $data =  DB::table('LENDER as l')
-                ->where('l.INPUT_DT', '>=', '20190101000000')
-                ->where('l.BRANCH_ID', 'IHTVN1')
-                ->whereIn('L.LENDER_NO', $str)
-                ->select('l.*')->get();
-            foreach ($data as $item) {
-                $SUM_LENDER_AMT = 0; //tien ung
-                $SUM_JOB_ORDER = 0; //tien job order
-                $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
-                $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
 
-                foreach ($advance_d as $i) {
-                    $SUM_LENDER_AMT += $i->LENDER_AMT;
-                }
-                foreach ($job_d as $i) {
-                    $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
-                }
-                //kiem tra phieu chi truc tiep
-                if ($item->LENDER_TYPE == 'C') {
-                    $item->SUM_LENDER_AMT = 0; //tong ung
-                    $item->SUM_DIRECT = $SUM_JOB_ORDER; //chi truc tiep
-                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
-                    $item->SUM_REPLENISHMENT_WITHDRAWAL = -$SUM_JOB_ORDER; //tong bu tra
-                } else {
-                    $item->SUM_LENDER_AMT = $SUM_LENDER_AMT; //tong ung
-                    $item->SUM_DIRECT = 0; //chi truc tiep
-                    $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
-                    $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT - $SUM_JOB_ORDER; //tong bu tra
-                }
-            }
-            return $data;
         } catch (\Exception $e) {
             return $e;
         }
     }
+    // public static function getReplenishmentWithdrawalPayment($advanceno)
+    // {
+    //     try {
+    //         $str = json_decode($advanceno);
+    //         $data =  DB::table('LENDER as l')
+    //             ->where('l.INPUT_DT', '>=', '20190101000000')
+    //             ->where('l.BRANCH_ID', 'IHTVN1')
+    //             ->whereIn('L.LENDER_NO', $str)
+    //             ->select('l.*')->get();
+    //         foreach ($data as $item) {
+    //             $SUM_LENDER_AMT = 0; //tien ung
+    //             $SUM_JOB_ORDER = 0; //tien job order
+    //             $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
+    //             $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
+
+    //             foreach ($advance_d as $i) {
+    //                 $SUM_LENDER_AMT += $i->LENDER_AMT;
+    //             }
+    //             foreach ($job_d as $i) {
+    //                 $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
+    //             }
+    //             //kiem tra phieu chi truc tiep
+    //             if ($item->LENDER_TYPE == 'C') {
+    //                 $item->SUM_LENDER_AMT = 0; //tong ung
+    //                 $item->SUM_DIRECT = $SUM_JOB_ORDER; //chi truc tiep
+    //                 $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+    //                 $item->SUM_REPLENISHMENT_WITHDRAWAL = -$SUM_JOB_ORDER; //tong bu tra
+    //             } else {
+    //                 $item->SUM_LENDER_AMT = $SUM_LENDER_AMT; //tong ung
+    //                 $item->SUM_DIRECT = 0; //chi truc tiep
+    //                 $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+    //                 $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT - $SUM_JOB_ORDER; //tong bu tra
+    //             }
+    //         }
+    //         return $data;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
     //2 phiếu yêu cầu thanh toán
     public static function postDebitNote($request)
     {

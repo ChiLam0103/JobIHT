@@ -26,6 +26,7 @@
             </tr>
         </thead>
         <tbody>
+            {{dd($lender)}}
             @foreach ($lender as $key => $item)
                 <tr>
                     <td>{{ $key + 1 }}</td>
@@ -43,10 +44,10 @@
             @endforeach
             <tr>
                 <td colspan="7"></td>
-                <td>{{ $lender->sum('SUM_LENDER_AMT') }}</td>
-                <td>{{ $lender->sum('SUM_DIRECT') }}</td>
-                <td>{{ $lender->sum('SUM_JOB_ORDER') }}</td>
-                <td>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') }}</td>
+                <td>{{ $lender->sum('SUM_LENDER_AMT') ? $lender->sum('SUM_LENDER_AMT') :0 }}</td>
+                <td>{{ $lender->sum('SUM_DIRECT') ? $lender->sum('SUM_DIRECT') :0}}</td>
+                <td>{{ $lender->sum('SUM_JOB_ORDER') ? $lender->sum('SUM_JOB_ORDER') :0}}</td>
+                <td>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') ? $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') :0}}</td>
             </tr>
             <tr>
                 <th colspan="10" style="text-align: right">Tổng Phiếu Trả và Bù/Chi</th>

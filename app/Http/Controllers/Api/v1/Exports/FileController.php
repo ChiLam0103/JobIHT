@@ -13,6 +13,44 @@ use Illuminate\Support\Facades\Input;
 
 class FileController extends Controller
 {
+    //1. job start
+    public function filterJobStart(Request $request)//filter job_start with cust_no & date
+    {
+        $data = StatisticFile::filterJobStart($request);
+        return $data;
+    }
+    public function jobStart(Request $request)//export
+    {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $today = date("Ymd");
+        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? $today :  $request->fromdate;
+        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
+        $data = StatisticFile::jobStartNew($request);
+        if ($data) {
+            $filename = 'job-start' . '(' . date('YmdHis') . ')';
+            Excel::create($filename, function ($excel) use ($data, $from_date, $to_date) {
+                $excel->sheet('JOB ORDER', function ($sheet) use ($data, $from_date, $to_date) {
+                    $sheet->loadView('export\file\job-start\index', [
+                        'data' => $data,
+                        'from_date' => $from_date,
+                        'to_date' => $to_date,
+                    ]);
+                    $sheet->setOrientation('landscape');
+                });
+            })->store('xlsx');
+            return response()->json([
+                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
+            ]);
+        } else {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'null'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
     //2.1 export date
     public function exportJobOrder(Request $request)
     {

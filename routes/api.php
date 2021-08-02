@@ -216,6 +216,9 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('custno={id}&jobno={jobno}', 'FileController@jobOrderCustomer');
                     Route::get('custno={id}', 'FileController@getJobOrderCustomer');
                     Route::get('fromdate={fromdate}&todate={todate}', 'FileController@jobOrder_Date');
+
+                    Route::get('/', 'FileController@jobOrdertNew');//function update
+                    Route::get('filter-job', 'FileController@filterJobOrder');//filter job with cust_no & date
                 });
                 //3.bao bieu refund
                 Route::group(['prefix' => 'refund'], function () {
@@ -239,7 +242,7 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('advance_no={advanceno}', 'PaymentController@advance');
                     //1.2thống kê phiếu bù và phiếu trả
                     Route::post('replenishment-withdrawal-payment', 'PaymentController@postReplenishmentWithdrawalPayment');
-                    Route::get('replenishment-withdrawal-payment', 'PaymentController@getReplenishmentWithdrawalPayment');
+                    // Route::get('replenishment-withdrawal-payment', 'PaymentController@getReplenishmentWithdrawalPayment');
                 });
                 //2. phiếu yêu cầu thanh toán
                 Route::group(['prefix' => 'debit-note'], function () {
@@ -258,15 +261,15 @@ Route::namespace('Api\v1')->group(function () {
                 //8. thống kê phiếu thu
                 Route::get('receipts/type={type}&receiptno={receiptno}', 'PaymentController@receipt');
             });
-            // //export excel
-            // Route::group(['prefix' => 'export'], function () {
-            //     Route::post('/', 'JobStartController@exportDebt');
-            // });
+
         });
         //export
         Route::group(['prefix' => 'export', 'namespace' => 'Exports'], function () {
             //1. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
+                //1. JOB START
+                Route::get('filter-job', 'FileController@filterJobStart');//filter job with cust_no & date
+                Route::get('job-start', 'FileController@jobStart');//function update
                 //2.job order
                 Route::post('job-order', 'FileController@exportJobOrder_Date');
                 Route::post('job-order-new', 'FileController@exportJobOrder');

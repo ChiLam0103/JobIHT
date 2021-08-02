@@ -104,24 +104,25 @@ class PaymentController extends Controller
             );
         }
     }
-    public function getReplenishmentWithdrawalPayment(Request $request)
-    {
-        $lender = StatisticPayment::getReplenishmentWithdrawalPayment($request->advanceno);
+    // public function getReplenishmentWithdrawalPayment(Request $request)
+    // {
+    //     $lender = StatisticPayment::getReplenishmentWithdrawalPayment($request->advanceno);
 
-        if ($lender) {
-            return view('print\payment\advance\post-replenishment-withdrawal-payment', [
-                'lender' => $lender,
-            ]);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Vui lòng chọn số phiếu!'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
+    //     if ($lender) {
+    //         return view('print\payment\advance\post-replenishment-withdrawal-payment', [
+    //             'lender' => $lender,
+    //         ]);
+    //     } else {
+    //         return response()->json(
+    //             [
+    //                 'success' => false,
+    //                 'message' => 'Vui lòng chọn số phiếu!'
+    //             ],
+    //             Response::HTTP_BAD_REQUEST
+    //         );
+    //     }
+    // }
+
     //2 print- phiếu yêu cầu thanh toán
     public function postDebitNote(Request $request)
     {
