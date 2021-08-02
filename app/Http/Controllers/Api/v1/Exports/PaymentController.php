@@ -21,7 +21,7 @@ class PaymentController extends Controller
     //1.2.1 excel thống kê phiếu bù/trả
     public function postExportReplenishmentWithdrawalPayment(Request $request)
     {
-        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request->advanceno);
+        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request);
         if ($lender) {
             $filename = 'thong-ke-bu-tra' . '(' . date('YmdHis') . ')';
             Excel::create($filename, function ($excel) use ($lender) {

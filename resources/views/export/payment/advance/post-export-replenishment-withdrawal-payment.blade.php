@@ -26,7 +26,6 @@
             </tr>
         </thead>
         <tbody>
-            {{dd($lender)}}
             @foreach ($lender as $key => $item)
                 <tr>
                     <td>{{ $key + 1 }}</td>
