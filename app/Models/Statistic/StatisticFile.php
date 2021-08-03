@@ -76,24 +76,21 @@ class StatisticFile extends Model
                 $array_job = '';
                 $date = '';
                 if ($request->array_job_no) {
-                    $array_job = 'and  job.JOB_NO IN (" . $request->array_job_no . ")';
+                    $array_job = 'and  job.JOB_NO IN (' . $request->array_job_no . ')';
                 }
                 if ($request->array_id) {
                     $array_job = 'and  job.ID IN ( ' . $request->array_id . ' )';
                 }
-                if ($request->fromdate &&  $request->todate) {
-                    $date = "and  job.ORDER_DATE >= '" . $from_date . "' and  job.ORDER_DATE <= '" . $to_date . "'";
-                }
-
+                // if ($request->fromdate &&  $request->todate) {
+                //     $date = "and  job.ORDER_DATE >= '" . $from_date . "' and  job.ORDER_DATE <= '" . $to_date . "'";
+                // }
                 $data = DB::select("select c.CUST_NAME, job.*
                 FROM JOB_ORDER_M job
                 LEFT JOIN CUSTOMER c
                 ON job.CUST_NO = c.CUST_NO
                 WHERE job.BRANCH_ID='IHTVN1'
-                AND  c.BRANCH_ID='IHTVN1'
                 AND  job.INPUT_DT >='20190101000000'
                 " . $array_job . "
-                " . $date . "
                 ORDER BY job.JOB_NO ");
                 foreach ($data as $item) {
                     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE, job_d.INDUSTRY_ZONE_AMT

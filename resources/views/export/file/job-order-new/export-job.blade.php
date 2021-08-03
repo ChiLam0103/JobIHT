@@ -33,27 +33,28 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($job_m as $item)
+            {{-- {{dd($data)}} --}}
+            {{-- @foreach ($data as $item) --}}
                 <tr>
-                    <td>{{ $item->JOB_NO }}</td>
-                    <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>
-                    <td>{{ $item->CUST_NO }}</td>
-                    <td style="text-align: left;">{{ $item->CUST_NAME }}</td>
-                    <td>{{ $item->ORDER_FROM }}</td>
-                    <td>{{ $item->ORDER_TO }}</td>
-                    <td>{{ $item->NW }}</td>
-                    <td>{{ $item->GW }}</td>
-                    <td>{{ $item->POL }}</td>
-                    <td>{{ $item->POD }}</td>
-                    <td>{{ date('Y/m/d', strtotime($item->ETD_ETA)) }}</td>
-                    <td>{{ $item->PO_NO }}</td>
-                    <td>{{ $item->CONTAINER_QTY }}</td>
-                    <td>{{ $item->CONSIGNEE }}</td>
-                    <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
-                    <td>{{ $item->SHIPPER }}</td>
+                    <td>{{ $data->JOB_NO }}</td>
+                    <td>{{ date('Y/m/d', strtotime($data->ORDER_DATE)) }}</td>
+                    <td>{{ $data->CUST_NO }}</td>
+                    <td style="text-align: left;">{{ $data->CUST_NAME }}</td>
+                    <td>{{ $data->ORDER_FROM }}</td>
+                    <td>{{ $data->ORDER_TO }}</td>
+                    <td>{{ $data->NW }}</td>
+                    <td>{{ $data->GW }}</td>
+                    <td>{{ $data->POL }}</td>
+                    <td>{{ $data->POD }}</td>
+                    <td>{{ date('Y/m/d', strtotime($data->ETD_ETA)) }}</td>
+                    <td>{{ $data->PO_NO }}</td>
+                    <td>{{ $data->CONTAINER_QTY }}</td>
+                    <td>{{ $data->CONSIGNEE }}</td>
+                    <td>{{ date('Y/m/d', strtotime($data->CUSTOMS_DATE)) }}</td>
+                    <td>{{ $data->SHIPPER }}</td>
                     <?php try {
                     ?>
-                    @foreach ($item->JOB_D as $item_d)
+                    @foreach ($data->JOB_D as $item_d)
                 <tr>
                     <td td colspan="15" style="border: none"></td>
                     <td>{{ $item_d['PAY_NAME'] }}</td>
@@ -75,7 +76,7 @@
             <?php
             } ?>
             </tr>
-            @endforeach
+            {{-- @endforeach --}}
         </tbody>
     </table>
 
