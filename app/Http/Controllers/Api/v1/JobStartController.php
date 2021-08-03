@@ -183,4 +183,9 @@ class JobStartController extends Controller
             );
         }
     }
+    public function filterJob(Request $request)//filter job_start with cust_no & date
+    {
+        $data = JobStart::filterJob($request);
+        return $data;
+    }
 }

@@ -14,11 +14,7 @@ use Illuminate\Support\Facades\Input;
 class FileController extends Controller
 {
     //1. job start
-    public function filterJobStart(Request $request)//filter job_start with cust_no & date
-    {
-        $data = StatisticFile::filterJobStart($request);
-        return $data;
-    }
+
     public function jobStart(Request $request)//export
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');

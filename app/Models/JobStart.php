@@ -227,4 +227,14 @@ class JobStart extends Model
             return $e;
         }
     }
+    //filter job with cust_no & date(print/export Job start)
+    public static function filterJob($request)
+    {
+        $data = DB::table('JOB_START')
+            ->where('CUST_NO', $request->custno)
+            ->whereBetween('JOB_DATE', [$request->fromdate, $request->todate])
+            ->select('JOB_NO', 'CUST_NO')
+            ->get();
+        return $data;
+    }
 }

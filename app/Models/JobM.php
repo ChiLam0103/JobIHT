@@ -148,7 +148,7 @@ class JobM extends Model
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-            $job_start=JobStart::des($request['JOB_NO']);
+            $job_start = JobStart::des($request['JOB_NO']);
             if ($request['CUST_NO'] != 'undefined' || $request['CUST_NO'] != null || $request['CUST_NO'] != '' || $request['CUST_NO']) {
                 DB::table(config('constants.JOB_M_TABLE'))
                     ->insert(
@@ -345,7 +345,7 @@ class JobM extends Model
     {
         try {
             if ($request->type == 'pending') {
-                foreach ($request->data as $item){
+                foreach ($request->data as $item) {
                     $query = DB::table('JOB_ORDER_D')
                         ->where('ID', $item['ID'])
                         // ->where('ORDER_TYPE', $request['ORDER_TYPE'])
@@ -371,5 +371,16 @@ class JobM extends Model
         } catch (\Exception $e) {
             return '201';
         }
+    }
+
+    //filter job with cust_no & date(print/export Job start)
+    public static function filterJob($request)
+    {
+        $data = DB::table('JOB_ORDER_M')
+            ->where('CUST_NO', $request->custno)
+            ->whereBetween('ORDER_DATE', [$request->fromdate, $request->todate])
+            ->select('JOB_NO', 'CUST_NO')
+            ->get();
+        return $data;
     }
 }

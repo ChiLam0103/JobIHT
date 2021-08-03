@@ -341,4 +341,10 @@ class JobOrderController extends Controller
             ], Response::HTTP_OK);
         }
     }
+    //filter job_start with cust_no & date
+    public function filterJob(Request $request)
+    {
+        $data = JobM::filterJob($request);
+        return $data;
+    }
 }

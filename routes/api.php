@@ -87,6 +87,7 @@ Route::namespace('Api\v1')->group(function () {
         Route::group(['prefix' => 'file'], function () {
             //phieu theo doi
             Route::group(['prefix' => 'job-start'], function () {
+
                 Route::get('page={page}', 'JobStartController@listPage');
                 Route::get('take={take}', 'JobStartController@listTake');
                 Route::get('', 'JobStartController@list');
@@ -96,6 +97,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('add', 'JobStartController@add');
                 Route::post('edit', 'JobStartController@edit');
                 Route::post('remove', 'JobStartController@remove');
+                Route::get('filter-job', 'JobStartController@filterJob');//filter job with cust_no & date(print/export Job start)
             });
             Route::group(['prefix' => 'job-order'], function () {
                 Route::get('/', 'JobOrderController@list');
@@ -110,6 +112,7 @@ Route::namespace('Api\v1')->group(function () {
                 Route::post('edit-d', 'JobOrderController@editJobD');
                 Route::post('remove', 'JobOrderController@remove');
                 Route::post('remove-d', 'JobOrderController@removeJobD');
+                Route::get('filter-job', 'JobOrderController@filterJob');//filter job with cust_no & date(print/export Job order)
             });
             Route::group(['prefix' => 'approved'], function () {
                 Route::get('list-pending/page={page}', 'JobOrderController@listPending');
@@ -268,8 +271,7 @@ Route::namespace('Api\v1')->group(function () {
             //1. báo biểu hồ sơ
             Route::group(['prefix' => 'file'], function () {
                 //1. JOB START
-                Route::get('filter-job', 'FileController@filterJobStart');//filter job with cust_no & date
-                Route::get('job-start', 'FileController@jobStart');//function update
+                Route::post('job-start', 'FileController@jobStart');//function update
                 //2.job order
                 Route::post('job-order', 'FileController@exportJobOrder_Date');
                 Route::post('job-order-new', 'FileController@exportJobOrder');

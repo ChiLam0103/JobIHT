@@ -44,22 +44,16 @@ class StatisticFile extends Model
         $data =  $query->get();
         return $data;
     }
-    //filter job_start with cust_no & date (1.1)
-    public static function filterJobStart($request)
-    {
-        $data = DB::table('JOB_START')
-            ->where('CUST_NO', $request->custno)
-            ->whereBetween('JOB_DATE', [$request->fromdate, $request->todate])
-            ->select('JOB_NO', 'CUST_NO')
-            ->get();
-        return $data;
-    }
+
 
     //--------------------------------//--------------------------------------
     //2.1 in job order theo job
     public static function JobOrderNew($request)
     {
         $data = '';
+        $today = date("Ymd");
+        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
+        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
         switch ($request->type) {
             case 'job':
                 $data =  DB::table('JOB_ORDER_M as jom')
@@ -79,17 +73,18 @@ class StatisticFile extends Model
                 break;
 
             case 'customer':
-                $array = '';
+                $array_job = '';
                 $date = '';
                 if ($request->array_job_no) {
-                    $array = 'and  job.JOB_NO IN (" . $request->array_job_no . ")';
+                    $array_job = 'and  job.JOB_NO IN (" . $request->array_job_no . ")';
                 }
                 if ($request->array_id) {
-                    $array = 'and  job.ID IN ( ' . $request->array_id . ' )';
+                    $array_job = 'and  job.ID IN ( ' . $request->array_id . ' )';
                 }
                 if ($request->fromdate &&  $request->todate) {
-                    $date = "and  job.ORDER_DATE >= '" . $request->fromdate . "' and  job.ORDER_DATE <= '" . $request->todate . "'";
+                    $date = "and  job.ORDER_DATE >= '" . $from_date . "' and  job.ORDER_DATE <= '" . $to_date . "'";
                 }
+
                 $data = DB::select("select c.CUST_NAME, job.*
                 FROM JOB_ORDER_M job
                 LEFT JOIN CUSTOMER c
@@ -97,8 +92,7 @@ class StatisticFile extends Model
                 WHERE job.BRANCH_ID='IHTVN1'
                 AND  c.BRANCH_ID='IHTVN1'
                 AND  job.INPUT_DT >='20190101000000'
-                AND  job.CUST_NO = '" . $request->cust_no . "'
-                " . $array . "
+                " . $array_job . "
                 " . $date . "
                 ORDER BY job.JOB_NO ");
                 foreach ($data as $item) {
@@ -121,8 +115,8 @@ class StatisticFile extends Model
                 WHERE job.BRANCH_ID='IHTVN1'
                 AND  c.BRANCH_ID='IHTVN1'
                 AND  job.INPUT_DT >='20190101000000'
-                AND  job.ORDER_DATE >= '" . $request->fromdate . "'
-                AND  job.ORDER_DATE <= '" . $request->todate . "'
+                AND  job.ORDER_DATE >= '" . $from_date . "'
+                AND  job.ORDER_DATE <= '" . $to_date . "'
                 ORDER BY job.JOB_NO ");
                 foreach ($data as $item) {
                     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
