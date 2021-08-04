@@ -47,8 +47,8 @@ class FileController extends Controller
             );
         }
     }
-    //2.1 export date
-    public function exportJobOrder(Request $request)
+    //2.1 export job order
+    public function exportJobOrderNew(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $data = StatisticFile::jobOrderNew($request);
@@ -96,39 +96,7 @@ class FileController extends Controller
             'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
         ]);
     }
-    public function exportJobOrder_Date(Request $request)
-    {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $today = date("Ymd");
-        $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
-        $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
-        $data = StatisticFile::jobOrder_Date($request->fromdate, $request->todate);
-        if ($data) {
-            $filename = 'job-order-date' . '(' . date('YmdHis') . ')';
-            Excel::create($filename, function ($excel) use ($data, $from_date, $to_date) {
-                $excel->sheet('JOB ORDER', function ($sheet) use ($data, $from_date, $to_date) {
-                    $sheet->loadView('export\file\job-order\export-date', [
-                        'data' => $data,
-                        'from_date' => $from_date,
-                        'to_date' => $to_date,
-                    ]);
-                    $sheet->setOrientation('landscape');
-                });
-            })->store('xlsx');
-            return response()->json([
-                'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
-            ]);
-        } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'null'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
-    //2.1 import excel thêm or chỉnh sửa chi phí job_d
+    //2.1.1 import excel thêm or chỉnh sửa chi phí job_d
     public function importJobOrder()
     {
         Excel::load(Input::file('file'), function ($reader) {

@@ -273,8 +273,8 @@ Route::namespace('Api\v1')->group(function () {
                 //1. JOB START
                 Route::post('job-start', 'FileController@jobStart');//function update
                 //2.job order
-                Route::post('job-order', 'FileController@exportJobOrder_Date');
-                Route::post('job-order-new', 'FileController@exportJobOrder');
+                // Route::post('job-order', 'FileController@exportJobOrder');
+                Route::post('job-order-new', 'FileController@exportJobOrderNew');
                 //3. báo biểu refund
                 //3. báo biểu refund
                 Route::post('refund', 'FileController@postExportRefund');

@@ -29,17 +29,20 @@ class StatisticFile extends Model
             return $e;
         }
     }
-    //1.1 function update statistic = 2
+    //1.1 function update statistic
     public static function jobStartNew($request)
     {
+
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $today = date("Ymd");
         $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? $today :  $request->fromdate;
         $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
 
-        $query = DB::table('JOB_START')->whereBetween('JOB_DATE', [$from_date, $to_date]);
-        if ($request->custno) {
-            $query->where('CUST_NO', $request->custno);
+        $query = DB::table('JOB_START');
+        if ($request->type = "customer") {
+            $query->whereIn('ID', $request->array_id);
+        } else {
+            $query->whereBetween('JOB_DATE', [$from_date, $to_date]);
         }
         $data =  $query->get();
         return $data;
@@ -47,7 +50,7 @@ class StatisticFile extends Model
 
 
     //--------------------------------//--------------------------------------
-    //2.1 in job order theo job
+    //2.1 in job order theo job new
     public static function JobOrderNew($request)
     {
         $data = '';
@@ -73,25 +76,12 @@ class StatisticFile extends Model
                 break;
 
             case 'customer':
-                $array_job = '';
-                $date = '';
-                if ($request->array_job_no) {
-                    $array_job = 'and  job.JOB_NO IN (' . $request->array_job_no . ')';
-                }
-                if ($request->array_id) {
-                    $array_job = 'and  job.ID IN ( ' . $request->array_id . ' )';
-                }
-                // if ($request->fromdate &&  $request->todate) {
-                //     $date = "and  job.ORDER_DATE >= '" . $from_date . "' and  job.ORDER_DATE <= '" . $to_date . "'";
-                // }
-                $data = DB::select("select c.CUST_NAME, job.*
-                FROM JOB_ORDER_M job
-                LEFT JOIN CUSTOMER c
-                ON job.CUST_NO = c.CUST_NO
-                WHERE job.BRANCH_ID='IHTVN1'
-                AND  job.INPUT_DT >='20190101000000'
-                " . $array_job . "
-                ORDER BY job.JOB_NO ");
+                $data = DB::table('JOB_ORDER_M as job')
+                    ->rightJoin('CUSTOMER as c', 'c.CUST_NO', 'job.CUST_NO')
+                    ->where('job.BRANCH_ID', 'IHTVN1')
+                    ->whereIn('job.ID', $request->array_id)
+                    ->select('c.CUST_NAME', 'job.*')
+                    ->get();
                 foreach ($data as $item) {
                     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE, job_d.INDUSTRY_ZONE_AMT
                     FROM JOB_ORDER_D job_d
@@ -130,6 +120,7 @@ class StatisticFile extends Model
         }
         return $data;
     }
+
     public static function jobOrder($jobno)
     {
         try {
@@ -160,124 +151,74 @@ class StatisticFile extends Model
         }
     }
     //2.2 in job order theo ngay
-    public static function jobOrder_Date($fromdate, $todate)
-    {
-        try {
-            $job_m = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
-                FROM JOB_ORDER_M job
-                LEFT JOIN CUSTOMER c
-                ON job.CUST_NO =c.CUST_NO
-                WHERE job.BRANCH_ID='IHTVN1'
-                AND  c.BRANCH_ID='IHTVN1'
-                AND  job.INPUT_DT >='20190101000000'
-                AND  job.ORDER_DATE >= '" . $fromdate . "'
-                AND  job.ORDER_DATE <= '" . $todate . "'
-                ORDER BY job.JOB_NO ");
-            $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
-                FROM JOB_ORDER_M job
-                LEFT JOIN CUSTOMER c
-                ON job.CUST_NO =c.CUST_NO
-                LEFT JOIN JOB_ORDER_D job_d
-                ON job.JOB_NO = job_d.JOB_NO
-                LEFT JOIN PAY_TYPE pt
-                ON job_d.ORDER_TYPE = pt.PAY_NO
-                WHERE job.BRANCH_ID='IHTVN1'
-                AND  c.BRANCH_ID='IHTVN1'
-                AND  job.INPUT_DT >='20190101000000'
-                AND  job.ORDER_DATE >= '" . $fromdate . "'
-                AND  job.ORDER_DATE <= '" . $todate . "'
-                ORDER BY job_d.JOB_NO");
-            foreach ($job_m as $item) {
-                foreach ($job_d as $item_d) {
-                    if ($item->JOB_NO == $item_d->JOB_NO) {
-                        $item->JOB_D[] = [
-                            "PAY_NAME" => $item_d->PAY_NAME,
-                            "SER_NO" => $item_d->SER_NO,
-                            "DESCRIPTION" => $item_d->DESCRIPTION,
-                            "PORT_AMT" => $item_d->PORT_AMT,
-                            "NOTE" => $item_d->NOTE,
-                            "UNIT" => $item_d->UNIT,
-                            "QTY" => $item_d->QTY,
-                            "PRICE" => $item_d->PRICE,
-                            "TAX_AMT" => $item_d->TAX_AMT,
-                            "TAX_NOTE" => $item_d->TAX_NOTE,
-                        ];
-                    }
-                }
-            }
 
-            return  $job_m;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function getJobOrder_D($jobno)
-    {
-        try {
-            $data =  DB::table('JOB_ORDER_D as jod')
-                ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-                ->where('jod.JOB_NO', $jobno)
-                ->select('pt.PAY_NAME', 'jod.JOB_NO', 'jod.SER_NO', 'jod.DESCRIPTION', 'jod.PORT_AMT', 'jod.NOTE', 'jod.UNIT', 'jod.QTY', 'jod.PRICE', 'jod.TAX_AMT', 'jod.TAX_NOTE')
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
+    // public static function getJobOrder_D($jobno)
+    // {
+    //     try {
+    //         $data =  DB::table('JOB_ORDER_D as jod')
+    //             ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
+    //             ->where('jod.JOB_NO', $jobno)
+    //             ->select('pt.PAY_NAME', 'jod.JOB_NO', 'jod.SER_NO', 'jod.DESCRIPTION', 'jod.PORT_AMT', 'jod.NOTE', 'jod.UNIT', 'jod.QTY', 'jod.PRICE', 'jod.TAX_AMT', 'jod.TAX_NOTE')
+    //             ->get();
+    //         return $data;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
     //2.2 in job order theo khach hang
-    public static function getJobOrderCustomer($custno)
-    {
-        try {
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->where('c.CUST_NO', $custno)
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('c.BRANCH_ID', 'IHTVN1')
-                ->where('jom.INPUT_DT', '>=', '20190101000000')
-                ->select('jom.ID', 'jom.JOB_NO', 'jom.ORDER_DATE')
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function jobOrderCustomer($custno, $jobno)
-    {
-        try {
-            $array_jobno = explode(",", $jobno);
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->where('jom.INPUT_DT', '>=', '20190101000000')
-                ->where('c.CUST_NO', $custno)
-                ->whereIn('jom.JOB_NO', $array_jobno)
-                ->select('c.CUST_NAME', 'jom.*')
-                ->where('jom.BRANCH_ID', 'IHTVN1')
-                ->where('c.BRANCH_ID', 'IHTVN1')
-                ->distinct()
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-    public static function jobOrderCustomer_D($custno, $jobno)
-    {
-        try {
-            $array_jobno = explode(",", $jobno);
-            $data =  DB::table('JOB_ORDER_M as jom')
-                ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-                ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
-                ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
-                ->where('jom.INPUT_DT', '>=', '20190101000000')
-                ->where('c.CUST_NO', $custno)
-                ->whereIn('jom.JOB_NO', $array_jobno)
-                ->select('pt.PAY_NAME', 'jod.*')
-                ->get();
-            return $data;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
+    // public static function getJobOrderCustomer($custno)
+    // {
+    //     try {
+    //         $data =  DB::table('JOB_ORDER_M as jom')
+    //             ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+    //             ->where('c.CUST_NO', $custno)
+    //             ->where('jom.BRANCH_ID', 'IHTVN1')
+    //             ->where('c.BRANCH_ID', 'IHTVN1')
+    //             ->where('jom.INPUT_DT', '>=', '20190101000000')
+    //             ->select('jom.ID', 'jom.JOB_NO', 'jom.ORDER_DATE')
+    //             ->get();
+    //         return $data;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
+    // public static function jobOrderCustomer($custno, $jobno)
+    // {
+    //     try {
+    //         $array_jobno = explode(",", $jobno);
+    //         $data =  DB::table('JOB_ORDER_M as jom')
+    //             ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+    //             ->where('jom.INPUT_DT', '>=', '20190101000000')
+    //             ->where('c.CUST_NO', $custno)
+    //             ->whereIn('jom.JOB_NO', $array_jobno)
+    //             ->select('c.CUST_NAME', 'jom.*')
+    //             ->where('jom.BRANCH_ID', 'IHTVN1')
+    //             ->where('c.BRANCH_ID', 'IHTVN1')
+    //             ->distinct()
+    //             ->get();
+    //         return $data;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
+    // public static function jobOrderCustomer_D($custno, $jobno)
+    // {
+    //     try {
+    //         $array_jobno = explode(",", $jobno);
+    //         $data =  DB::table('JOB_ORDER_M as jom')
+    //             ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+    //             ->leftJoin('JOB_ORDER_D as jod', 'jom.JOB_NO', 'jod.JOB_NO')
+    //             ->rightJoin('PAY_TYPE as pt', 'jod.ORDER_TYPE', 'pt.PAY_NO')
+    //             ->where('jom.INPUT_DT', '>=', '20190101000000')
+    //             ->where('c.CUST_NO', $custno)
+    //             ->whereIn('jom.JOB_NO', $array_jobno)
+    //             ->select('pt.PAY_NAME', 'jod.*')
+    //             ->get();
+    //         return $data;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
     //--------------------------------//--------------------------------------
 
     //3 bao bieu refund

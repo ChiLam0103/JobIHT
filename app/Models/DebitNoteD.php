@@ -70,7 +70,6 @@ class DebitNoteD extends Model
             }
 
             $ser_no = DebitNoteD::generateSerNo($array['job_no']);
-            // dd($ser_no);
             DB::table(config('constants.DEBIT_NOTE_D_TABLE'))
                 ->insert(
                     [
