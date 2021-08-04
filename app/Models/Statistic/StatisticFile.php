@@ -166,22 +166,22 @@ class StatisticFile extends Model
     //     }
     // }
     //2.2 in job order theo khach hang
-    // public static function getJobOrderCustomer($custno)
-    // {
-    //     try {
-    //         $data =  DB::table('JOB_ORDER_M as jom')
-    //             ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
-    //             ->where('c.CUST_NO', $custno)
-    //             ->where('jom.BRANCH_ID', 'IHTVN1')
-    //             ->where('c.BRANCH_ID', 'IHTVN1')
-    //             ->where('jom.INPUT_DT', '>=', '20190101000000')
-    //             ->select('jom.ID', 'jom.JOB_NO', 'jom.ORDER_DATE')
-    //             ->get();
-    //         return $data;
-    //     } catch (\Exception $e) {
-    //         return $e;
-    //     }
-    // }
+    public static function getJobOrderCustomer($custno)
+    {
+        try {
+            $data =  DB::table('JOB_ORDER_M as jom')
+                ->leftJoin('CUSTOMER as c', 'jom.CUST_NO', 'c.CUST_NO')
+                ->where('c.CUST_NO', $custno)
+                ->where('jom.BRANCH_ID', 'IHTVN1')
+                ->where('c.BRANCH_ID', 'IHTVN1')
+                ->where('jom.INPUT_DT', '>=', '20190101000000')
+                ->select('jom.ID', 'jom.JOB_NO', 'jom.ORDER_DATE')
+                ->get();
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     // public static function jobOrderCustomer($custno, $jobno)
     // {
     //     try {
