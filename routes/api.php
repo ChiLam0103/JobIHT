@@ -220,7 +220,6 @@ Route::namespace('Api\v1')->group(function () {
                     Route::get('custno={id}', 'FileController@getJobOrderCustomer');
                     Route::get('fromdate={fromdate}&todate={todate}', 'FileController@jobOrder_Date');
 
-                    Route::get('/', 'FileController@jobOrdertNew');//function update
                     Route::get('filter-job', 'FileController@filterJobOrder');//filter job with cust_no & date
                 });
                 //3.bao bieu refund

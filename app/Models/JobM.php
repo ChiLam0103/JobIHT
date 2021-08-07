@@ -379,7 +379,7 @@ class JobM extends Model
         $data = DB::table('JOB_ORDER_M')
             ->where('CUST_NO', $request->custno)
             ->whereBetween('ORDER_DATE', [$request->fromdate, $request->todate])
-            ->select('JOB_NO', 'CUST_NO')
+            ->select('ID','JOB_NO', 'CUST_NO')
             ->get();
         return $data;
     }
