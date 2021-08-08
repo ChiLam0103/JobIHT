@@ -37,11 +37,10 @@ class StatisticFile extends Model
         $today = date("Ymd");
         $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? $today :  $request->fromdate;
         $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
-
         $query = DB::table('JOB_START');
-        if ($request->type = "customer") {
+        if ($request->type == "customer") {
             $query->whereIn('ID', $request->array_id);
-        } else {
+        } else if($request->type == "date") {
             $query->whereBetween('JOB_DATE', [$from_date, $to_date]);
         }
         $data =  $query->get();
