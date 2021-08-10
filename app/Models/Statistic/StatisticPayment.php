@@ -46,6 +46,8 @@ class StatisticPayment extends Model
         try {
             $data =  DB::table('LENDER')
                 ->whereIn('LENDER_NO', $request->advanceno)
+                ->orWhereIn('LENDER_NO', $request->so_phieu)
+                ->orWhereIn('JOB_NO', $request->job_no)
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
                 ->get();
