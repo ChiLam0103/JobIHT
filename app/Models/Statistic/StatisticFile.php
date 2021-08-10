@@ -40,7 +40,7 @@ class StatisticFile extends Model
         $query = DB::table('JOB_START');
         if ($request->type == "customer") {
             $query->whereIn('ID', $request->array_id);
-        } else if($request->type == "date") {
+        } else if ($request->type == "date") {
             $query->whereBetween('JOB_DATE', [$from_date, $to_date]);
         }
         $data =  $query->get();
@@ -78,6 +78,7 @@ class StatisticFile extends Model
                 $data = DB::table('JOB_ORDER_M as job')
                     ->rightJoin('CUSTOMER as c', 'c.CUST_NO', 'job.CUST_NO')
                     ->where('job.BRANCH_ID', 'IHTVN1')
+                    ->where('c.BRANCH_ID', 'IHTVN1')
                     ->whereIn('job.ID', $request->array_id)
                     ->select('c.CUST_NAME', 'job.*')
                     ->get();
@@ -94,27 +95,51 @@ class StatisticFile extends Model
                 }
                 break;
             case 'date':
-                $data = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
-                FROM JOB_ORDER_M job
-                LEFT JOIN CUSTOMER c
-                ON job.CUST_NO =c.CUST_NO
-                WHERE job.BRANCH_ID='IHTVN1'
-                AND  c.BRANCH_ID='IHTVN1'
-                AND  job.INPUT_DT >='20190101000000'
-                AND  job.ORDER_DATE >= '" . $from_date . "'
-                AND  job.ORDER_DATE <= '" . $to_date . "'
-                ORDER BY job.JOB_NO ");
-                foreach ($data as $item) {
-                    $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
-                    FROM JOB_ORDER_D job_d
-                    RIGHT JOIN PAY_TYPE pt
-                    ON job_d.ORDER_TYPE = pt.PAY_NO
-                    WHERE job_d.BRANCH_ID='IHTVN1'
-                    AND  job_d.INPUT_DT >='20190101000000'
-                    AND  job_d.JOB_NO = '" . $item->JOB_NO . "'
-                    ORDER BY job_d.JOB_NO");
-                    $item->job_d = $job_d;
-                }
+                $data='';
+                DB::table('JOB_ORDER_M as job_m')
+                    ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'job_m.CUST_NO')
+                    ->where('job_m.BRANCH_ID', 'IHTVN1')
+                    ->where('c.BRANCH_ID', 'IHTVN1')
+                    ->where('job_m.INPUT_DT', '>=', '20190101000000')
+                    ->whereIn('job_m.ORDER_DATE', [$from_date, $to_date])
+                    ->orderBy('job_m.JOB_NO')
+                    ->select('c.CUST_NAME', 'job_m.JOB_NO', 'job_m.ORDER_DATE', 'job_m.CUST_NO', 'job_m.ORDER_FROM', 'job_m.ORDER_TO', 'job_m.NW', 'job_m.GW', 'job_m.POL', 'job_m.POL', 'job_m.POD', 'job_m.ETD_ETA', 'job_m.PO_NO', 'job_m.CONTAINER_QTY', 'job_m.CONSIGNEE', 'job_m.CUSTOMS_DATE', 'job_m.SHIPPER')
+                    ->chunk(500, function ($job_m) use (&$data) {
+                        // Do something
+                        foreach ($job_m as $item) {
+                            $job_d = DB::table('JOB_ORDER_D as job_d')
+                                ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
+                                ->where('job_d.BRANCH_ID', 'IHTVN1')
+                                ->where('job_d.INPUT_DT', '>=', '20190101000000')
+                                ->where('job_d.JOB_NO', $item->JOB_NO)
+                                ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE')
+                                ->get();
+                            $item->job_d = $job_d;
+                        }
+                        $data = $job_m;
+                    });
+
+                // $data = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
+                // FROM JOB_ORDER_M job
+                // LEFT JOIN CUSTOMER c
+                // ON job.CUST_NO =c.CUST_NO
+                // WHERE job.BRANCH_ID='IHTVN1'
+                // AND  c.BRANCH_ID='IHTVN1'
+                // AND  job.INPUT_DT >='20190101000000'
+                // AND  job.ORDER_DATE >= '" . $from_date . "'
+                // AND  job.ORDER_DATE <= '" . $to_date . "'
+                // ORDER BY job.JOB_NO ");
+                // foreach ($data as $item) {
+                //     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
+                //     FROM JOB_ORDER_D job_d
+                //     RIGHT JOIN PAY_TYPE pt
+                //     ON job_d.ORDER_TYPE = pt.PAY_NO
+                //     WHERE job_d.BRANCH_ID='IHTVN1'
+                //     AND  job_d.INPUT_DT >='20190101000000'
+                //     AND  job_d.JOB_NO = '" . $item->JOB_NO . "'
+                //     ORDER BY job_d.JOB_NO");
+                //     $item->job_d = $job_d;
+                // }
                 break;
         }
         return $data;
