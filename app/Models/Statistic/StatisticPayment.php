@@ -44,8 +44,10 @@ class StatisticPayment extends Model
     public static function postReplenishmentWithdrawalPayment($request)
     {
         try {
+            // dd($request['so_phieu']);
             $data =  DB::table('LENDER')
-                ->whereIn('LENDER_NO', $request->advanceno)
+                // ->where('LENDER_NO',  $request['advanceno'])
+                ->where('LENDER_NO', $request['so_phieu'])
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
                 ->get();
@@ -74,6 +76,58 @@ class StatisticPayment extends Model
                     $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT - $SUM_JOB_ORDER; //tong bu tra
                 }
             }
+            return $data;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    // import excel lender_table
+    public static function importLender($request)
+    {
+        try {
+            $data = array();
+            foreach ($request as $item) {
+                $query =  DB::table('LENDER')
+                    // ->where('LENDER_NO',  $request['advanceno'])
+                    ->where('LENDER_NO', $item['so_phieu'])
+                    ->where('INPUT_DT', '>=', '20190101000000')
+                    ->where('BRANCH_ID', 'IHTVN1')
+                    ->first();
+                array_push($data, $query);
+            }
+            // dd($data);
+            foreach ($data as $key => $item) {
+                if ($item) {
+                    $SUM_LENDER_AMT = 0; //tien ung
+                    $SUM_JOB_ORDER = 0; //tien job order
+                    // $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
+                    $advance_d = DB::table('LENDER_D')->where('LENDER_NO', $item->LENDER_NO)->get();
+                    $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
+                    foreach ($advance_d as $i) {
+                        $SUM_LENDER_AMT += $i->LENDER_AMT;
+                    }
+                    // dd($SUM_LENDER_AMT);
+                    foreach ($job_d as $i) {
+                        $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
+                    }
+                    //kiem tra phieu chi truc tiep
+                    if ($item->LENDER_TYPE == 'C') {
+                        $item->SUM_LENDER_AMT = 0; //tong ung
+                        $item->SUM_DIRECT = $SUM_JOB_ORDER; //chi truc tiep
+                        $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+                        $item->SUM_REPLENISHMENT_WITHDRAWAL = -$SUM_JOB_ORDER; //tong bu tra
+                    } else {
+                        $item->SUM_LENDER_AMT = $SUM_LENDER_AMT; //tong ung
+                        $item->SUM_DIRECT = 0; //chi truc tiep
+                        $item->SUM_JOB_ORDER = $SUM_JOB_ORDER; //tong job
+                        $item->SUM_REPLENISHMENT_WITHDRAWAL = $SUM_LENDER_AMT - $SUM_JOB_ORDER; //tong bu tra
+                    }
+                } else {
+                    // remove orange apps
+                    unset($data[$key]);
+                }
+            }
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;

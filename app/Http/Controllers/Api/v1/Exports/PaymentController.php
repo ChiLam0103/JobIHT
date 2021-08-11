@@ -46,39 +46,26 @@ class PaymentController extends Controller
         }
     }
     //1.2.2 import excel thống kê phiếu bù/trả và export thống kê phiếu bù/trả
+    protected $fileImport;
     public function importPayment()
     {
         Excel::load(Input::file('file'), function ($reader) {
-            // foreach ($reader->toArray() as $row) {
-            // }
-            $data = PaymentController::function_Payment($reader->toArray());
-            $this->url = $data;
-        });
-        return response()->json([
-            'url' => $this->url,
-        ]);
-    }
-    protected $url;
-    public static function function_Payment($advanceno)
-    {
-        $lender = StatisticPayment::postReplenishmentWithdrawalPayment($advanceno);
-        if ($lender) {
+            $data = StatisticPayment::importLender($reader->toArray());
             $filename = 'thong-ke-bu-tra' . '(' . date('YmdHis') . ')';
-
-            Excel::create($filename, function ($excel) use ($lender) {
-                $excel->sheet('Thong ke Bu-Tra', function ($sheet) use ($lender) {
+            Excel::create($filename, function ($excel) use ($data) {
+                $excel->sheet('Thong ke Bu-Tra', function ($sheet) use ($data) {
                     $sheet->loadView('export\payment\advance\post-export-replenishment-withdrawal-payment', [
-                        'lender' => $lender,
+                        'lender' => $data,
                     ]);
                     $sheet->setOrientation('landscape');
                 });
             })->store('xlsx');
-            $url = 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx';
-            return $url;
-        } else {
-            $err = 'Vui lòng chọn số phiếu';
-            return $err;
-        }
+            $this->fileImport = $filename;
+            // $url = 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx';
+            // return $url;
+        });
+        $url = 'https://job-api.ihtvn.com/storage/exports/' . $this->fileImport . '.xlsx';
+        return $url;
     }
     //2.1 export-phiếu yêu cầu thanh toán
     public function postExportDebitNote(Request $request)

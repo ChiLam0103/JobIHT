@@ -26,6 +26,12 @@
             </tr>
         </thead>
         <tbody>
+            <span style="display: hidden"> {{ $SUM_LENDER_AMT = 0 }}
+                {{ $SUM_DIRECT = 0 }}
+                {{ $SUM_JOB_ORDER = 0 }}
+                {{ $SUM_REPLENISHMENT_WITHDRAWAL = 0 }}
+                {{ $SUM_REPLENISHMENT_WITHDRAWAL = 0 }}
+            </span>
             @foreach ($lender as $key => $item)
                 <tr>
                     <td>{{ $key + 1 }}</td>
@@ -40,17 +46,24 @@
                     <td>{{ $item->SUM_JOB_ORDER }}</td>
                     <td>{{ $item->SUM_REPLENISHMENT_WITHDRAWAL }}</td>
                 </tr>
+                <span style="display: hidden">{{ $SUM_LENDER_AMT += $item->SUM_LENDER_AMT }}
+                    {{ $SUM_DIRECT += $item->SUM_DIRECT }}
+                    {{ $SUM_JOB_ORDER += $item->SUM_JOB_ORDER }}
+                    {{ $SUM_REPLENISHMENT_WITHDRAWAL += $item->SUM_REPLENISHMENT_WITHDRAWAL }}
+                </span>
+
             @endforeach
             <tr>
                 <td colspan="7"></td>
-                <td>{{ $lender->sum('SUM_LENDER_AMT') ? $lender->sum('SUM_LENDER_AMT') :0 }}</td>
-                <td>{{ $lender->sum('SUM_DIRECT') ? $lender->sum('SUM_DIRECT') :0}}</td>
-                <td>{{ $lender->sum('SUM_JOB_ORDER') ? $lender->sum('SUM_JOB_ORDER') :0}}</td>
-                <td>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') ? $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') :0}}</td>
+                <td>{{ $SUM_LENDER_AMT }}</td>
+                <td>{{ $SUM_DIRECT }}</td>
+                <td>{{ $SUM_JOB_ORDER }}</td>
+                <td>{{ $SUM_REPLENISHMENT_WITHDRAWAL }}
+                </td>
             </tr>
             <tr>
                 <th colspan="10" style="text-align: right">Tổng Phiếu Trả và Bù/Chi</th>
-                <th>{{ $lender->sum('SUM_REPLENISHMENT_WITHDRAWAL') }}</th>
+                <th>{{ $SUM_REPLENISHMENT_WITHDRAWAL }}</th>
             </tr>
         </tbody>
     </table>
