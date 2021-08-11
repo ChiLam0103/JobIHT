@@ -86,7 +86,7 @@ class PaymentController extends Controller
         }
     }
     //1.2 thống kê phiếu bù/trả
-    public function postReplenishmentWithdrawalPayment(Request $request)
+    public function postExportReplenishmentWithdrawalPayment(Request $request)
     {
         $lender = StatisticPayment::postReplenishmentWithdrawalPayment($request);
 

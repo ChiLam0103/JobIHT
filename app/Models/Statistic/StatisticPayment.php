@@ -45,11 +45,7 @@ class StatisticPayment extends Model
     {
         try {
             $data =  DB::table('LENDER')
-                // ->where('LENDER_NO',  $request['advanceno'])
-                ->where('LENDER_NO', $request['so_phieu'])
-                ->whereIn('LENDER_NO', $request->advanceno)
-                ->orWhereIn('LENDER_NO', $request->so_phieu)
-                ->orWhereIn('JOB_NO', $request->job_no)
+                ->where('LENDER_NO', $request->advanceno)
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
                 ->get();
@@ -90,25 +86,21 @@ class StatisticPayment extends Model
             $data = array();
             foreach ($request as $item) {
                 $query =  DB::table('LENDER')
-                    // ->where('LENDER_NO',  $request['advanceno'])
                     ->where('LENDER_NO', $item['so_phieu'])
                     ->where('INPUT_DT', '>=', '20190101000000')
                     ->where('BRANCH_ID', 'IHTVN1')
                     ->first();
                 array_push($data, $query);
             }
-            // dd($data);
             foreach ($data as $key => $item) {
                 if ($item) {
                     $SUM_LENDER_AMT = 0; //tien ung
                     $SUM_JOB_ORDER = 0; //tien job order
-                    // $advance_d = StatisticPayment::advance_D($item->LENDER_NO);
                     $advance_d = DB::table('LENDER_D')->where('LENDER_NO', $item->LENDER_NO)->get();
                     $job_d = JobD::getJob($item->JOB_NO, "JOB_ORDER")->whereIn('jd.THANH_TOAN_MK', [null, 'N']);
                     foreach ($advance_d as $i) {
                         $SUM_LENDER_AMT += $i->LENDER_AMT;
                     }
-                    // dd($SUM_LENDER_AMT);
                     foreach ($job_d as $i) {
                         $SUM_JOB_ORDER += $i->PORT_AMT + $i->INDUSTRY_ZONE_AMT;
                     }
@@ -129,7 +121,6 @@ class StatisticPayment extends Model
                     unset($data[$key]);
                 }
             }
-            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;

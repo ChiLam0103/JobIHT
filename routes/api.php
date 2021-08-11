@@ -243,7 +243,7 @@ Route::namespace('Api\v1')->group(function () {
                     //1.1 phieu chi
                     Route::get('advance_no={advanceno}', 'PaymentController@advance');
                     //1.2thống kê phiếu bù và phiếu trả
-                    Route::post('replenishment-withdrawal-payment', 'PaymentController@postReplenishmentWithdrawalPayment');
+                    Route::post('replenishment-withdrawal-payment', 'PaymentController@postExportReplenishmentWithdrawalPayment');
                     // Route::get('replenishment-withdrawal-payment', 'PaymentController@getReplenishmentWithdrawalPayment');
                 });
                 //2. phiếu yêu cầu thanh toán
