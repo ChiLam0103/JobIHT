@@ -95,8 +95,8 @@ class StatisticFile extends Model
                 }
                 break;
             case 'date':
-                $data='';
-                DB::table('JOB_ORDER_M as job_m')
+                $data = [];
+                $job_m =  DB::table('JOB_ORDER_M as job_m')
                     ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'job_m.CUST_NO')
                     ->where('job_m.BRANCH_ID', 'IHTVN1')
                     ->where('c.BRANCH_ID', 'IHTVN1')
@@ -104,9 +104,10 @@ class StatisticFile extends Model
                     ->whereIn('job_m.ORDER_DATE', [$from_date, $to_date])
                     ->orderBy('job_m.JOB_NO')
                     ->select('c.CUST_NAME', 'job_m.JOB_NO', 'job_m.ORDER_DATE', 'job_m.CUST_NO', 'job_m.ORDER_FROM', 'job_m.ORDER_TO', 'job_m.NW', 'job_m.GW', 'job_m.POL', 'job_m.POL', 'job_m.POD', 'job_m.ETD_ETA', 'job_m.PO_NO', 'job_m.CONTAINER_QTY', 'job_m.CONSIGNEE', 'job_m.CUSTOMS_DATE', 'job_m.SHIPPER')
-                    ->chunk(500, function ($job_m) use (&$data) {
+                    ->chunk(5000, function ($job_m) use (&$data) {
                         // Do something
                         foreach ($job_m as $item) {
+                            dd($job_m,$item);
                             $job_d = DB::table('JOB_ORDER_D as job_d')
                                 ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
                                 ->where('job_d.BRANCH_ID', 'IHTVN1')
@@ -116,9 +117,11 @@ class StatisticFile extends Model
                                 ->get();
                             $item->job_d = $job_d;
                         }
-                        $data = $job_m;
-                    });
 
+                        $data[0] = $job_m->toArray();
+                        dd($data[0]);
+                    });
+                dd($data);
                 // $data = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
                 // FROM JOB_ORDER_M job
                 // LEFT JOIN CUSTOMER c
