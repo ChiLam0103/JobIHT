@@ -45,7 +45,7 @@ class StatisticPayment extends Model
     {
         try {
             $data =  DB::table('LENDER')
-                ->where('LENDER_NO', $request->advanceno)
+                ->whereIn('LENDER_NO', $request->advanceno)
                 ->where('INPUT_DT', '>=', '20190101000000')
                 ->where('BRANCH_ID', 'IHTVN1')
                 ->get();
