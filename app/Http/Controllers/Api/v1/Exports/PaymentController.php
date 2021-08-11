@@ -61,11 +61,10 @@ class PaymentController extends Controller
                 });
             })->store('xlsx');
             $this->fileImport = $filename;
-            // $url = 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx';
-            // return $url;
         });
-        $url = 'https://job-api.ihtvn.com/storage/exports/' . $this->fileImport . '.xlsx';
-        return $url;
+        return response()->json([
+            'url' => 'https://job-api.ihtvn.com/storage/exports/' . $this->fileImport . '.xlsx',
+        ]);
     }
     //2.1 export-phiếu yêu cầu thanh toán
     public function postExportDebitNote(Request $request)
