@@ -5,6 +5,7 @@
     <table>
         <thead>
             <tr>
+                <th>STT</th>
                 <th>Số Job Order</th>
                 <th>Ngày lập</th>
                 <th>Mã khách hàng</th>
@@ -35,8 +36,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @foreach ($data as $key => $item)
                 <tr>
+                    <td>{{ $key + 1 }}</td>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>
                     <td>{{ $item->CUST_NO }}</td>
@@ -54,23 +56,23 @@
                     <td>{{ date('Y/m/d', strtotime($item->CUSTOMS_DATE)) }}</td>
                     <td>{{ $item->SHIPPER }}</td>
                     @foreach ($item->job_d as $item_d)
-                    <tr>
-                        <td colspan="16" style="border: none"></td>
-                        <td>{{ $item_d->PAY_NAME }}</td>
-                        <td>{{ $item_d->SER_NO }}</td>
-                        <td>{{ $item_d->DESCRIPTION }}</td>
-                        <td>{{ $item_d->PORT_AMT }}</td>
-                        <td>{{ $item_d->INDUSTRY_ZONE_AMT }}</td>
-                        <td>{{ $item_d->NOTE }}</td>
-                        <td>{{ $item_d->UNIT }}</td>
-                        <td>{{ $item_d->QTY }}</td>
-                        <td>{{ $item_d->PRICE }}</td>
-                        <td>{{ $item_d->TAX_AMT }}</td>
-                        <td>{{ ($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY }}
-                        </td>
-                    </tr>
-                    @endforeach
+                <tr>
+                    <td colspan="16" style="border: none"></td>
+                    <td>{{ $item_d->PAY_NAME }}</td>
+                    <td>{{ $item_d->SER_NO }}</td>
+                    <td>{{ $item_d->DESCRIPTION }}</td>
+                    <td>{{ $item_d->PORT_AMT }}</td>
+                    <td>{{ $item_d->INDUSTRY_ZONE_AMT }}</td>
+                    <td>{{ $item_d->NOTE }}</td>
+                    <td>{{ $item_d->UNIT }}</td>
+                    <td>{{ $item_d->QTY }}</td>
+                    <td>{{ $item_d->PRICE }}</td>
+                    <td>{{ $item_d->TAX_AMT }}</td>
+                    <td>{{ ($item_d->PRICE + $item_d->PRICE * ($item_d->TAX_NOTE / 100)) * $item_d->QTY }}
+                    </td>
                 </tr>
+            @endforeach
+            </tr>
             @endforeach
         </tbody>
     </table>

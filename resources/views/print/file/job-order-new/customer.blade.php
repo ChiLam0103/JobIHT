@@ -69,6 +69,7 @@
     <div id="page" class="page">
         <table class="table">
             <tr>
+                <th>STT</th>
                 <th>Số Job Order</th>
                 <th>Ngày lập</th>
                 <th>Mã khách hàng</th>
@@ -96,9 +97,9 @@
                 <th>Tiền thuế</th>
                 <th>Tổng Tiền</th>
             </tr>
-            @foreach ($data as $item)
-
+            @foreach ($data as $key => $item)
                 <tr>
+                    <td>{{ $key + 1 }}</td>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>
                     <td>{{ $item->CUST_NO }}</td>

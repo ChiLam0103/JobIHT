@@ -5,6 +5,7 @@
     <table>
         <thead>
             <tr>
+                <th>STT</th>
                 <th>Số Job Order</th>
                 <th>Ngày lập</th>
                 <th>Mã khách hàng</th>
@@ -33,8 +34,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @foreach ($data as $key => $item)
                 <tr>
+                    <td>{{ $key + 1 }}</td>
                     <td>{{ $item->JOB_NO }}</td>
                     <td>{{ date('Y/m/d', strtotime($item->ORDER_DATE)) }}</td>
                     <td>{{ $item->CUST_NO }}</td>
