@@ -84,17 +84,16 @@ class StatisticFile extends Model
 
             case 'customer':
                 $job_m ->whereIn('job_m.ID', $request->array_id)
-                ->chunk(500, function ($job_m) use (&$array) {
+                ->chunk(300, function ($job_m) use (&$array) {
                     // Do something
                     foreach ($job_m as $item) {
-                        $job_d = DB::table('JOB_ORDER_D as job_d')
+                        $item->job_d = DB::table('JOB_ORDER_D as job_d')
                             ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
                             ->where('job_d.BRANCH_ID', 'IHTVN1')
                             ->where('job_d.INPUT_DT', '>=', '20190101000000')
                             ->where('job_d.JOB_NO', $item->JOB_NO)
                             ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE', 'job_d.TAX_NOTE', 'job_d.INDUSTRY_ZONE_AMT')
                             ->get();
-                        $item->job_d = $job_d;
                     }
 
                     array_push($array, $job_m);
@@ -122,17 +121,16 @@ class StatisticFile extends Model
                 break;
             case 'date':
                 $job_m->whereIn('job_m.ORDER_DATE', [$from_date, $to_date])
-                    ->chunk(500, function ($job_m) use (&$array) {
+                    ->chunk(300, function ($job_m) use (&$array) {
                         // Do something
                         foreach ($job_m as $item) {
-                            $job_d = DB::table('JOB_ORDER_D as job_d')
+                            $item->job_d = DB::table('JOB_ORDER_D as job_d')
                                 ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
                                 ->where('job_d.BRANCH_ID', 'IHTVN1')
                                 ->where('job_d.INPUT_DT', '>=', '20190101000000')
                                 ->where('job_d.JOB_NO', $item->JOB_NO)
                                 ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE')
                                 ->get();
-                            $item->job_d = $job_d;
                         }
 
                         array_push($array, $job_m);

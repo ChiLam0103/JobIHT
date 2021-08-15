@@ -275,7 +275,6 @@ Route::namespace('Api\v1')->group(function () {
                 // Route::post('job-order', 'FileController@exportJobOrder');
                 Route::post('job-order-new', 'FileController@exportJobOrderNew');
                 //3. báo biểu refund
-                //3. báo biểu refund
                 Route::post('refund', 'FileController@postExportRefund');
                 //4.thong ke job order--tạo job
                 Route::post('created-job', 'FileController@statisticCreatedJob');

@@ -170,6 +170,7 @@ class StatisticPayment extends Model
     {
         try {
             $data = '';
+            $array = array();
             $total_amt = 0;
             $today = date("Ymd");
             $fromdate = $request->fromdate != 'null' ? $request->fromdate : '19000101';
@@ -224,12 +225,25 @@ class StatisticPayment extends Model
                     }
                     if ($request->custno && $request->person && $request->phone) {
                         $query = StatisticPayment::query();
-                        $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)
-                            ->select('dnm.*')->get();
-                        foreach ($data as $item) {
-                            $debit_d = StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
-                            $item->debit_d = $debit_d;
-                        }
+
+                        $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)
+                        ->select('dnm.*')
+                        ->chunk(300, function ($query) use (&$array) {
+                            // Do something
+                            foreach ($query as $item) {
+                                $item->debit_d= StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
+                            }
+
+                            array_push($array, $query);
+                        });
+                        $data = $array[0];
+
+                        // $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)
+                        //     ->select('dnm.*')->get();
+                        // foreach ($data as $item) {
+                        //     $debit_d = StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
+                        //     $item->debit_d = $debit_d;
+                        // }
                         return $data;
                     }
                     break;
@@ -252,11 +266,23 @@ class StatisticPayment extends Model
                     }
                     if ($request->custno && $request->person && $request->phone) {
                         $query = StatisticPayment::query();
-                        $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)->select('dnm.*')->get();
-                        foreach ($data as $item) {
-                            $debit_d = StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
-                            $item->debit_d = $debit_d;
-                        }
+                        $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)
+                        ->select('dnm.*')
+                        ->chunk(300, function ($query) use (&$array) {
+                            // Do something
+                            foreach ($query as $item) {
+                                $item->debit_d = StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
+                            }
+
+                            array_push($array, $query);
+                        });
+                        $data = $array[0];
+                        // $data = $query->whereIn('dnm.JOB_NO', $request->jobno)->whereIn('dnm.CUST_NO', $request->custno)->select('dnm.*')->get();
+                        // foreach ($data as $item) {
+                        //     $debit_d = StatisticPayment::postDebitNote_D('customer', null, null, $item->JOB_NO, null);
+                        //     $item->debit_d = $debit_d;
+                        // }
+                        // dd($data);
                         return $data;
                     }
                     break;
@@ -314,6 +340,8 @@ class StatisticPayment extends Model
     public static function profit($type, $jobno, $custno, $fromdate, $todate)
     {
         try {
+            $data = '';
+            $array = array();
             $check_date = (($fromdate == null || $fromdate == 'undefined' || $fromdate == 'null') && ($todate == null || $todate == 'undefined' || $todate == 'null') || $fromdate > $todate) ? 0 : 1;
             $check_custno = ($custno == null || $custno == 'undefined' || $custno == 'null') ? 0 : 1;
             $query = DB::table('JOB_START as job')
@@ -341,6 +369,19 @@ class StatisticPayment extends Model
                     }
                     break;
             }
+            $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
+                ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
+                ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get()
+            ->chunk(300, function ($query) use (&$array) {
+                // Do something
+                foreach ($query as $item) {
+                    $item->job_d= StatisticPayment::profitJobOrderD($item->JOB_NO);
+                }
+
+                array_push($array, $query);
+            });
+            $data = $array[0];
+
             $data = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
                 ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
                 ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get();
@@ -445,27 +486,27 @@ class StatisticPayment extends Model
             return $e;
         }
     }
-    public static function jobMonthly_jobOrderD($jobno)
-    {
-        $data = DB::table('JOB_ORDER_D as jd')
-            ->where('jd.BRANCH_ID', 'IHTVN1')
-            ->where('jd.JOB_NO', $jobno)
-            ->selectRaw('sum(jd.PORT_AMT) as SUM_PORT_AMT')
-            ->selectRaw('sum(jd.INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT')
-            ->first();
-        return $data;
-    }
-    public static function jobMonthly_lenderD($jobno)
-    {
-        $data = DB::table('LENDER as l')
-            ->leftJoin('LENDER_D as ld', 'l.LENDER_NO', 'ld.LENDER_NO')
-            ->where('l.BRANCH_ID', 'IHTVN1')
-            ->where('l.LENDER_TYPE', 'T')
-            ->where('l.JOB_NO', $jobno)
-            ->selectRaw('sum(ld.LENDER_AMT) as SUM_LENDER_AMT')
-            ->first();
-        return $data;
-    }
+    // public static function jobMonthly_jobOrderD($jobno)
+    // {
+    //     $data = DB::table('JOB_ORDER_D as jd')
+    //         ->where('jd.BRANCH_ID', 'IHTVN1')
+    //         ->where('jd.JOB_NO', $jobno)
+    //         ->selectRaw('sum(jd.PORT_AMT) as SUM_PORT_AMT')
+    //         ->selectRaw('sum(jd.INDUSTRY_ZONE_AMT) as SUM_INDUSTRY_ZONE_AMT')
+    //         ->first();
+    //     return $data;
+    // }
+    // public static function jobMonthly_lenderD($jobno)
+    // {
+    //     $data = DB::table('LENDER as l')
+    //         ->leftJoin('LENDER_D as ld', 'l.LENDER_NO', 'ld.LENDER_NO')
+    //         ->where('l.BRANCH_ID', 'IHTVN1')
+    //         ->where('l.LENDER_TYPE', 'T')
+    //         ->where('l.JOB_NO', $jobno)
+    //         ->selectRaw('sum(ld.LENDER_AMT) as SUM_LENDER_AMT')
+    //         ->first();
+    //     return $data;
+    // }
     //6. thong ke thanh toan cua khach hang
     public static function paymentCustomers($type, $custno, $fromdate, $todate)
     {
@@ -600,19 +641,19 @@ class StatisticPayment extends Model
             ->orderBy('dnm.JOB_NO');
         return $data;
     }
-    public static function test($advanceno)
-    {
-        $data =  DB::table('LENDER as l')
-            ->whereIn('L.LENDER_NO', $advanceno)
-            ->where('l.BRANCH_ID', 'IHTVN1')
-            ->where('l.INPUT_DT', '>=', '20190101000000')
-            ->select('l.*')->take(10)->get();
-        $data_d = DB::table('LENDER_D as ld')
-            ->where('ld.BRANCH_ID', 'IHTVN1')
-            ->whereIn('ld.LENDER_NO', $advanceno)
-            ->select('ld.*')->get();
-        $array = $data['0']->push($data_d);
-        dd($array);
-        return $data;
-    }
+    // public static function test($advanceno)
+    // {
+    //     $data =  DB::table('LENDER as l')
+    //         ->whereIn('L.LENDER_NO', $advanceno)
+    //         ->where('l.BRANCH_ID', 'IHTVN1')
+    //         ->where('l.INPUT_DT', '>=', '20190101000000')
+    //         ->select('l.*')->take(10)->get();
+    //     $data_d = DB::table('LENDER_D as ld')
+    //         ->where('ld.BRANCH_ID', 'IHTVN1')
+    //         ->whereIn('ld.LENDER_NO', $advanceno)
+    //         ->select('ld.*')->get();
+    //     $array = $data['0']->push($data_d);
+    //     dd($array);
+    //     return $data;
+    // }
 }
