@@ -388,7 +388,7 @@ class StatisticPayment extends Model
             foreach ($data as $item) {
                 $item->job_d = StatisticPayment::profitJobOrderD($item->JOB_NO);
             }
-            dd($data);
+            // dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
