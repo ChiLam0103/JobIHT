@@ -369,18 +369,18 @@ class StatisticPayment extends Model
                     }
                     break;
             }
-            $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
-                ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
-                ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get()
-            ->chunk(300, function ($query) use (&$array) {
-                // Do something
-                foreach ($query as $item) {
-                    $item->job_d= StatisticPayment::profitJobOrderD($item->JOB_NO);
-                }
-
-                array_push($array, $query);
-            });
-            $data = $array[0];
+            // $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
+            //     ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
+            //     ->groupBy('c.CUST_NAME', 'dm.JOB_NO', 'dm.CUST_NO')->get()
+            // ->chunk(300, function ($query) use (&$array) {
+            //     // Do something
+            //     foreach ($query as $item) {
+            //         $item->job_d= StatisticPayment::profitJobOrderD($item->JOB_NO);
+            //     }
+            //     array_push($array, $query);
+            // });
+            // dd($array[0]);
+            // $data = $array[0];
 
             $data = $query->leftJoin('DEBIT_NOTE_D as dnd', 'dnd.JOB_NO', 'dm.JOB_NO')
                 ->selectRaw("sum(dnd.QUANTITY * dnd.PRICE) as TIEN_THANH_TOAN")
@@ -388,6 +388,7 @@ class StatisticPayment extends Model
             foreach ($data as $item) {
                 $item->job_d = StatisticPayment::profitJobOrderD($item->JOB_NO);
             }
+            dd($data);
             return $data;
         } catch (\Exception $e) {
             return $e;
