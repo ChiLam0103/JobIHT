@@ -96,12 +96,24 @@ class FileController extends Controller
             'url' => 'https://job-api.ihtvn.com/storage/exports/' . $filename . '.xlsx',
         ]);
     }
-    //2.1.1 import excel thêm or chỉnh sửa chi phí job_d
+    //2.1.1 import excel phí kéo job_d---chị Huệ
     public function importJobOrder()
     {
         Excel::load(Input::file('file'), function ($reader) {
             foreach ($reader->toArray() as $array) {
                 JobD::importJobOrder($array);
+            }
+        });
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+    //2.1.2 import excel phí job_d---chị Phấn
+    public function importJobOrderBoat()
+    {
+        Excel::load(Input::file('file'), function ($reader) {
+            foreach ($reader->toArray() as $array) {
+                JobD::importJobOrderBoat($array);
             }
         });
         return response()->json([

@@ -257,4 +257,40 @@ class JobD extends Model
             return $e;
         }
     }
+    // import chi phí --chị Phấn
+    public static function importJobOrderBoat($request)
+    {
+        try {
+            // dd($request);
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $order_type=DB::table('PAY_TYPE')->where('PAY_NAME',$request['loai'])->select('PAY_NO')->first('PAY_NO');
+            $ser_no = JobD::generateSerNo($request['job_no'], $order_type->PAY_NO);
+            // dd($order_type->PAY_NO,$ser_no);
+            DB::table(config('constants.JOB_D_TABLE'))
+            ->insert(
+                [
+                    "JOB_NO" => $request['job_no'],
+                    "ORDER_TYPE" => $order_type->PAY_NO,
+                    "SER_NO" => $ser_no,
+                    "DESCRIPTION" => $request['mo_ta'],
+                    "UNIT" =>  $request['dvt'],
+                    "QTY" =>$request['sl'],
+                    "PRICE" =>  $request['gia_truoc_thue'],//giá trước thuế
+                    "TAX_NOTE" =>  0,// % thuế
+                    "TAX_AMT" => 0,// tiền thuế
+                    "NOTE" =>  $request['ghi_chu'],
+                    "THANH_TOAN_MK" => 'N',
+                    "BRANCH_ID" => 'IHTVN1',
+                    "INPUT_USER" => 'JENNY',
+                    "INPUT_DT" => date("YmdHis"),
+                    //job order
+                    "PORT_AMT" => 0,
+                    "INDUSTRY_ZONE_AMT" =>0,
+                ]
+            );
+            return true;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

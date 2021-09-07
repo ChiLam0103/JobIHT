@@ -299,11 +299,12 @@ Route::namespace('Api\v1')->group(function () {
         });
         //import
         Route::group(['prefix' => 'import', 'namespace' => 'Exports'], function () {
-            //1. payment manager(quan ly thu chi)
+            //1. payment manager(quan ly thu chi)--Chị Quỳnh import-> xuất file excel
             Route::post('payment', 'PaymentController@importPayment');
-
-            Route::post('debit-note', 'PaymentController@importDebitNote');
-            //inport upload phí kéo
+            //chị Phấn
+            Route::post('debit-note', 'PaymentController@importDebitNote');//add table debit_note_d
+            Route::post('job-order-boat', 'FileController@importJobOrderBoat');// add table job_order_d (chi phí book tàu)
+            //inport upload phí kéo--Chị Huệ
             Route::post('job-order', 'FileController@importJobOrder');
         });
         //test
