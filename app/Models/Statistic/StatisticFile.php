@@ -58,12 +58,12 @@ class StatisticFile extends Model
         $from_date = ($request->fromdate == 'undefined' || $request->fromdate == 'null' || $request->fromdate == null) ? '19000101' :  $request->fromdate;
         $to_date = ($request->todate == 'undefined' || $request->todate == 'null' || $request->todate == null) ? $today : $request->todate;
         $job_m =  DB::table('JOB_ORDER_M as job_m')
-        ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'job_m.CUST_NO')
-        ->where('job_m.BRANCH_ID', 'IHTVN1')
-        ->where('c.BRANCH_ID', 'IHTVN1')
-        ->where('job_m.INPUT_DT', '>=', '20190101000000')
-        ->orderBy('job_m.JOB_NO')
-        ->select('c.CUST_NAME', 'job_m.*');
+            ->leftJoin('CUSTOMER as c', 'c.CUST_NO', 'job_m.CUST_NO')
+            ->where('job_m.BRANCH_ID', 'IHTVN1')
+            ->where('c.BRANCH_ID', 'IHTVN1')
+            ->where('job_m.INPUT_DT', '>=', '20190101000000')
+            ->orderBy('job_m.JOB_NO')
+            ->select('c.CUST_NAME', 'job_m.*');
         switch ($request->type) {
             case 'job':
                 $data =  DB::table('JOB_ORDER_M as jom')
@@ -83,21 +83,21 @@ class StatisticFile extends Model
                 break;
 
             case 'customer':
-                $job_m ->whereIn('job_m.ID', $request->array_id)
-                ->chunk(300, function ($job_m) use (&$array) {
-                    // Do something
-                    foreach ($job_m as $item) {
-                        $item->job_d = DB::table('JOB_ORDER_D as job_d')
-                            ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
-                            ->where('job_d.BRANCH_ID', 'IHTVN1')
-                            ->where('job_d.INPUT_DT', '>=', '20190101000000')
-                            ->where('job_d.JOB_NO', $item->JOB_NO)
-                            ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE', 'job_d.TAX_NOTE', 'job_d.INDUSTRY_ZONE_AMT')
-                            ->get();
-                    }
+                $job_m->whereIn('job_m.ID', $request->array_id)
+                    ->chunk(300, function ($job_m) use (&$array) {
+                        // Do something
+                        foreach ($job_m as $item) {
+                            $item->job_d = DB::table('JOB_ORDER_D as job_d')
+                                ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
+                                ->where('job_d.BRANCH_ID', 'IHTVN1')
+                                ->where('job_d.INPUT_DT', '>=', '20190101000000')
+                                ->where('job_d.JOB_NO', $item->JOB_NO)
+                                ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE', 'job_d.TAX_NOTE', 'job_d.INDUSTRY_ZONE_AMT')
+                                ->get();
+                        }
 
-                    array_push($array, $job_m);
-                });
+                        array_push($array, $job_m);
+                    });
                 $data = $array[0];
 
                 // $data = DB::table('JOB_ORDER_M as job')
@@ -120,14 +120,16 @@ class StatisticFile extends Model
                 // }
                 break;
             case 'date':
-                $job_m->whereIn('job_m.ORDER_DATE', [$from_date, $to_date])
-                    ->chunk(300, function ($job_m) use (&$array) {
+
+                $job_m->where('job_m.ORDER_DATE',  '>=', $from_date)
+                    ->where('job_m.ORDER_DATE',  '<=', $to_date)
+                    ->chunk(7000, function ($job_m) use (&$array) {
                         // Do something
                         foreach ($job_m as $item) {
                             $item->job_d = DB::table('JOB_ORDER_D as job_d')
                                 ->leftJoin('PAY_TYPE as pt', 'pt.PAY_NO', 'job_d.ORDER_TYPE')
-                                ->where('job_d.BRANCH_ID', 'IHTVN1')
-                                ->where('job_d.INPUT_DT', '>=', '20190101000000')
+                                // ->where('job_d.BRANCH_ID', 'IHTVN1')
+                                // ->where('job_d.INPUT_DT', '>=', '20190101000000')
                                 ->where('job_d.JOB_NO', $item->JOB_NO)
                                 ->select('pt.PAY_NAME', 'job_d.JOB_NO', 'job_d.SER_NO', 'job_d.DESCRIPTION', 'job_d.PORT_AMT', 'job_d.NOTE', 'job_d.UNIT', 'job_d.QTY', 'job_d.PRICE', 'job_d.TAX_AMT', 'job_d.TAX_NOTE')
                                 ->get();
@@ -135,7 +137,9 @@ class StatisticFile extends Model
 
                         array_push($array, $job_m);
                     });
+                // dd($array);
                 $data = $array[0];
+
                 // $data = DB::select("select c.CUST_NAME, job.JOB_NO, job.ORDER_DATE, job.CUST_NO, job.ORDER_FROM, job.ORDER_TO, job.NW, job.GW, job.POL, job.POL, job.POD, job.ETD_ETA, job.PO_NO, job.CONTAINER_QTY, job.CONSIGNEE, job.CUSTOMS_DATE, job.SHIPPER
                 // FROM JOB_ORDER_M job
                 // LEFT JOIN CUSTOMER c
@@ -146,6 +150,7 @@ class StatisticFile extends Model
                 // AND  job.ORDER_DATE >= '" . $from_date . "'
                 // AND  job.ORDER_DATE <= '" . $to_date . "'
                 // ORDER BY job.JOB_NO ");
+                // // dd($data); 4393
                 // foreach ($data as $item) {
                 //     $job_d = DB::select("select pt.PAY_NAME, job_d.JOB_NO, job_d.SER_NO, job_d.DESCRIPTION, job_d.PORT_AMT, job_d.NOTE, job_d.UNIT, job_d.QTY, job_d.PRICE, job_d.TAX_AMT, job_d.TAX_NOTE
                 //     FROM JOB_ORDER_D job_d
